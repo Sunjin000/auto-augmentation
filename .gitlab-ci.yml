@@ -22,4 +22,4 @@ deploy-job:
     - pip install -r requirements.txt
     - flask run &
     - echo "Now I'm Deploying to Heroku!"
-    - dpl --provider=heroku --app=yw21218-simplewebapp --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b
+    - dpl --provider=heroku --app=metarl --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b
