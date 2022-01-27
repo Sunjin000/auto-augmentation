@@ -1,0 +1,31 @@
+{% extends "basic.html" %}
+{% block title %}Response{% endblock %}
+{% block body %}
+Response to query:<br>
+<ul>
+{% for result in search_results %}
+<li> {{ result }}
+{% endfor %}
+</ul>
+
+<div>  
+  <form action="/choose_file">
+    <input type="radio" id="downloadTypeChoice1"
+      name="Filetype" value="html">
+    <label for="downloadChoice1">HTML</label><br>
+  
+    <input type="radio" id="downloadTypeChoice2"
+      name="Filetype" value="markdown">
+    <label for="downloadTypeChoice2">Markdown</label><br>
+  
+    <input type="radio" id="downloadTypeChoice3"
+    name="Filetype" value="pdf">
+    <label for="downloadTypeChoice3">PDF</label><br>
+  
+    <input type="submit">
+  </form>
+
+</div>
+
+{% endblock %}
+
