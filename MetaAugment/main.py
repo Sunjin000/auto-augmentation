@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
+import torchvision.transforms.autoaugment as autoaugment
 import MetaAugment.AutoAugmentDemo.ops as ops # 
 
 print(torch.__version__)
@@ -55,6 +56,14 @@ sgd = optim.SGD(model.parameters(), lr=1e-1)
 cost = nn.CrossEntropyLoss()
 epoch = 100
 
+
+# using torchvision.transforms.autoaugment module
+policy = autoaugment.AutoAugmentPolicy("cifar10")
+aa = autoaugment.AutoAugment(policy=policy)
+print(aa.get_params)
+# aa(image)
+
+
 for _epoch in range(epoch):
     model.train()
     for idx, (train_x, train_label) in enumerate(train_loader):
@@ -80,11 +89,3 @@ for _epoch in range(epoch):
 
     print(f'accuracy: {correct / _sum}')
     torch.save(model, f'models/mnist_{correct / _sum}.pkl')
-
-
-
-# We use the root parameter to define where to save the data.
-# The train parameter is set to true because we are initializing the MNIST training dataset.
-# The download parameter is set to true because we want to download it if it’s not already present in our data folder.
-# The transform parameter is set to none because we don’t want to apply any image manipulation transforms at this time. 
-mnist_trainset = datasets.MNIST(root='./data', train=True, download=True, transform=None)
