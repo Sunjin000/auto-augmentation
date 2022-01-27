@@ -1,6 +1,14 @@
 {% extends "basic.html" %}
-{% block title%}Home{% endblock %}
+{% block title%}Progress{% endblock %}
 {% block body %}
 Training the model...
 
+<div>
+    <img src="{{url_for('static', filename='image/training_plot.png')}}" class="img-thumbnail" />
+    <form action="/show_result">
+        <input type="submit" value='Show Result'>
+    </form>
+
+</div>
+ 
 {% endblock %}

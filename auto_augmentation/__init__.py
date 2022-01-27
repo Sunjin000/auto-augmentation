@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, render_template, request, flash
 
+from auto_augmentation import home, progress, result, download_file
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -19,10 +21,10 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
 
-    from auto_augmentation import search_page, search_result, download_file
-
-    app.register_blueprint(search_page.bp)
-    app.register_blueprint(search_result.bp)
+    app.register_blueprint(home.bp)
+    app.register_blueprint(progress.bp)
+    app.register_blueprint(result.bp)
     app.register_blueprint(download_file.bp)
+    
 
     return app
