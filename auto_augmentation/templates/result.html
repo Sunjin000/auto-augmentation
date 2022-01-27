@@ -1,0 +1,18 @@
+{% extends "basic.html" %}
+{% block title %}Result{% endblock %}
+{% block body %}
+
+<div>  
+  <b>Accuracy before data augmentation is: 64.6%</b><br>
+  <b>Accuracy after data augmentation is: 79.3%</b>
+
+</div>
+
+<div>
+  <form action="/download">
+  <input type="submit" value='Download CNN'>
+  </form>
+</div>
+
+{% endblock %}
+

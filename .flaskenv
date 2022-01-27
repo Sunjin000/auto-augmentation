@@ -1,1 +1,1 @@
-FLASK_APP=autoaugmentation
+FLASK_APP=auto_augmentation
