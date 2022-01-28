@@ -1,15 +1,13 @@
 import numpy as np
 import torch
+torch.manual_seed(0)
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
 import torchvision.transforms.autoaugment as autoaugment
-import MetaAugment.AutoAugmentDemo.ops as ops # 
-
-print(torch.__version__)
-
+#import MetaAugment.AutoAugmentDemo.ops as ops # 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
 class LeNet(nn.Module):
@@ -46,23 +44,36 @@ class LeNet(nn.Module):
 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
-batch_size = 256
+batch_size = 32
+n_samples = 0.02
+
 train_dataset = datasets.MNIST(root='./MetaAugment/train', train=True, download=True, transform=torchvision.transforms.ToTensor())
 test_dataset = datasets.MNIST(root='./MetaAugment/test', train=False, download=True, transform=torchvision.transforms.ToTensor())
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
+
+# shuffle and take first n_samples  %age of training dataset
+shuffled_train_dataset = torch.utils.data.Subset(train_dataset, torch.randperm(len(train_dataset)).tolist())
+indices_train = torch.arange(int(n_samples*len(train_dataset)))
+reduced_train_dataset = data_utils.Subset(shuffled_train_dataset, indices_train)
+
+# shuffle and take first n_samples %age of test dataset
+shuffled_test_dataset = torch.utils.data.Subset(test_dataset, torch.randperm(len(test_dataset)).tolist())
+indices_test = torch.arange(int(n_samples*len(test_dataset)))
+reduced_test_dataset = data_utils.Subset(shuffled_test_dataset, indices_test)
+
+print("Size of training dataset:\t", len(reduced_train_dataset))
+print("Size of testing dataset:\t", len(reduced_test_dataset), "\n")
+
+train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=batch_size)
+test_loader = torch.utils.data.DataLoader(reduced_test_dataset, batch_size=batch_size)
+
 model = LeNet()
 sgd = optim.SGD(model.parameters(), lr=1e-1)
 cost = nn.CrossEntropyLoss()
 epoch = 100
 
-
 # using torchvision.transforms.autoaugment module
 policy = autoaugment.AutoAugmentPolicy("cifar10")
 aa = autoaugment.AutoAugment(policy=policy)
-print(aa.get_params)
-# aa(image)
-
 
 for _epoch in range(epoch):
     model.train()
@@ -71,8 +82,8 @@ for _epoch in range(epoch):
         sgd.zero_grad()
         predict_y = model(train_x.float())
         loss = cost(predict_y, train_label.long())
-        if idx % 10 == 0:
-            print('idx: {}, loss: {}'.format(idx, loss.sum().item()))
+        #if idx % 10 == 0:
+        #    print('idx: {}, loss: {}'.format(idx, loss.sum().item()))
         loss.backward()
         sgd.step()
 
@@ -87,5 +98,6 @@ for _epoch in range(epoch):
         correct += np.sum(_.numpy(), axis=-1)
         _sum += _.shape[0]
 
-    print(f'accuracy: {correct / _sum}')
-    torch.save(model, f'models/mnist_{correct / _sum}.pkl')
+    if _epoch % 10 == 0:
+        print('Epoch: {} \t Accuracy: {:.2f}%'.format(_epoch, correct / _sum *100))
+    #torch.save(model, f'mnist_{correct / _sum}.pkl')
