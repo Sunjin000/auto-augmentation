@@ -77,3 +77,27 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         
     return best_acc
 
+# This is sort of how our AA_Learner class should look like:
+class AA_Learner:
+    def __init__(self, controller):
+        self.controller = controller
+
+    def learn(self, dataset, child_network, toy_flag):
+        '''
+        Deos what is seen in Figure 1 in the AutoAugment paper.
+
+        'res' stands for resolution of the discretisation of the search space. It could be
+        a tuple, with first entry regarding probability, second regarding magnitude
+        '''
+        good_policy_found = False
+
+        while not good_policy_found:
+            policy = self.controller.pop_policy()
+
+            train_loader, test_loader = prepare_dataset(dataset, policy, toy_flag)
+
+            reward = train_model(child_network, train_loader, test_loader, sgd, cost, epoch)
+
+            self.controller.update(reward, policy)
+        
+        return good_policy

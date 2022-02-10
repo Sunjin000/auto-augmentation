@@ -107,28 +107,6 @@ def train_model(transform_idx, p):
     cost = nn.CrossEntropyLoss()
     epoch = 20
 
-    # for _epoch in range(epoch):
-    #     model.train()
-    #     for idx, (train_x, train_label) in enumerate(train_loader):
-    #         sgd.zero_grad()
-    #         predict_y = model(train_x.float())
-    #         loss = cost(predict_y, train_label.long())
-    #         loss.backward()
-    #         sgd.step()
-
-    #     correct = 0
-    #     _sum = 0
-    #     model.eval()
-    #     for idx, (test_x, test_label) in enumerate(test_loader):
-    #         predict_y = model(test_x.float()).detach()
-    #         predict_ys = np.argmax(predict_y, axis=-1)
-    #         _ = predict_ys == test_label
-    #         correct += np.sum(_.numpy(), axis=-1)
-    #         _sum += _.shape[0]
-
-    #     if _epoch % 2 == 0:
-    #         print('Epoch: {} \t Accuracy: {:.2f}%'.format(_epoch, correct / _sum *100))
-    #     #torch.save(model, f'mnist_{correct / _sum}.pkl')
 
     best_acc = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)
 
