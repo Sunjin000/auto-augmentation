@@ -12,12 +12,13 @@ import random
 import pygad
 import pygad.torchga as torchga
 import random
+
 import MetaAugment.child_networks as child_networks
+from MetaAugment.main import *
+
 
 np.random.seed(0)
 random.seed(0)
-
-
 
 
 class Learner(nn.Module):
@@ -87,55 +88,51 @@ def train_model(transform_idx, p):
                )
 
     batch_size = 32
-    n_samples = 0.05
+    n_samples = 0.005
 
     train_dataset = datasets.MNIST(root='./MetaAugment/train', train=True, download=False, transform=transform_train)
     test_dataset = datasets.MNIST(root='./MetaAugment/test', train=False, download=False, transform=torchvision.transforms.ToTensor())
 
-    # shuffle and take first n_samples  %age of training dataset
-    shuffled_train_dataset = torch.utils.data.Subset(train_dataset, torch.randperm(len(train_dataset)).tolist())
-    indices_train = torch.arange(int(n_samples*len(train_dataset)))
-    reduced_train_dataset = torch.utils.data.Subset(shuffled_train_dataset, indices_train)
-
-    # shuffle and take first n_samples %age of test dataset
-    shuffled_test_dataset = torch.utils.data.Subset(test_dataset, torch.randperm(len(test_dataset)).tolist())
-    indices_test = torch.arange(int(n_samples*len(test_dataset)))
-    reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
-
-    print("Size of training dataset:\t", len(reduced_train_dataset))
-    print("Size of testing dataset:\t", len(reduced_test_dataset), "\n")
+    # create toy dataset from above uploaded data
+    train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
 
     train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=batch_size)
     test_loader = torch.utils.data.DataLoader(reduced_test_dataset, batch_size=batch_size)
 
-    model = child_networks.lenet()
-    sgd = optim.SGD(model.parameters(), lr=1e-1)
+    print("Size of training dataset:\t", len(reduced_train_dataset))
+    print("Size of testing dataset:\t", len(reduced_test_dataset), "\n")
+
+    child_network = child_networks.lenet()
+    sgd = optim.SGD(child_network.parameters(), lr=1e-1)
     cost = nn.CrossEntropyLoss()
     epoch = 20
 
-    for _epoch in range(epoch):
-        model.train()
-        for idx, (train_x, train_label) in enumerate(train_loader):
-            sgd.zero_grad()
-            predict_y = model(train_x.float())
-            loss = cost(predict_y, train_label.long())
-            loss.backward()
-            sgd.step()
+    # for _epoch in range(epoch):
+    #     model.train()
+    #     for idx, (train_x, train_label) in enumerate(train_loader):
+    #         sgd.zero_grad()
+    #         predict_y = model(train_x.float())
+    #         loss = cost(predict_y, train_label.long())
+    #         loss.backward()
+    #         sgd.step()
 
-        correct = 0
-        _sum = 0
-        model.eval()
-        for idx, (test_x, test_label) in enumerate(test_loader):
-            predict_y = model(test_x.float()).detach()
-            predict_ys = np.argmax(predict_y, axis=-1)
-            _ = predict_ys == test_label
-            correct += np.sum(_.numpy(), axis=-1)
-            _sum += _.shape[0]
+    #     correct = 0
+    #     _sum = 0
+    #     model.eval()
+    #     for idx, (test_x, test_label) in enumerate(test_loader):
+    #         predict_y = model(test_x.float()).detach()
+    #         predict_ys = np.argmax(predict_y, axis=-1)
+    #         _ = predict_ys == test_label
+    #         correct += np.sum(_.numpy(), axis=-1)
+    #         _sum += _.shape[0]
 
-        if _epoch % 2 == 0:
-            print('Epoch: {} \t Accuracy: {:.2f}%'.format(_epoch, correct / _sum *100))
-        #torch.save(model, f'mnist_{correct / _sum}.pkl')
-    return correct / _sum *100
+    #     if _epoch % 2 == 0:
+    #         print('Epoch: {} \t Accuracy: {:.2f}%'.format(_epoch, correct / _sum *100))
+    #     #torch.save(model, f'mnist_{correct / _sum}.pkl')
+
+    best_acc = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)
+
+    return best_acc
 
 
 
