@@ -82,7 +82,7 @@ class AA_Learner:
     def __init__(self, controller):
         self.controller = controller
 
-    def learn(self, dataset, child_network, toy_flag):
+    def learn(self, train_dataset, test_dataset, child_network, toy_flag):
         '''
         Deos what is seen in Figure 1 in the AutoAugment paper.
 
@@ -94,9 +94,10 @@ class AA_Learner:
         while not good_policy_found:
             policy = self.controller.pop_policy()
 
-            train_loader, test_loader = prepare_dataset(dataset, policy, toy_flag)
+            train_loader, test_loader = create_toy(train_dataset, test_dataset,
+                                                    batch_size=32, n_samples=0.005)
 
-            reward = train_model(child_network, train_loader, test_loader, sgd, cost, epoch)
+            reward = train_child_network(child_network, train_loader, test_loader, sgd, cost, epoch)
 
             self.controller.update(reward, policy)
         

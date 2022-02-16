@@ -90,8 +90,8 @@ def train_model(transform_idx, p):
     batch_size = 32
     n_samples = 0.005
 
-    train_dataset = datasets.MNIST(root='./MetaAugment/train', train=True, download=False, transform=transform_train)
-    test_dataset = datasets.MNIST(root='./MetaAugment/test', train=False, download=False, transform=torchvision.transforms.ToTensor())
+    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, transform=transform_train)
+    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False, transform=torchvision.transforms.ToTensor())
 
     # create toy dataset from above uploaded data
     train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
@@ -142,8 +142,8 @@ def callback_generation(ga_instance):
 # ORGANISING DATA
 
 # transforms = ['RandomResizedCrop', 'RandomHorizontalFlip', 'RandomVerticalCrop', 'RandomRotation']
-train_dataset = datasets.MNIST(root='./MetaAugment/train', train=True, download=True, transform=torchvision.transforms.ToTensor())
-test_dataset = datasets.MNIST(root='./MetaAugment/test', train=False, download=True, transform=torchvision.transforms.ToTensor())
+train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, transform=torchvision.transforms.ToTensor())
+test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True, transform=torchvision.transforms.ToTensor())
 n_samples = 0.02
 # shuffle and take first n_samples  %age of training dataset
 shuffled_train_dataset = torch.utils.data.Subset(train_dataset, torch.randperm(len(train_dataset)).tolist())
