@@ -77,28 +77,24 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         
     return best_acc
 
-# This is sort of how our AA_Learner class should look like:
-class AA_Learner:
-    def __init__(self, controller):
-        self.controller = controller
 
-    def learn(self, train_dataset, test_dataset, child_network, toy_flag):
-        '''
-        Deos what is seen in Figure 1 in the AutoAugment paper.
+if __name__=='__main__':
+    import MetaAugment.child_networks as cn
 
-        'res' stands for resolution of the discretisation of the search space. It could be
-        a tuple, with first entry regarding probability, second regarding magnitude
-        '''
-        good_policy_found = False
+    batch_size = 32
+    n_samples = 0.005
 
-        while not good_policy_found:
-            policy = self.controller.pop_policy()
+    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, 
+                                   transform=torchvision.transforms.ToTensor())
+    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False,
+                                  transform=torchvision.transforms.ToTensor())
 
-            train_loader, test_loader = create_toy(train_dataset, test_dataset,
-                                                    batch_size=32, n_samples=0.005)
+    # create toy dataset from above uploaded data
+    train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
 
-            reward = train_child_network(child_network, train_loader, test_loader, sgd, cost, epoch)
+    child_network = cn.lenet()
+    sgd = optim.SGD(child_network.parameters(), lr=1e-1)
+    cost = nn.CrossEntropyLoss()
+    epoch = 20
 
-            self.controller.update(reward, policy)
-        
-        return good_policy
+    best_acc = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)

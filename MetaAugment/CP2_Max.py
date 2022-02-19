@@ -96,11 +96,11 @@ def train_model(transform_idx, p):
     # create toy dataset from above uploaded data
     train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
 
-    train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=batch_size)
-    test_loader = torch.utils.data.DataLoader(reduced_test_dataset, batch_size=batch_size)
+    # train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=batch_size)
+    # test_loader = torch.utils.data.DataLoader(reduced_test_dataset, batch_size=batch_size)
 
-    print("Size of training dataset:\t", len(reduced_train_dataset))
-    print("Size of testing dataset:\t", len(reduced_test_dataset), "\n")
+    # print("Size of training dataset:\t", len(reduced_train_dataset))
+    # print("Size of testing dataset:\t", len(reduced_test_dataset), "\n")
 
     child_network = child_networks.lenet()
     sgd = optim.SGD(child_network.parameters(), lr=1e-1)
