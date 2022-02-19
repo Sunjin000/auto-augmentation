@@ -5,7 +5,7 @@ from enum import Enum
 from torch import Tensor
 from typing import List, Tuple, Optional, Dict
 
-from . import functional as F, InterpolationMode
+from torchvision.transforms import functional as F, InterpolationMode
 
 __all__ = ["AutoAugmentPolicy", "AutoAugment", "RandAugment", "TrivialAugmentWide"]
 
@@ -403,3 +403,56 @@ class TrivialAugmentWide(torch.nn.Module):
         s += ', fill={fill}'
         s += ')'
         return s.format(**self.__dict__)
+
+
+if __name__=='__main__':
+    from MetaAugment.main import *
+    import MetaAugment.child_networks as cn
+    import torchvision.transforms as transforms
+
+    batch_size = 32
+    n_samples = 0.005
+    cost = nn.CrossEntropyLoss()
+
+    policies1 = [
+            (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
+            (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
+            (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
+            (("ShearY", 0.5, 8), ("TranslateY", 0.7, 9)),
+            (("AutoContrast", 0.5, None), ("Equalize", 0.9, None))
+            ]
+
+    policies2 = [
+            (("Color", 0.9, 9), ("Equalize", 0.6, None)),
+            (("AutoContrast", 0.8, None), ("Solarize", 0.2, 8)),
+            (("Brightness", 0.1, 3), ("Color", 0.7, 0)),
+            (("Solarize", 0.4, 5), ("AutoContrast", 0.9, None)),
+            (("TranslateY", 0.9, 9), ("TranslateY", 0.7, 9))
+            ]
+
+    def test_autoaugment_policy(policies):
+        aa_transform = AutoAugment()
+        aa_transform.policies = policies
+
+        train_transform = transforms.Compose([
+                                                aa_transform(),
+                                                transforms.ToTensor()
+                                            ])
+
+
+        train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, 
+                                    transform=train_transform)
+        test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False,
+                                    transform=torchvision.transforms.ToTensor())
+
+        # create toy dataset from above uploaded data
+        train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
+
+        child_network = cn.lenet()
+        sgd = optim.SGD(child_network.parameters(), lr=1e-1)
+
+        best_acc = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)
+    
+
+    test_autoaugment_policy(policies1)
+    test_autoaugment_policy(policies2)
