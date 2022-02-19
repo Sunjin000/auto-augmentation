@@ -1,25 +1,25 @@
-# build-job:
-#   stage: build
-#   script:
-#     - echo "Hello, I'm Building"
-#     - pip install pytest
-#     - pip install flask
-#     - pip install pandoc # for pdf making
-#     - pip install weasyprint # for pdf making
+build-job:
+  stage: build
+  script:
+    - echo "Hello, I'm Building"
+    - pip install pytest
+    - pip install flask
+    - pip install pandoc # for pdf making
+    - pip install weasyprint # for pdf making
 
-# test-job:
-#   stage: test
-#   script:
-#     - echo "Now I'm Testing!"
-#     - python3 -m tests.test_query_processor
+test-job:
+  stage: test
+  script:
+    - echo "Now I'm Testing!"
+    - python3 -m tests.test_query_processor
 
-# deploy-job:
-#   stage: deploy
-#   script:
-#     - echo "Now I'm Deploying to VM!"
-#     - python3 -m venv venv
-#     - . venv/bin/activate
-#     - pip install -r requirements.txt
-#     - flask run &
-#     - echo "Now I'm Deploying to Heroku!"
-#     - dpl --provider=heroku --app=metarl --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b
+deploy-job:
+  stage: deploy
+  script:
+    - echo "Now I'm Deploying to VM!"
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - pip install -r requirements.txt
+    - flask run &
+    - echo "Now I'm Deploying to Heroku!"
+    - dpl --provider=heroku --app=metarl --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b
