@@ -409,6 +409,7 @@ if __name__=='__main__':
     from MetaAugment.main import *
     import MetaAugment.child_networks as cn
     import torchvision.transforms as transforms
+    from torchvision.transforms import functional as F, InterpolationMode
 
     batch_size = 32
     n_samples = 0.005
@@ -435,7 +436,7 @@ if __name__=='__main__':
         aa_transform.policies = policies
 
         train_transform = transforms.Compose([
-                                                aa_transform(),
+                                                aa_transform,
                                                 transforms.ToTensor()
                                             ])
 
