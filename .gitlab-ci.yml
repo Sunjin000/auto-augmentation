@@ -23,3 +23,13 @@ deploy-job:
     - flask run &
     - echo "Now I'm Deploying to Heroku!"
     - dpl --provider=heroku --app=metarl --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b
+
+    # Why better to deploy to Heroku -> don't need SSH, need to log into Imperial network to access VM / site
+        # Public server VM -> effectively what Heroku does, gives access to some virtual machine on their servers and make it accessible 
+    # What makes Docker so good/useful -> Self-contained, everything packaged into single image, less overhead, all there in image
+    # Said we did some things wrong, after arguing he backtracked lmao 
+        # When running app on VM (not docker), want to make sure it doesn't pause pipeline (want separate terminal) -> pkill 
+    # Check that the pipeline works today -> Their pipeline failed because they had to update the API key (<<< make sure it hasnt expired >>>). Try clicking run job again
+    # on deploy stage, make sure it deploys to Heroku
+    # Pipeline fail -> go into query processor and comment out line shakrespear (will cause test to fail --> looks for word writer when query database. Push it and it will fail)
+      # Remove change and push again -> fixed. Just comment out then re-comment to check if it works again
