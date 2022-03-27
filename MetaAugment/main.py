@@ -35,6 +35,9 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
     best_acc=0
     early_stop_cnt = 0
     
+    # logging accuracy for plotting
+    acc_log = [] 
+
     # train child_network and check validation accuracy each epoch
     for _epoch in range(max_epochs):
 
@@ -74,8 +77,9 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
             break
         
         print('main.train_child_network best accuracy: ', best_acc)
-        
-    return best_acc
+        acc_log.append(acc)
+
+    return best_acc, acc_log
 
 
 if __name__=='__main__':

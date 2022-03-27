@@ -411,6 +411,7 @@ class TrivialAugmentWide(torch.nn.Module):
 
 
 if __name__=='__main__':
+    import matplotlib.pyplot as plt
     from MetaAugment.main import *
     import MetaAugment.child_networks as cn
     import torchvision.transforms as transforms
@@ -465,10 +466,14 @@ if __name__=='__main__':
         child_network = cn.lenet()
         sgd = optim.SGD(child_network.parameters(), lr=1e-1)
 
-        best_acc = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)
+        best_acc, acc_log = train_child_network(child_network, train_loader, test_loader, sgd, cost, max_epochs=100)
+        return best_acc, acc_log
 
-        train_dataset
-    
-
-    test_autoaugment_policy(subpolicies1)
-    test_autoaugment_policy(subpolicies2)
+    _, acc_log1 = test_autoaugment_policy(subpolicies1)
+    _, acc_log2 = test_autoaugment_policy(subpolicies2)
+    plt.plot(acc_log1, label='subpolicies1')
+    plt.plot(acc_log2, label='subpolicies2')
+    plt.xlabel('epochs')
+    plt.ylabel('accuracy')
+    plt.legend()
+    plt.show()
