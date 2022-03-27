@@ -93,9 +93,9 @@ class AutoAugment(torch.nn.Module):
         self.policy = policy
         self.interpolation = interpolation
         self.fill = fill
-        self.policies = self._get_policies(policy)
+        self.subpolicies = self._get_subpolicies(policy)
 
-    def _get_policies(
+    def _get_subpolicies(
         self,
         policy: AutoAugmentPolicy
     ) -> List[Tuple[Tuple[str, float, Optional[int]], Tuple[str, float, Optional[int]]]]:
@@ -232,9 +232,9 @@ class AutoAugment(torch.nn.Module):
             elif fill is not None:
                 fill = [float(f) for f in fill]
 
-        transform_id, probs, signs = self.get_params(len(self.policies))
+        transform_id, probs, signs = self.get_params(len(self.subpolicies))
 
-        for i, (op_name, p, magnitude_id) in enumerate(self.policies[transform_id]):
+        for i, (op_name, p, magnitude_id) in enumerate(self.subpolicies[transform_id]):
             if probs[i] <= p:
                 op_meta = self._augmentation_space(10, F.get_image_size(img))
                 magnitudes, signed = op_meta[op_name]
@@ -426,7 +426,7 @@ if __name__=='__main__':
     n_samples = 0.005
     cost = nn.CrossEntropyLoss()
 
-    policies1 = [
+    subpolicies1 = [
             (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
             (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
             (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
@@ -436,7 +436,7 @@ if __name__=='__main__':
 
     # The one that i hand crafted. You'll see that this one usually reaches a much
     # higher poerformance
-    policies2 = [
+    subpolicies2 = [
             (("ShearY", 0.8, 4), ("Rotate", 0.5, 6)),
             (("TranslateY", 0.7, 4), ("TranslateX", 0.8, 6)),
             (("Rotate", 0.5, 3), ("ShearY", 0.8, 5)),
@@ -444,9 +444,9 @@ if __name__=='__main__':
             (("Rotate", 0.5, 3), ("TranslateX", 0.5, 5))
             ]
 
-    def test_autoaugment_policy(policies):
+    def test_autoaugment_policy(subpolicies):
         aa_transform = AutoAugment()
-        aa_transform.policies = policies
+        aa_transform.subpolicies = subpolicies
 
         train_transform = transforms.Compose([
                                                 aa_transform,
@@ -470,5 +470,5 @@ if __name__=='__main__':
         train_dataset
     
 
-    test_autoaugment_policy(policies1)
-    test_autoaugment_policy(policies2)
+    test_autoaugment_policy(subpolicies1)
+    test_autoaugment_policy(subpolicies2)
