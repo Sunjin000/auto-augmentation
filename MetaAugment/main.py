@@ -15,11 +15,16 @@ import torchvision.transforms.autoaugment as autoaugment
 
 def create_toy(train_dataset, test_dataset, batch_size, n_samples):
     # shuffle and take first n_samples %age of training dataset
-    shuffled_train_dataset = torch.utils.data.Subset(train_dataset, torch.randperm(len(train_dataset)).tolist())
+    shuffle_order_train = np.random.RandomState(seed=100).permutation(len(train_dataset))
+    shuffled_train_dataset = torch.utils.data.Subset(train_dataset, shuffle_order_train)
+    
     indices_train = torch.arange(int(n_samples*len(train_dataset)))
     reduced_train_dataset = torch.utils.data.Subset(shuffled_train_dataset, indices_train)
+    
     # shuffle and take first n_samples %age of test dataset
-    shuffled_test_dataset = torch.utils.data.Subset(test_dataset, torch.randperm(len(test_dataset)).tolist())
+    shuffle_order_test = np.random.RandomState(seed=1000).permutation(len(test_dataset))
+    shuffled_test_dataset = torch.utils.data.Subset(test_dataset, shuffle_order_test)
+
     indices_test = torch.arange(int(n_samples*len(test_dataset)))
     reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
 
@@ -31,7 +36,7 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples):
 
 
 def train_child_network(child_network, train_loader, test_loader, sgd,
-                         cost, max_epochs=100, early_stop_num = 10):
+                         cost, max_epochs=100, early_stop_num = 10, logging=False):
     best_acc=0
     early_stop_cnt = 0
     
@@ -79,8 +84,9 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         print('main.train_child_network best accuracy: ', best_acc)
         acc_log.append(acc)
 
-    return best_acc, acc_log
-
+    if logging:
+        return best_acc, acc_log
+    return best_acc
 
 if __name__=='__main__':
     import MetaAugment.child_networks as cn
