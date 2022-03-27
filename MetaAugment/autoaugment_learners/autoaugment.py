@@ -1,3 +1,8 @@
+# We can use the functions in here to easily apply many different image transformations
+# to a dataset, in the same format that is seen in the AutoAugment paper (A policy which
+# consists of N subpolicies, 2 operations per subpolicy). The actual way to use the code
+# is quite simple. See the demo code in 'if __main__' for demonstration.
+
 import math
 import torch
 
