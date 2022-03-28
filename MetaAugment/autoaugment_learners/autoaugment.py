@@ -456,7 +456,7 @@ if __name__=='__main__':
     def test_autoaugment_policy(subpolicies, train_dataset, test_dataset):
 
         aa_transform = AutoAugment()
-        aa_transform.subpolicies = subpolicies1
+        aa_transform.subpolicies = subpolicies
         train_transform = transforms.Compose([
                                                 aa_transform,
                                                 transforms.ToTensor()
