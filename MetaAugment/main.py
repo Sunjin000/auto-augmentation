@@ -13,16 +13,16 @@ import torchvision.transforms.autoaugment as autoaugment
 
 
 
-def create_toy(train_dataset, test_dataset, batch_size, n_samples):
+def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
     # shuffle and take first n_samples %age of training dataset
-    shuffle_order_train = np.random.RandomState(seed=100).permutation(len(train_dataset))
+    shuffle_order_train = np.random.RandomState(seed=seed).permutation(len(train_dataset))
     shuffled_train_dataset = torch.utils.data.Subset(train_dataset, shuffle_order_train)
     
     indices_train = torch.arange(int(n_samples*len(train_dataset)))
     reduced_train_dataset = torch.utils.data.Subset(shuffled_train_dataset, indices_train)
     
     # shuffle and take first n_samples %age of test dataset
-    shuffle_order_test = np.random.RandomState(seed=1000).permutation(len(test_dataset))
+    shuffle_order_test = np.random.RandomState(seed=seed).permutation(len(test_dataset))
     shuffled_test_dataset = torch.utils.data.Subset(test_dataset, shuffle_order_test)
 
     indices_test = torch.arange(int(n_samples*len(test_dataset)))
