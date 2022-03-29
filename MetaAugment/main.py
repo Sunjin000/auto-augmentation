@@ -60,13 +60,14 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         correct = 0
         _sum = 0
         child_network.eval()
-        for idx, (test_x, test_label) in enumerate(test_loader):
-            predict_y = child_network(test_x.float()).detach()
-            predict_ys = np.argmax(predict_y, axis=-1)
-            label_np = test_label.numpy()
-            _ = predict_ys == test_label
-            correct += np.sum(_.numpy(), axis=-1)
-            _sum += _.shape[0]
+        with torch.no_grad():
+            for idx, (test_x, test_label) in enumerate(test_loader):
+                predict_y = child_network(test_x.float()).detach()
+                predict_ys = np.argmax(predict_y, axis=-1)
+                label_np = test_label.numpy()
+                _ = predict_ys == test_label
+                correct += np.sum(_.numpy(), axis=-1)
+                _sum += _.shape[0]
         
         # update best validation accuracy if it was higher, otherwise increase early stop count
         acc = correct / _sum
