@@ -25,7 +25,9 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
     shuffle_order_test = np.random.RandomState(seed=seed).permutation(len(test_dataset))
     shuffled_test_dataset = torch.utils.data.Subset(test_dataset, shuffle_order_test)
 
-    indices_test = torch.arange(int(n_samples*len(test_dataset)))
+    big = 4 # how much bigger is the test set
+
+    indices_test = torch.arange(int(n_samples*len(test_dataset)*big))
     reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
 
     # push into DataLoader
@@ -36,7 +38,7 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
 
 
 def train_child_network(child_network, train_loader, test_loader, sgd,
-                         cost, max_epochs=100, early_stop_num = 10, logging=False):
+                         cost, max_epochs=2000, early_stop_num = 10, logging=False):
     best_acc=0
     early_stop_cnt = 0
     
