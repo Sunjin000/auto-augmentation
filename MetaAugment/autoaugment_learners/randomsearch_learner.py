@@ -130,7 +130,7 @@ class randomsearch_learner:
                 continuous_p_m (boolean): whether the operation_tensor has continuous representations
                                         of probability and magnitude
             '''
-            # if input operation_tensor is continuous
+            # if input operation_tensor is discrete
             if discrete_p_m:
                 fun_t = operation_tensor[:fun_num]
                 prob_t = operation_tensor[fun_num:fun_num+p_bins+1]
