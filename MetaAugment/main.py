@@ -38,7 +38,8 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
 
 
 def train_child_network(child_network, train_loader, test_loader, sgd,
-                         cost, max_epochs=2000, early_stop_num = 10, logging=False):
+                         cost, max_epochs=2000, early_stop_num = 10, logging=False,
+                         print_every_epoch=True):
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -102,12 +103,13 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         if early_stop_cnt >= early_stop_num:
             break
         
-        print('main.train_child_network best accuracy: ', best_acc)
+        if print_every_epoch:
+            print('main.train_child_network best accuracy: ', best_acc)
         acc_log.append(acc)
 
     if logging:
-        return best_acc, acc_log
-    return best_acc
+        return best_acc.item(), acc_log
+    return best_acc.item()
 
 if __name__=='__main__':
     import MetaAugment.child_networks as cn
