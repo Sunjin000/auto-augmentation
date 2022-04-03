@@ -1,7 +1,5 @@
-# DUMMY PSEUDOCODE!
-# this might become the superclass for all other autoaugment_learners
+# The parent class for all other autoaugment learners``
 
-from importlib import machinery
 import torch
 import numpy as np
 from MetaAugment.main import *
@@ -39,108 +37,79 @@ augmentation_space = [
 # TODO: Right now the aa_learner is identical to randomsearch_learner. Change
 # this so that it can act as a superclass to all other augment learners
 class aa_learner:
-    def __init__(self, sp_num=5):
+    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
         '''
         Args:
-            spdim: number of subpolicies per policy
+            spdim (int): number of subpolicies per policy
+            fun_num (int): number of image functions in our search space
+            p_bins (int): number of bins we divide the interval [0,1] for probabilities
+            m_bins (int): number of bins we divide the magnitude space
+
+            discrete_p_m (boolean): Whether or not the agent should represent probability and 
+                                    magnitude as discrete variables as the out put of the 
+                                    controller (A controller can be a neural network, genetic
+                                    algorithm, etc.)
         '''
         self.sp_num = sp_num
+        self.fun_num = fun_num
+        self.p_bins = p_bins
+        self.m_bins = m_bins
 
-        # fun_num is the number of different operations
-        # TODO: Allow fun_num to be changed with the user's specifications 
-        self.fun_num = 14
+        # should we repre
+        self.discrete_p_m = discrete_p_m
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
 
-    def generate_new_discrete_operation(self, fun_num=14, p_bins=10, m_bins=10):
+
+    def translate_operation_tensor(self, operation_tensor):
         '''
-        generate a new random operation in the form of a tensor of dimension:
-            (fun_num + 11 + 10)
-
-        The first fun_num dimensions is a 1-hot encoding to specify which function to use.
-        The next 11 dimensions specify which 'probability' to choose.
-            (0.0, 0.1, ..., 1.0)
-        The next 10 dimensions specify which 'magnitude' to choose.
-            (0, 1, ..., 9)
-        '''
-        fun = np.random.randint(0, fun_num)
-        prob = np.random.randint(p_bins+1, fun_num)
-        mag = np.random.randint(m_bins, fun_num)
-        
-        fun_t= torch.zeros(fun_num)
-        fun_t[fun] = 1
-        prob_t = torch.zeros(p_bins+1)
-        prob_t[prob] = 1
-        mag_t = torch.zeros(m_bins)
-        mag_t[mag] = 1
-
-        return torch.cat([fun_t, prob_t, mag_t])
-
-
-    def generate_new_continuous_operation(self, fun_num=14, p_bins=10, m_bins=10):
-        '''
-        Returns operation_tensor, which is a tensor representation of a random operation with
-        dimension:
-            (fun_num + 1 + 1)
-
-        The first fun_num dimensions is a 1-hot encoding to specify which function to use.
-        The next 1 dimensions specify which 'probability' to choose.
-            0 < x < 1
-        The next 1 dimensions specify which 'magnitude' to choose.
-            0 < x < 9
-        '''
-        fun = np.random.randint(0, fun_num)
-        
-        fun_p_m = torch.zeros(fun_num + 2)
-        fun_p_m[fun] = 1
-        fun_p_m[-2] = np.random.uniform() # 0<prob<1
-        fun_p_m[-1] = np.random.uniform() * (m_bins-1) # 0<mag<9
-        
-        return fun_p_m
-
-
-    def translate_operation_tensor(self, operation_tensor, fun_num=14,
-                                        p_bins=10, m_bins=10,
-                                        discrete_p_m=False):
-        '''
-        takes in a tensor representing a operation and returns an actual operation which
+        takes in a tensor representing an operation and returns an actual operation which
         is in the form of:
             ("Invert", 0.8, None)
             or
             ("Contrast", 0.2, 6)
 
         Args:
-            operation_tensor
+            operation_tensor (tensor): 
+                                - If discrete_p_m is True, we expect to take in a tensor with
+                                dimension (self.fun_num + self.p_bins + self.m_bins)
+                                - If discrete_p_m is False, we expect to take in a tensor with
+                                dimension (self.fun_num + 1 + 1)
             continuous_p_m (boolean): whether the operation_tensor has continuous representations
                                     of probability and magnitude
         '''
-        # if input operation_tensor is discrete
-        if discrete_p_m:
-            fun_t = operation_tensor[:fun_num]
-            prob_t = operation_tensor[fun_num:fun_num+p_bins+1]
-            mag_t = operation_tensor[-m_bins:]
+        # if probability and magnitude are represented as discrete variables
+        if self.discrete_p_m:
+            fun_t = operation_tensor[ : self.fun_num]
+            prob_t = operation_tensor[self.fun_num : self.fun_num+self.p_bins]
+            mag_t = operation_tensor[-self.m_bins : ]
 
             fun = torch.argmax(fun_t)
             prob = torch.argmax(prob_t) # 0 <= p <= 10
             mag = torch.argmax(mag_t) # 0 <= m <= 9
 
-            fun = augmentation_space[fun][0]
+            function = augmentation_space[fun][0]
             prob = prob/10
 
-            return (fun, prob, mag)
 
-        
-        # process continuous operation_tensor
-        fun_t = operation_tensor[:fun_num]
-        p = operation_tensor[-2].item() # 0 < p < 1
-        m = operation_tensor[-1].item() # 0 < m < 9
+        # if probability and magnitude are represented as continuous variables
+        else:
+            fun_t = operation_tensor[:self.fun_num]
+            p = operation_tensor[-2].item() # 0 < p < 1
+            m = operation_tensor[-1].item() # 0 < m < 9
 
-        fun_num = torch.argmax(fun_t)
-        function = augmentation_space[fun_num][0]
-        p = round(p, 1) # round to nearest first decimal digit
-        m = round(m) # round to nearest integer
-        return (function, p, m)
+            fun = torch.argmax(fun_t)
+
+            function = augmentation_space[fun][0]
+            prob = round(p, 1) # round to nearest first decimal digit
+            mag = round(m) # round to nearest integer
+
+        # if the image function does not require a magnitude, we set the magnitude to None
+        if augmentation_space[fun][0] == True: # if the image function has a magnitude
+            return (function, prob, mag)
+        else:
+            return (function, prob, None)
 
 
     def generate_new_policy(self):
@@ -153,21 +122,7 @@ class aa_learner:
             (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
             ]
         '''
-
-        new_policy = []
-        for _ in range(self.sp_num):
-            # generate 2 operations for each subpolicy
-            ops = []
-            for i in range(2):
-                new_op = self.generate_new_continuous_operation(self.fun_num)
-                new_op = self.translate_operation_tensor(new_op)
-                ops.append(new_op)
-
-            new_subpolicy = tuple(ops)
-
-            new_policy.append(new_subpolicy)
-
-        return new_policy
+        raise NotImplementedError('generate_new_policy not implemented in aa_learner')
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
@@ -177,6 +132,7 @@ class aa_learner:
             1. <generate a random policy>
             2. <see how good that policy is>
             3. <save how good the policy is in a list/dictionary>
+        until a certain condition (either specified by the user or pre-specified) is met
         '''
 
         # test out 15 random policies
@@ -194,13 +150,14 @@ class aa_learner:
     def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, toy_flag):
         '''
         Given a policy (using AutoAugment paper terminology), we train a child network
-        with the policy and return the accuracy.
+        using the policy and return the accuracy (how good the policy is for the dataset and 
+        child network).
         '''
         # We need to define an object aa_transform which takes in the image and 
         # transforms it with the policy (specified in its .policies attribute)
         # in its forward pass
         aa_transform = AutoAugment()
-        aa_transform.policies = policy
+        aa_transform.subpolicies = policy
         train_transform = transforms.Compose([
                                                 aa_transform,
                                                 transforms.ToTensor()

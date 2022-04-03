@@ -1,25 +1,17 @@
-from importlib import machinery
 import torch
 import numpy as np
-from MetaAugment.main import *
-import MetaAugment.child_networks as cn
 import torchvision.transforms as transforms
-from MetaAugment.autoaugment_learners.autoaugment import *
-
 import torchvision.transforms.autoaugment as torchaa
 from torchvision.transforms import functional as F, InterpolationMode
+
+from MetaAugment.main import *
+import MetaAugment.child_networks as cn
+from MetaAugment.autoaugment_learners.autoaugment import *
+from MetaAugment.autoaugment_learners.aa_learner import *
 
 from pprint import pprint
 
 
-# an example of how a policy can look like
-policy1 = [
-            (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
-            (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
-            (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
-            (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
-            (("AutoContrast", 0.5, None), ("Equalize", 0.9, None))
-            ]
 
 # We will use this augmentation_space temporarily. Later on we will need to 
 # make sure we are able to add other image functions if the users want.
@@ -42,22 +34,21 @@ augmentation_space = [
             ("Invert", False),
         ]
 
-class randomsearch_learner:
-    def __init__(self, sp_num=5):
+class randomsearch_learner(aa_learner):
+    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
         '''
         Args:
             spdim: number of subpolicies per policy
+            fun_num: number of image functions in our search space
+            p_bins: number of bins we divide the interval [0,1] for probabilities
+            m_bins: number of bins we divide the magnitude space
         '''
-        self.sp_num = sp_num
-
-        # fun_num is the number of different operations
-        # TODO: Allow fun_num to be changed with the user's specifications 
-        self.fun_num = 14
+        super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
 
-    def generate_new_discrete_operation(self, fun_num=14, p_bins=10, m_bins=10):
+    def generate_new_discrete_operation(self):
         '''
         generate a new random operation in the form of a tensor of dimension:
             (fun_num + 11 + 10)
@@ -68,21 +59,21 @@ class randomsearch_learner:
         The next 10 dimensions specify which 'magnitude' to choose.
             (0, 1, ..., 9)
         '''
-        fun = np.random.randint(0, fun_num)
-        prob = np.random.randint(p_bins+1, fun_num)
-        mag = np.random.randint(m_bins, fun_num)
+        random_fun = np.random.randint(0, self.fun_num)
+        random_prob = np.random.randint(0, self.p_bins)
+        random_mag = np.random.randint(0, self.m_bins)
         
-        fun_t= torch.zeros(fun_num)
-        fun_t[fun] = 1
-        prob_t = torch.zeros(p_bins+1)
-        prob_t[prob] = 1
-        mag_t = torch.zeros(m_bins)
-        mag_t[mag] = 1
+        fun_t= torch.zeros(self.fun_num)
+        fun_t[random_fun] = 1
+        prob_t = torch.zeros(self.p_bins)
+        prob_t[random_prob] = 1
+        mag_t = torch.zeros(self.m_bins)
+        mag_t[random_mag] = 1
 
         return torch.cat([fun_t, prob_t, mag_t])
 
 
-    def generate_new_continuous_operation(self, fun_num=14, p_bins=10, m_bins=10):
+    def generate_new_continuous_operation(self):
         '''
         Returns operation_tensor, which is a tensor representation of a random operation with
         dimension:
@@ -94,57 +85,16 @@ class randomsearch_learner:
         The next 1 dimensions specify which 'magnitude' to choose.
             0 < x < 9
         '''
-        fun = np.random.randint(0, fun_num)
+        fun_p_m = torch.zeros(self.fun_num + 2)
         
-        fun_p_m = torch.zeros(fun_num + 2)
-        fun_p_m[fun] = 1
+        # pick a random image function
+        random_fun = np.random.randint(0, self.fun_num)
+        fun_p_m[random_fun] = 1
+
         fun_p_m[-2] = np.random.uniform() # 0<prob<1
-        fun_p_m[-1] = np.random.uniform() * (m_bins-1) # 0<mag<9
+        fun_p_m[-1] = np.random.uniform() * (self.m_bins-1) # 0<mag<9
         
         return fun_p_m
-
-
-    def translate_operation_tensor(self, operation_tensor, fun_num=14,
-                                        p_bins=10, m_bins=10,
-                                        discrete_p_m=False):
-        '''
-        takes in a tensor representing a operation and returns an actual operation which
-        is in the form of:
-            ("Invert", 0.8, None)
-            or
-            ("Contrast", 0.2, 6)
-
-        Args:
-            operation_tensor
-            continuous_p_m (boolean): whether the operation_tensor has continuous representations
-                                    of probability and magnitude
-        '''
-        # if input operation_tensor is discrete
-        if discrete_p_m:
-            fun_t = operation_tensor[:fun_num]
-            prob_t = operation_tensor[fun_num:fun_num+p_bins+1]
-            mag_t = operation_tensor[-m_bins:]
-
-            fun = torch.argmax(fun_t)
-            prob = torch.argmax(prob_t) # 0 <= p <= 10
-            mag = torch.argmax(mag_t) # 0 <= m <= 9
-
-            fun = augmentation_space[fun][0]
-            prob = prob/10
-
-            return (fun, prob, mag)
-
-        
-        # process continuous operation_tensor
-        fun_t = operation_tensor[:fun_num]
-        p = operation_tensor[-2].item() # 0 < p < 1
-        m = operation_tensor[-1].item() # 0 < m < 9
-
-        fun_num = torch.argmax(fun_t)
-        function = augmentation_space[fun_num][0]
-        p = round(p, 1) # round to nearest first decimal digit
-        m = round(m) # round to nearest integer
-        return (function, p, m)
 
 
     def generate_new_policy(self):
@@ -158,11 +108,16 @@ class randomsearch_learner:
             ]
         '''
         new_policy = []
-        for _ in range(self.sp_num):
-            # generate 2 operations for each subpolicy
+        
+        for _ in range(self.sp_num): # generate sp_num subpolicies for each policy
             ops = []
+            # generate 2 operations for each subpolicy
             for i in range(2):
-                new_op = self.generate_new_continuous_operation(self.fun_num)
+                # if our agent uses discrete representations of probability and magnitude
+                if self.discrete_p_m:
+                    new_op = self.generate_new_discrete_operation()
+                else:
+                    new_op = self.generate_new_continuous_operation()
                 new_op = self.translate_operation_tensor(new_op)
                 ops.append(new_op)
 
@@ -181,7 +136,6 @@ class randomsearch_learner:
             2. <see how good that policy is>
             3. <save how good the policy is in a list/dictionary>
         '''
-
         # test out 15 random policies
         for _ in range(15):
             policy = self.generate_new_policy()
@@ -192,43 +146,6 @@ class randomsearch_learner:
                                                 test_dataset, toy_flag)
 
             self.history.append((policy, reward))
-    
-
-    def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, toy_flag):
-        '''
-        Given a policy (using AutoAugment paper terminology), we train a child network
-        with the policy and return the accuracy.
-        '''
-        # We need to define an object aa_transform which takes in the image and 
-        # transforms it with the policy (specified in its .policies attribute)
-        # in its forward pass
-        aa_transform = AutoAugment()
-        aa_transform.policies = policy
-        train_transform = transforms.Compose([
-                                                aa_transform,
-                                                transforms.ToTensor()
-                                            ])
-        
-        # We feed the transformation into the Dataset object
-        train_dataset.transform = train_transform
-
-        # create Dataloader objects out of the Dataset objects
-        train_loader, test_loader = create_toy(train_dataset,
-                                                test_dataset,
-                                                batch_size=32,
-                                                n_samples=0.01,
-                                                seed=100)
-
-        # train the child network with the dataloaders equipped with our specific policy
-        accuracy = train_child_network(child_network, 
-                                    train_loader, 
-                                    test_loader, 
-                                    sgd = optim.SGD(child_network.parameters(), lr=1e-1),
-                                    cost = nn.CrossEntropyLoss(),
-                                    max_epochs = 100, 
-                                    early_stop_num = 15, 
-                                    logging = False)
-        return accuracy
 
 
 if __name__=='__main__':
@@ -243,6 +160,6 @@ if __name__=='__main__':
     child_network = cn.lenet
 
     
-    rs_learner = randomsearch_learner()
+    rs_learner = randomsearch_learner(discrete_p_m=False)
     rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
     pprint(rs_learner.history)
