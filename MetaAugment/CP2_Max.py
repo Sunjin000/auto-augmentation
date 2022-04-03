@@ -37,8 +37,10 @@ class Learner(nn.Module):
         self.relu3 = nn.ReLU()
         self.fc2 = nn.Linear(120, 84)
         self.relu4 = nn.ReLU()
-        self.fc3 = nn.Linear(84, 13)
+        self.fc3 = nn.Linear(84, num_transforms + 21)
         # self.sig = nn.Sigmoid()
+# Currently using discrete outputs for the probabilities 
+
 
     def forward(self, x):
         y = self.conv1(x)
