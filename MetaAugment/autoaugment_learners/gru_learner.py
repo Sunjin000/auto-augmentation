@@ -1,13 +1,8 @@
 import torch
-import numpy as np
-import torchvision.transforms as transforms
-import torchvision.transforms.autoaugment as torchaa
-from torchvision.transforms import functional as F, InterpolationMode
 
-from MetaAugment.main import *
 import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.autoaugment import *
-from MetaAugment.autoaugment_learners.aa_learner import *
+from MetaAugment.autoaugment_learners.aa_learner import aa_learner
+from MetaAugment.controller_networks.rnn_controller import RNNModel
 
 from pprint import pprint
 
@@ -33,6 +28,7 @@ augmentation_space = [
             ("Invert", False),
         ]
 
+
 class gru_learner(aa_learner):
     # Uses a GRU controller which is updated via Proximal Polixy Optimization
     # It is the same model use in
@@ -50,8 +46,9 @@ class gru_learner(aa_learner):
         '''
         super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
 
-        # TODO: We should probably use a different way to store results than self.history
-        self.history = []
+        # input_size of the RNNModel can be chosen arbitrarily as we don't put any inputs in it.
+        self.controller = RNNModel(mode='GRU', input_size=1, hidden_size=40, num_layers=1,
+                         bias=True, output_size=fun_num+p_bins+m_bins)
 
 
     def generate_new_policy(self):
@@ -68,25 +65,7 @@ class gru_learner(aa_learner):
             (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
             ]
         '''
-        new_policy = []
-        
-        for _ in range(self.sp_num): # generate sp_num subpolicies for each policy
-            ops = []
-            # generate 2 operations for each subpolicy
-            for i in range(2):
-                # if our agent uses discrete representations of probability and magnitude
-                if self.discrete_p_m:
-                    new_op = self.generate_new_discrete_operation()
-                else:
-                    new_op = self.generate_new_continuous_operation()
-                new_op = self.translate_operation_tensor(new_op)
-                ops.append(new_op)
-
-            new_subpolicy = tuple(ops)
-
-            new_policy.append(new_subpolicy)
-
-        return new_policy
+        new_policy = self.controller(input=torch.rand(1))
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
@@ -114,13 +93,15 @@ if __name__=='__main__':
     # We can initialize the train_dataset with its transform as None.
     # Later on, we will change this object's transform attribute to the policy
     # that we want to test
-    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, 
+    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, 
                                 transform=None)
-    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False,
+    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True,
                                 transform=torchvision.transforms.ToTensor())
     child_network = cn.lenet
 
     
-    rs_learner = randomsearch_learner(discrete_p_m=False)
-    rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
-    pprint(rs_learner.history)
+    learner = gru_learner(discrete_p_m=False)
+    print(learner.generate_new_policy())
+    breakpoint()
+    learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
+    pprint(learner.history)

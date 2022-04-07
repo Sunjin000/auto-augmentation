@@ -1,14 +1,12 @@
-# The parent class for all other autoaugment learners``
+# The parent class for all other autoaugment learners
 
 import torch
-import numpy as np
-from MetaAugment.main import *
-import MetaAugment.child_networks as cn
-import torchvision.transforms as transforms
-from MetaAugment.autoaugment_learners.autoaugment import *
+import torch.nn as nn
+import torch.optim as optim
+from MetaAugment.main import train_child_network, create_toy
+from MetaAugment.autoaugment_learners.autoaugment import AutoAugment
 
-import torchvision.transforms.autoaugment as torchaa
-from torchvision.transforms import functional as F, InterpolationMode
+import torchvision.transforms as transforms
 
 from pprint import pprint
 

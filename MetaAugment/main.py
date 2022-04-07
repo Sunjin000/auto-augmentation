@@ -2,11 +2,9 @@ import numpy as np
 import torch
 torch.manual_seed(0)
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
-import torchvision.transforms.autoaugment as autoaugment
 #import MetaAugment.AutoAugmentDemo.ops as ops # 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py

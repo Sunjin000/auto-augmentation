@@ -1,13 +1,8 @@
 import torch
 import numpy as np
-import torchvision.transforms as transforms
-import torchvision.transforms.autoaugment as torchaa
-from torchvision.transforms import functional as F, InterpolationMode
 
-from MetaAugment.main import *
 import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.autoaugment import *
-from MetaAugment.autoaugment_learners.aa_learner import *
+from MetaAugment.autoaugment_learners.aa_learner import aa_learner
 
 from pprint import pprint
 
@@ -43,9 +38,7 @@ class randomsearch_learner(aa_learner):
             m_bins: number of bins we divide the magnitude space
         '''
         super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
-
-        # TODO: We should probably use a different way to store results than self.history
-        self.history = []
+        
 
     def generate_new_discrete_operation(self):
         '''
