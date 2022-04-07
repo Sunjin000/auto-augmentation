@@ -63,11 +63,11 @@ class randomsearch_learner(aa_learner):
         random_mag = np.random.randint(0, self.m_bins)
         
         fun_t= torch.zeros(self.fun_num)
-        fun_t[random_fun] = 1
+        fun_t[random_fun] = 1.0
         prob_t = torch.zeros(self.p_bins)
-        prob_t[random_prob] = 1
+        prob_t[random_prob] = 1.0
         mag_t = torch.zeros(self.m_bins)
-        mag_t[random_mag] = 1
+        mag_t[random_mag] = 1.0
 
         return torch.cat([fun_t, prob_t, mag_t])
 
@@ -152,10 +152,10 @@ if __name__=='__main__':
     # We can initialize the train_dataset with its transform as None.
     # Later on, we will change this object's transform attribute to the policy
     # that we want to test
-    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, 
-                                transform=None)
-    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False,
-                                transform=torchvision.transforms.ToTensor())
+    train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train',
+                                    train=True, download=True, transform=None)
+    test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
+                            train=False, download=True, transform=torchvision.transforms.ToTensor())
     child_network = cn.lenet
 
     
