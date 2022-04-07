@@ -14,7 +14,6 @@ from pprint import pprint
 
 # We will use this augmentation_space temporarily. Later on we will need to 
 # make sure we are able to add other image functions if the users want.
-num_bins = 10
 augmentation_space = [
             # (function_name, do_we_need_to_specify_magnitude)
             ("ShearX", True),
@@ -34,8 +33,6 @@ augmentation_space = [
         ]
 
 
-# TODO: Right now the aa_learner is identical to randomsearch_learner. Change
-# this so that it can act as a superclass to all other augment learners
 class aa_learner:
     def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
         '''
@@ -135,6 +132,7 @@ class aa_learner:
         until a certain condition (either specified by the user or pre-specified) is met
         '''
 
+        # This is dummy code
         # test out 15 random policies
         for _ in range(15):
             policy = self.generate_new_policy()

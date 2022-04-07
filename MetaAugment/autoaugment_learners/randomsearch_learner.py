@@ -15,7 +15,6 @@ from pprint import pprint
 
 # We will use this augmentation_space temporarily. Later on we will need to 
 # make sure we are able to add other image functions if the users want.
-num_bins = 10
 augmentation_space = [
             # (function_name, do_we_need_to_specify_magnitude)
             ("ShearX", True),
