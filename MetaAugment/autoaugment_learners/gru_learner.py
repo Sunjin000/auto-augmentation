@@ -156,10 +156,11 @@ class gru_learner(aa_learner):
             cont_optim.step()
 
             # save the history every 1 epochs as a pickle
-            if _%1==1:
-                with open('gru_logs.pkl', 'wb') as file:
-                    pickle.dump(self.history, file)
-            
+            with open('gru_logs.pkl', 'wb') as file:
+                pickle.dump(self.history, file)
+            with open('gru_learner.pkl', 'wb') as file:
+                pickle.dump(self, file)
+             
 
 
 
