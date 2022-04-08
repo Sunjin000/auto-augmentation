@@ -145,6 +145,9 @@ if __name__=='__main__':
     # We can initialize the train_dataset with its transform as None.
     # Later on, we will change this object's transform attribute to the policy
     # that we want to test
+    import torchvision.datasets as datasets
+    import torchvision
+    
     train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train',
                                     train=True, download=True, transform=None)
     test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 

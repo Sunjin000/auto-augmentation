@@ -61,7 +61,7 @@ class GRUCell(nn.Module):
 
     def forward(self, input, hx=None):
         if hx is None:
-            hx = input.new_zeros(input.size(0), self.hidden_size, requires_grad=False)
+            hx = input.new_zeros(self.hidden_size, requires_grad=False)
 
         z, r = torch.chunk(self.x2h(input) + self.h2h(hx), 2, -1)
         z = torch.sigmoid(z)
@@ -73,11 +73,11 @@ class GRUCell(nn.Module):
 
 
 class RNNModel(nn.Module):
-    def __init__(self, mode, input_size, hidden_size, num_layers, bias, output_size):
+    def __init__(self, mode, output_size, num_layers, bias):
         super(RNNModel, self).__init__()
         self.mode = mode
-        self.input_size = input_size
-        self.hidden_size = hidden_size
+        self.input_size = output_size
+        self.hidden_size = output_size
         self.num_layers = num_layers
         self.bias = bias
         self.output_size = output_size
@@ -113,17 +113,27 @@ class RNNModel(nn.Module):
         self.fc = nn.Linear(self.hidden_size, self.output_size)
 
         
-    def forward(self, input, hx=None):
+    def forward(self, input, time_steps=10, hx=None):
+        # The 'input' is the input x into the first timestep
+        # I think this should be a random vector
+        assert input.shape == (self.output_size, )
 
         outs = []
         h0 = [None] * self.num_layers if hx is None else list(hx)
     
-        X = list(input.permute(1, 0, 2))
-        for j, l in enumerate(self.rnn_cell_list):
-            hx = h0[j]
-            for i in range(input.shape[1]):
-                hx = l(X[i], hx)
-                X[i] = hx if self.mode != 'LSTM' else hx[0]
+
+        X = [None] * time_steps
+        X[0] = input # first input is 'input'
+        for layer_idx, layer_cell in enumerate(self.rnn_cell_list):
+            hx = h0[layer_idx]
+            for i in range(time_steps):
+                hx = layer_cell(X[i], hx)
+                
+                # we feed in this timestep's output into the next timestep's input
+                # except if we are at the last timestep
+                if i != time_steps-1:
+                    X[i+1] = hx if self.mode == 'GRU' else hx[0]
+                
         outs = X
     
 
@@ -191,7 +201,8 @@ class BidirRecurrentModel(nn.Module):
         
         
     def forward(self, input, hx=None):
-        
+        assert NotImplementedError('right now this forward function is written for classification. \
+                                You should modify it for our purpose, like the RNNModel was.')
         outs = []
         outs_rev = []
         

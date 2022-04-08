@@ -36,7 +36,7 @@ class gru_learner(aa_learner):
     # and
     # http://arxiv.org/abs/1611.01578
 
-    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
+    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=True):
         '''
         Args:
             spdim: number of subpolicies per policy
@@ -44,11 +44,12 @@ class gru_learner(aa_learner):
             p_bins: number of bins we divide the interval [0,1] for probabilities
             m_bins: number of bins we divide the magnitude space
         '''
-        super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
+        super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m=True)
 
-        # input_size of the RNNModel can be chosen arbitrarily as we don't put any inputs in it.
-        self.controller = RNNModel(mode='GRU', input_size=1, hidden_size=40, num_layers=1,
-                         bias=True, output_size=fun_num+p_bins+m_bins)
+        self.rnn_output_size = fun_num+p_bins+m_bins
+        self.controller = RNNModel(mode='GRU', output_size=self.rnn_output_size, 
+                                    num_layers=1, bias=True)
+        self.softmax = torch.nn.Softmax(dim=0)
 
 
     def generate_new_policy(self):
@@ -65,7 +66,41 @@ class gru_learner(aa_learner):
             (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
             ]
         '''
-        new_policy = self.controller(input=torch.rand(1))
+        # we need a random input to put in
+        random_input = torch.rand(self.rnn_output_size, requires_grad=False)
+
+        # 2*self.sp_num because we need 2 operations for every subpolicy
+        vectors = self.controller(input=random_input, time_steps=2*self.sp_num)
+
+        # softmax the funcion vector, probability vector, and magnitude vector
+        # of each timestep
+        softmaxed_vectors = []
+        for vector in vectors:
+            print(vector)
+            fun_t, prob_t, mag_t = vector.split([self.fun_num, self.p_bins, self.m_bins])
+            fun_t = self.softmax(fun_t)
+            prob_t = self.softmax(prob_t)
+            mag_t = self.softmax(mag_t)
+            softmaxed_vector = torch.cat((fun_t, prob_t, mag_t))
+            softmaxed_vectors.append(softmaxed_vector)
+            
+        print(softmaxed_vectors)
+        new_policy = []
+
+        for subpolicy_idx in range(self.sp_num):
+            # the vector corresponding to the first operation of this subpolicy
+            op1 = softmaxed_vectors[2*subpolicy_idx]
+            # the vector corresponding to the second operation of this subpolicy
+            op2 = softmaxed_vectors[2*subpolicy_idx+1]
+
+            # translate both vectors
+            op1 = self.translate_operation_tensor(op1)
+            op2 = self.translate_operation_tensor(op2)
+            
+            print('new subpol:', (op1, op2))
+            new_policy.append((op1,op2))
+        
+        return new_policy
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
@@ -93,6 +128,10 @@ if __name__=='__main__':
     # We can initialize the train_dataset with its transform as None.
     # Later on, we will change this object's transform attribute to the policy
     # that we want to test
+    import torchvision.datasets as datasets
+    import torchvision
+    torch.manual_seed(0)
+
     train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, 
                                 transform=None)
     test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True,
@@ -101,7 +140,6 @@ if __name__=='__main__':
 
     
     learner = gru_learner(discrete_p_m=False)
-    print(learner.generate_new_policy())
-    breakpoint()
+    newpol = learner.generate_new_policy()
     learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
     pprint(learner.history)

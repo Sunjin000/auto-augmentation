@@ -50,6 +50,8 @@ class aa_learner:
         self.p_bins = p_bins
         self.m_bins = m_bins
 
+        self.op_tensor_length = fun_num+p_bins+m_bins if discrete_p_m else fun_num+2
+
         # should we repre
         self.discrete_p_m = discrete_p_m
 
@@ -78,11 +80,12 @@ class aa_learner:
                             Whether we are taking the argmax of the softmaxed tensors. 
                             If this is False, we treat the softmaxed outputs as multinomial pdf's.
         '''
+        # make sure shape is correct
+        assert operation_tensor.shape==(self.op_tensor_length, ), operation_tensor.shape
+
         # if probability and magnitude are represented as discrete variables
         if self.discrete_p_m:
-            fun_t = operation_tensor[ : self.fun_num]
-            prob_t = operation_tensor[self.fun_num : self.fun_num+self.p_bins]
-            mag_t = operation_tensor[-self.m_bins : ]
+            fun_t, prob_t, mag_t = operation_tensor.split([self.fun_num, self.p_bins, self.m_bins])
 
             # make sure they are of right size
             assert fun_t.shape==(self.fun_num,), f'{fun_t.shape} != {self.fun_num}'
@@ -95,9 +98,9 @@ class aa_learner:
                 mag = torch.argmax(mag_t) # 0 <= m <= 9
             elif argmax==False:
                 # we need these to add up to 1 to be valid pdf's of multinomials
-                assert torch.sum(fun_t)==1
-                assert torch.sum(prob_t)==1
-                assert torch.sum(mag_t)==1
+                assert torch.sum(fun_t).isclose(torch.ones(1)), torch.sum(fun_t)
+                assert torch.sum(prob_t).isclose(torch.ones(1)), torch.sum(prob_t)
+                assert torch.sum(mag_t).isclose(torch.ones(1)), torch.sum(mag_t)
                 fun = torch.multinomial(fun_t, 1) # 0 <= fun <= self.fun_num-1
                 prob = torch.multinomial(prob_t, 1) # 0 <= p <= 10
                 mag = torch.multinomial(mag_t, 1) # 0 <= m <= 9
@@ -108,7 +111,7 @@ class aa_learner:
 
         # if probability and magnitude are represented as continuous variables
         else:
-            fun_t = operation_tensor[:self.fun_num]
+            fun_t, p, m = operation_tensor.split([self.fun_num, 1, 1])
             p = operation_tensor[-2].item() # 0 < p < 1
             m = operation_tensor[-1].item() # 0 < m < 9
 
@@ -118,7 +121,7 @@ class aa_learner:
             if argmax==True:
                 fun = torch.argmax(fun_t)
             elif argmax==False:
-                assert torch.sum(fun_t)==1
+                assert torch.sum(fun_t).isclose(torch.ones(1))
                 fun = torch.multinomial(fun_t, 1)
             
             function = augmentation_space[fun][0]
