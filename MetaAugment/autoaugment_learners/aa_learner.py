@@ -9,6 +9,8 @@ from MetaAugment.autoaugment_learners.autoaugment import AutoAugment
 import torchvision.transforms as transforms
 
 from pprint import pprint
+import matplotlib.pyplot as plt
+
 
 # We will use this augmentation_space temporarily. Later on we will need to 
 # make sure we are able to add other image functions if the users want.
@@ -50,6 +52,8 @@ class aa_learner:
         self.p_bins = p_bins
         self.m_bins = m_bins
 
+        self.op_tensor_length = fun_num+p_bins+m_bins if discrete_p_m else fun_num+2
+
         # should we repre
         self.discrete_p_m = discrete_p_m
 
@@ -57,7 +61,7 @@ class aa_learner:
         self.history = []
 
 
-    def translate_operation_tensor(self, operation_tensor, argmax=False):
+    def translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
         '''
         takes in a tensor representing an operation and returns an actual operation which
         is in the form of:
@@ -74,70 +78,100 @@ class aa_learner:
                                 - If self.discrete_p_m is False, we expect to take in a tensor with
                                 dimension (self.fun_num + 1 + 1)
 
+            return_log_prob (boolesn): 
+                                When this is on, we return which indices (of fun, prob, mag) were
+                                chosen (either randomly or deterministically, depending on argmax).
+                                This is used, for example, in the gru_learner to calculate the
+                                probability of the actions were chosen, which is then logged, then
+                                differentiated.
+
             argmax (boolean): 
                             Whether we are taking the argmax of the softmaxed tensors. 
                             If this is False, we treat the softmaxed outputs as multinomial pdf's.
+
+        Returns:
+            operation (list of tuples):
+                                An operation in the format that can be directly put into an
+                                AutoAugment object.
+            log_prob
+                                
         '''
+        if (not self.discrete_p_m) and return_log_prob:
+            raise ValueError("You are not supposed to use return_log_prob=True when the agent's \
+                            self.discrete_p_m is False!")
+
+        # make sure shape is correct
+        assert operation_tensor.shape==(self.op_tensor_length, ), operation_tensor.shape
+
         # if probability and magnitude are represented as discrete variables
         if self.discrete_p_m:
-            fun_t = operation_tensor[ : self.fun_num]
-            prob_t = operation_tensor[self.fun_num : self.fun_num+self.p_bins]
-            mag_t = operation_tensor[-self.m_bins : ]
+            fun_t, prob_t, mag_t = operation_tensor.split([self.fun_num, self.p_bins, self.m_bins])
 
             # make sure they are of right size
             assert fun_t.shape==(self.fun_num,), f'{fun_t.shape} != {self.fun_num}'
             assert prob_t.shape==(self.p_bins,), f'{prob_t.shape} != {self.p_bins}'
             assert mag_t.shape==(self.m_bins,), f'{mag_t.shape} != {self.m_bins}'
 
+
             if argmax==True:
-                fun = torch.argmax(fun_t)
-                prob = torch.argmax(prob_t) # 0 <= p <= 10
-                mag = torch.argmax(mag_t) # 0 <= m <= 9
+                fun_idx = torch.argmax(fun_t).item()
+                prob_idx = torch.argmax(prob_t).item() # 0 <= p <= 10
+                mag = torch.argmax(mag_t).item() # 0 <= m <= 9
             elif argmax==False:
                 # we need these to add up to 1 to be valid pdf's of multinomials
-                assert torch.sum(fun_t)==1
-                assert torch.sum(prob_t)==1
-                assert torch.sum(mag_t)==1
-                fun = torch.multinomial(fun_t, 1) # 0 <= fun <= self.fun_num-1
-                prob = torch.multinomial(prob_t, 1) # 0 <= p <= 10
-                mag = torch.multinomial(mag_t, 1) # 0 <= m <= 9
+                assert torch.sum(fun_t).isclose(torch.ones(1)), torch.sum(fun_t)
+                assert torch.sum(prob_t).isclose(torch.ones(1)), torch.sum(prob_t)
+                assert torch.sum(mag_t).isclose(torch.ones(1)), torch.sum(mag_t)
 
-            function = augmentation_space[fun][0]
-            prob = prob/10
+                fun_idx = torch.multinomial(fun_t, 1).item() # 0 <= fun <= self.fun_num-1
+                prob_idx = torch.multinomial(prob_t, 1).item() # 0 <= p <= 10
+                mag = torch.multinomial(mag_t, 1).item() # 0 <= m <= 9
+
+            function = augmentation_space[fun_idx][0]
+            prob = prob_idx/10
+
+            indices = (fun_idx, prob_idx, mag)
+
+            # log probability is the sum of the log of the softmax values of the indices 
+            # (of fun_t, prob_t, mag_t) that we have chosen
+            log_prob = torch.log(fun_t[fun_idx]) + torch.log(prob_t[prob_idx]) + torch.log(mag_t[mag])
 
 
         # if probability and magnitude are represented as continuous variables
         else:
-            fun_t = operation_tensor[:self.fun_num]
-            p = operation_tensor[-2].item() # 0 < p < 1
-            m = operation_tensor[-1].item() # 0 < m < 9
+            fun_t, prob, mag = operation_tensor.split([self.fun_num, 1, 1])
+            prob = prob.item()
+            # 0 =< prob =< 1
+            mag = mag.item()
+            # 0 =< mag =< 9
 
             # make sure the shape is correct
             assert fun_t.shape==(self.fun_num,), f'{fun_t.shape} != {self.fun_num}'
             
             if argmax==True:
-                fun = torch.argmax(fun_t)
+                fun_idx = torch.argmax(fun_t)
             elif argmax==False:
-                assert torch.sum(fun_t)==1
-                fun = torch.multinomial(fun_t, 1)
+                assert torch.sum(fun_t).isclose(torch.ones(1))
+                fun_idx = torch.multinomial(fun_t, 1).item()
+            prob = round(prob, 1) # round to nearest first decimal digit
+            mag = round(mag) # round to nearest integer
             
-            function = augmentation_space[fun][0]
-            prob = round(p, 1) # round to nearest first decimal digit
-            mag = round(m) # round to nearest integer
-            # If argmax is False, we treat operation_tensor as a concatenation of three
-            # multinomial pdf's.
+        function = augmentation_space[fun_idx][0]
 
         assert 0 <= prob <= 1
         assert 0 <= mag <= self.m_bins-1
         
         # if the image function does not require a magnitude, we set the magnitude to None
-        if augmentation_space[fun][1] == True: # if the image function has a magnitude
-            return (function, prob, mag)
+        if augmentation_space[fun_idx][1] == True: # if the image function has a magnitude
+            operation = (function, prob, mag)
         else:
-            return (function, prob, None)
-            
-
-
+            operation =  (function, prob, None)
+        
+        if return_log_prob:
+            return operation, log_prob
+        else:
+            return operation
+        
 
     def generate_new_policy(self):
         '''
@@ -175,7 +209,8 @@ class aa_learner:
             self.history.append((policy, reward))
     
 
-    def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, toy_flag):
+    def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, 
+                                toy_flag, logging=False):
         '''
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
@@ -197,7 +232,7 @@ class aa_learner:
         # create Dataloader objects out of the Dataset objects
         train_loader, test_loader = create_toy(train_dataset,
                                                 test_dataset,
-                                                batch_size=32,
+                                                batch_size=64,
                                                 n_samples=0.01,
                                                 seed=100)
 
@@ -205,9 +240,12 @@ class aa_learner:
         accuracy = train_child_network(child_network, 
                                     train_loader, 
                                     test_loader, 
-                                    sgd = optim.SGD(child_network.parameters(), lr=1e-1),
+                                    sgd = optim.SGD(child_network.parameters(), lr=3e-1),
+                                    # sgd = optim.Adadelta(child_network.parameters(), lr=1e-2),
                                     cost = nn.CrossEntropyLoss(),
-                                    max_epochs = 100, 
-                                    early_stop_num = 15, 
-                                    logging = False)
+                                    max_epochs = 3000000, 
+                                    early_stop_num = 120, 
+                                    logging = logging)
+        
+        # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
         return accuracy

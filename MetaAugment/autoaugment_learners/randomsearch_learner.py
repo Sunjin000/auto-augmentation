@@ -5,6 +5,8 @@ import MetaAugment.child_networks as cn
 from MetaAugment.autoaugment_learners.aa_learner import aa_learner
 
 from pprint import pprint
+import matplotlib.pyplot as plt
+import pickle
 
 
 
@@ -84,7 +86,7 @@ class randomsearch_learner(aa_learner):
         fun_p_m[random_fun] = 1
 
         fun_p_m[-2] = np.random.uniform() # 0<prob<1
-        fun_p_m[-1] = np.random.uniform() * (self.m_bins-1) # 0<mag<9
+        fun_p_m[-1] = np.random.uniform() * (self.m_bins-0.0000001) - 0.4999999 # -0.5<mag<9.5
         
         return fun_p_m
 
@@ -129,7 +131,7 @@ class randomsearch_learner(aa_learner):
             3. <save how good the policy is in a list/dictionary>
         '''
         # test out 15 random policies
-        for _ in range(15):
+        for _ in range(1500):
             policy = self.generate_new_policy()
 
             pprint(policy)
@@ -139,19 +141,54 @@ class randomsearch_learner(aa_learner):
 
             self.history.append((policy, reward))
 
+            # save the history every 10 epochs as a pickle
+            if _%10==1:
+                with open('randomsearch_logs.pkl', 'wb') as file:
+                    pickle.dump(self.history, file)
+    
+
+    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, toy_flag, n=50):
+        '''
+        I made this to plot a couple of accuracy graphs to help manually tune my gradient 
+        optimizer hyperparameters.
+        '''
+        acc_lists = []
+
+        # This is dummy code
+        # test out 15 random policies
+        for _ in range(n):
+            policy = self.generate_new_policy()
+
+            pprint(policy)
+            child_network = child_network_architecture()
+            reward, acc_list = self.test_autoaugment_policy(policy, child_network, train_dataset,
+                                                test_dataset, toy_flag, logging=True)
+
+            self.history.append((policy, reward))
+            acc_lists.append(acc_list)
+
+        for acc_list in acc_lists:
+            plt.plot(acc_list)
+        plt.title('I ran 50 random policies to see if there is any sign of \
+                    catastrophic failure during training')
+        plt.show()
+        plt.savefig('random_policies')
+
 
 if __name__=='__main__':
-
     # We can initialize the train_dataset with its transform as None.
     # Later on, we will change this object's transform attribute to the policy
     # that we want to test
+    import torchvision.datasets as datasets
+    import torchvision
+    
     train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train',
                                     train=True, download=True, transform=None)
     test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
                             train=False, download=True, transform=torchvision.transforms.ToTensor())
     child_network = cn.lenet
 
-    
-    rs_learner = randomsearch_learner(discrete_p_m=False)
+    rs_learner = randomsearch_learner(discrete_p_m=True)
     rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
+    # rs_learner.demo_plot(train_dataset, test_dataset, child_network, toy_flag=True)
     pprint(rs_learner.history)
