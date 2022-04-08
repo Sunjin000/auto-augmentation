@@ -1,6 +1,7 @@
 import pickle
 from pprint import pprint
 import matplotlib.pyplot as plt
+from torch import gru
 
 def get_maxacc(log):
     output = []
@@ -19,6 +20,14 @@ with open('gru_logs.pkl', 'rb') as file:
 
 plt.plot(get_maxacc(rs_list), label='randomsearcher')
 plt.plot(get_maxacc(gru_list), label='gru learner')
+plt.title('Comparing two agents')
+plt.ylabel('best accuracy to date')
+plt.xlabel('number of policies tested')
+plt.legend()
+plt.show()
+
+plt.plot([acc for pol,acc in rs_list], label='randomsearcher')
+plt.plot([acc for pol,acc in gru_list], label='gru learner')
 plt.title('Comparing two agents')
 plt.ylabel('best accuracy to date')
 plt.xlabel('number of policies tested')

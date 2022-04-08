@@ -233,7 +233,7 @@ class aa_learner:
         train_loader, test_loader = create_toy(train_dataset,
                                                 test_dataset,
                                                 batch_size=64,
-                                                n_samples=0.01,
+                                                n_samples=0.04,
                                                 seed=100)
 
         # train the child network with the dataloaders equipped with our specific policy
@@ -244,7 +244,7 @@ class aa_learner:
                                     # sgd = optim.Adadelta(child_network.parameters(), lr=1e-2),
                                     cost = nn.CrossEntropyLoss(),
                                     max_epochs = 3000000, 
-                                    early_stop_num = 120, 
+                                    early_stop_num = 60, 
                                     logging = logging)
         
         # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
