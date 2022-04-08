@@ -52,7 +52,7 @@ class gru_learner(aa_learner):
 
         self.rnn_output_size = fun_num+p_bins+m_bins
         self.controller = RNNModel(mode='GRU', output_size=self.rnn_output_size, 
-                                    num_layers=1, bias=True)
+                                    num_layers=2, bias=True)
         self.softmax = torch.nn.Softmax(dim=0)
 
 
