@@ -186,7 +186,7 @@ if __name__=='__main__':
                                     train=True, download=True, transform=None)
     test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
                             train=False, download=True, transform=torchvision.transforms.ToTensor())
-    child_network = cn.lenet
+    child_network = cn.bad_lenet
 
     rs_learner = randomsearch_learner(discrete_p_m=True)
     rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
