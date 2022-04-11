@@ -240,11 +240,11 @@ class aa_learner:
         accuracy = train_child_network(child_network, 
                                     train_loader, 
                                     test_loader, 
-                                    sgd = optim.SGD(child_network.parameters(), lr=1e-1),
+                                    sgd = optim.SGD(child_network.parameters(), lr=3e-1),
                                     # sgd = optim.Adadelta(child_network.parameters(), lr=1e-2),
                                     cost = nn.CrossEntropyLoss(),
                                     max_epochs = 3000000, 
-                                    early_stop_num = 10, 
+                                    early_stop_num = 15, 
                                     logging = logging,
                                     print_every_epoch=True)
         
