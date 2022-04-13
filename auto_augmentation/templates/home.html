@@ -1,0 +1,130 @@
+{% extends "basic.html" %}
+{% block title%}Home{% endblock %}
+{% block body %}
+<h1>Meta Reinforcement Learning for Data Augmentation</h1>
+
+<h3>Choose your dataset</h3>
+<form action="/user_input">
+  <!-- upload dataset -->
+  <label for="dataset_upload">You can upload your dataset here:</label>
+  <input type="file" name="dataset_upload" class="upload"><br><br>
+
+  <!-- dataset radio button -->
+  Or you can select a dataset from our database: <br>
+  <input type="radio" id="dataset1"
+    name="dataset_selection" value="MINIST">
+  <label for="dataset1">MINIST dataset</label><br>
+
+  <input type="radio" id="dataset2"
+    name="dataset_selection" value="IMGNET">
+  <label for="dataset2">IMGNET dataset</label><br>
+
+  <input type="radio" id="dataset3"
+  name="dataset_selection" value="dataset3">
+  <label for="dataset3">dataset3</label><br><br> 
+
+<!-- --------------------------------------------------------------- -->
+
+
+  <h3>Choose the network which the dataset is trained on</h3>
+  <!-- upload network -->
+  <label for="network_upload">Please upload your network here:</label>
+  <input type="file" name="network_upload" class="upload"><br><br>
+
+
+  <!-- network selection -->
+  Or you can select a dataset from our database: <br>
+  <input type="radio" id="network1"
+    name="network_selection" value="EasyNet">
+  <label for="dataset1">EasyNet</label><br>
+
+  <input type="radio" id="network2"
+    name="network_selection" value="LeNet">
+  <label for="dataset2">LeNet</label><br>
+
+  <input type="radio" id="network3"
+  name="network_selection" value="AlexNet">
+  <label for="dataset3">AlexNet</label><br><br> 
+
+
+
+  <h3>Advanced Search</h3>
+  <!-- action(data augmentation) space -->
+  Which data augmentation method you would like exclude? <br>
+  <input type="radio" id="ShearX"
+    name="action_space" value="ShearX">
+  <label for="ShearX">ShearX</label><br>
+
+  <input type="radio" id="ShearY"
+    name="action_space" value="ShearY">
+  <label for="ShearY">ShearY</label><br>
+
+  <input type="radio" id="TranslateX"
+    name="action_space" value="TranslateX">
+  <label for="TranslateX">TranslateX</label><br>
+
+  <input type="radio" id="TranslateY"
+  name="action_space" value="TranslateY">
+  <label for="TranslateY">TranslateY</label><br>
+
+  <input type="radio" id="Rotate"
+    name="Rotate" value="Rotate">
+  <label for="Rotate">Rotate</label><br>
+
+  <input type="radio" id="Brightness"
+  name="action_space" value="Brightness">
+  <label for="Brightness">Brightness</label><br>
+
+  <input type="radio" id="Color"
+  name="action_space" value="Color">
+  <label for="Color">Color</label><br>
+
+  <input type="radio" id="Contrast"
+  name="action_space" value="Contrast">
+  <label for="Contrast">Contrast</label><br>
+
+  <input type="radio" id="Sharpness"
+  name="action_space" value="Sharpness">
+  <label for="Sharpness">Sharpness</label><br>
+
+  <input type="radio" id="Posterize"
+  name="action_space" value="Posterize">
+  <label for="Posterize">Posterize</label><br>
+
+  <input type="radio" id="Solarize"
+  name="action_space" value="Solarize">
+  <label for="Solarize">Solarize</label><br>
+
+  <input type="radio" id="AutoContrast"
+  name="action_space" value="AutoContrast">
+  <label for="AutoContrast">AutoContrast</label><br>
+
+  <input type="radio" id="Equalize"
+  name="action_space" value="Equalize">
+  <label for="Equalize">Equalize</label><br>
+
+  <input type="radio" id="Invert"
+  name="action_space" value="Invert">
+  <label for="Invert">Invert</label><br><br><br>
+
+
+
+  <!-- action space -->
+  <!-- <label for="data_aug_method">Which data augmentation method you would like exclude?</label>
+    <select id="data_aug_method" name="data_aug_method">
+        <option value="Translate">Translate</option>
+        <option value="Rotate">Rotate</option>
+        <option value="AutoContrast">AutoContrast</option>
+        <option value="Equalize">Equalize</option>
+        <option value="Solarize">Solarize</option>
+        <option value="Posterize">Posterize</option>
+        <option value="Contrast">Contrast</option>
+        <option value="Brightness">Brightness</option>
+
+    </select><br><br> -->
+  
+
+  <input type="submit">
+</form>
+  
+{% endblock %}
