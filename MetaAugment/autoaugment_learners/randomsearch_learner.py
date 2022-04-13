@@ -32,27 +32,23 @@ augmentation_space = [
 
 class randomsearch_learner(aa_learner):
     def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
-        '''
-        Args:
-            spdim: number of subpolicies per policy
-            fun_num: number of image functions in our search space
-            p_bins: number of bins we divide the interval [0,1] for probabilities
-            m_bins: number of bins we divide the magnitude space
-        '''
         super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
         
 
     def generate_new_discrete_operation(self):
-        '''
+        """
         generate a new random operation in the form of a tensor of dimension:
             (fun_num + 11 + 10)
+
+        Used only when self.discrete_p_m=True
 
         The first fun_num dimensions is a 1-hot encoding to specify which function to use.
         The next 11 dimensions specify which 'probability' to choose.
             (0.0, 0.1, ..., 1.0)
         The next 10 dimensions specify which 'magnitude' to choose.
             (0, 1, ..., 9)
-        '''
+        """
+
         random_fun = np.random.randint(0, self.fun_num)
         random_prob = np.random.randint(0, self.p_bins)
         random_mag = np.random.randint(0, self.m_bins)
@@ -68,17 +64,20 @@ class randomsearch_learner(aa_learner):
 
 
     def generate_new_continuous_operation(self):
-        '''
+        """
         Returns operation_tensor, which is a tensor representation of a random operation with
         dimension:
             (fun_num + 1 + 1)
+
+        Used only when self.discrete_p_m=False.
 
         The first fun_num dimensions is a 1-hot encoding to specify which function to use.
         The next 1 dimensions specify which 'probability' to choose.
             0 < x < 1
         The next 1 dimensions specify which 'magnitude' to choose.
             0 < x < 9
-        '''
+        """
+
         fun_p_m = torch.zeros(self.fun_num + 2)
         
         # pick a random image function
@@ -92,15 +91,11 @@ class randomsearch_learner(aa_learner):
 
 
     def generate_new_policy(self):
-        '''
-        Generate a new random policy in the form of
-            [
-            (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
-            (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
-            (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
-            (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
-            ]
-        '''
+        """
+        Generates a new policy, with the elements chosen at random
+        (unifom random distribution).
+        """
+
         new_policy = []
         
         for _ in range(self.sp_num): # generate sp_num subpolicies for each policy
@@ -123,13 +118,6 @@ class randomsearch_learner(aa_learner):
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
-        '''
-        Does the loop which is seen in Figure 1 in the AutoAugment paper.
-        In other words, repeat:
-            1. <generate a random policy>
-            2. <see how good that policy is>
-            3. <save how good the policy is in a list/dictionary>
-        '''
         # test out 15 random policies
         for _ in range(1500):
             policy = self.generate_new_policy()
@@ -147,32 +135,6 @@ class randomsearch_learner(aa_learner):
                     pickle.dump(self.history, file)
     
 
-    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, toy_flag, n=50):
-        '''
-        I made this to plot a couple of accuracy graphs to help manually tune my gradient 
-        optimizer hyperparameters.
-        '''
-        acc_lists = []
-
-        # This is dummy code
-        # test out 15 random policies
-        for _ in range(n):
-            policy = self.generate_new_policy()
-
-            pprint(policy)
-            child_network = child_network_architecture()
-            reward, acc_list = self.test_autoaugment_policy(policy, child_network, train_dataset,
-                                                test_dataset, toy_flag, logging=True)
-
-            self.history.append((policy, reward))
-            acc_lists.append(acc_list)
-
-        for acc_list in acc_lists:
-            plt.plot(acc_list)
-        plt.title('I ran 50 random policies to see if there is any sign of \
-                    catastrophic failure during training')
-        plt.show()
-        plt.savefig('random_policies')
 
 
 if __name__=='__main__':
@@ -190,5 +152,4 @@ if __name__=='__main__':
 
     rs_learner = randomsearch_learner(discrete_p_m=True)
     rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
-    # rs_learner.demo_plot(train_dataset, test_dataset, child_network, toy_flag=True)
     pprint(rs_learner.history)

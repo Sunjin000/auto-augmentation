@@ -31,22 +31,28 @@ augmentation_space = [
 
 
 class gru_learner(aa_learner):
-    # Uses a GRU controller which is updated via Proximal Polixy Optimization
-    # It is the same model use in
-    # http://arxiv.org/abs/1805.09501
-    # and
-    # http://arxiv.org/abs/1611.01578
+    """
+    An AutoAugment learner with a GRU controller 
+
+    The original AutoAugment paper(http://arxiv.org/abs/1805.09501) 
+    uses a LSTM controller updated via Proximal Policy Optimization.
+    (See Section 3 of AutoAugment paper)
+
+    The GRU has been shown to be as powerful of a sequential neural
+    network as the LSTM whilst training and testing much faster
+    (https://arxiv.org/abs/1412.3555), which is why we substituted
+    the LSTM for the GRU.
+    """
 
     def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=True, alpha=0.2):
-        '''
+        """
         Args:
-            spdim: number of subpolicies per policy
-            fun_num: number of image functions in our search space
-            p_bins: number of bins we divide the interval [0,1] for probabilities
-            m_bins: number of bins we divide the magnitude space
-
-            alpha: Exploration parameter. The lower this value, the more exploration.
-        '''
+            alpha (float): Exploration parameter. It is multiplied to 
+                    operation tensors before they're softmaxed. 
+                    The lower this value, the more smoothed the output
+                    of the softmaxed will be, hence more exploration.
+        """
+        
         super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m=True)
         self.alpha = alpha
 
@@ -57,19 +63,41 @@ class gru_learner(aa_learner):
 
 
     def generate_new_policy(self):
-        '''
-        We run the GRU for 10 timesteps to obtain 10 operations.
-        At each time step, it outputs a (fun_num + p_bins + m_bins) dimensional vector
+        """
+        The GRU controller pops out a new policy.
 
-        And then for each operation, we put it through self. 
-        Generate a new policy in the form of
+        At each time step, the GRU outputs a 
+        (fun_num + p_bins + m_bins, ) dimensional tensor which 
+        contains information regarding which 'image function' to use,
+        which value of 'probability(prob)' and 'magnitude(mag)' to use.
+
+        We run the GRU for 10 timesteps to obtain 10 of such tensors.
+
+        We then softmax the parts of the tensor which represents the
+        choice of function, prob, and mag seperately, so that the
+        resulting tensor's values sums up to 3.
+
+        Then we input each tensor into self.translate_operation_tensor
+        with parameter (return_log_prob=True), which outputs a tuple
+        in the form of ('img_function_name', prob, mag) and a float
+        representing the log probability that we chose the chosen 
+        func, prob and mag. 
+
+        We add up the log probabilities of each operation.
+
+        We turn the operations into a list of 5 tuples such as:
             [
             (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
             (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
             (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
             (("ShearY", 0.5, 8), ("Invert", 0.7, None)),
             ]
-        '''
+        This list can then be input into an AutoAugment object
+        as is done in self.learn()
+        
+        We return the list and the sum of the log probs
+        """
+
         log_prob = 0
 
         # we need a random input to put in
@@ -108,13 +136,6 @@ class gru_learner(aa_learner):
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag, m=8):
-        '''
-        Does the loop which is seen in Figure 1 in the AutoAugment paper.
-        In other words, repeat:
-            1. <generate a random policy>
-            2. <see how good that policy is>
-            3. <save how good the policy is in a list/dictionary>
-        '''
         # optimizer for training the GRU controller
         cont_optim = torch.optim.SGD(self.controller.parameters(), lr=1e-2)
 
@@ -179,8 +200,7 @@ if __name__=='__main__':
                                 transform=torchvision.transforms.ToTensor())
     child_network = cn.lenet
 
-    
+
     learner = gru_learner(discrete_p_m=False)
-    newpol = learner.generate_new_policy()
     learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
     pprint(learner.history)
