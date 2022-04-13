@@ -2,6 +2,7 @@ import torch.nn as nn
 
 
 class LeNet(nn.Module):
+    # no. of params: 25*6 + 25*6*16 + 256*120 + 120*84 + 84*10 = > 30,000
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 6, 5)

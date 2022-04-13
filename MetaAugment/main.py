@@ -1,12 +1,9 @@
 import numpy as np
 import torch
-torch.manual_seed(0)
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
-import torchvision.transforms.autoaugment as autoaugment
 #import MetaAugment.AutoAugmentDemo.ops as ops # 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
@@ -25,7 +22,7 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
     shuffle_order_test = np.random.RandomState(seed=seed).permutation(len(test_dataset))
     shuffled_test_dataset = torch.utils.data.Subset(test_dataset, shuffle_order_test)
 
-    big = 4 # how much bigger is the test set
+    big = 1 # how much bigger is the test set
 
     indices_test = torch.arange(int(n_samples*len(test_dataset)*big))
     reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
@@ -109,6 +106,8 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
 
     if logging:
         return best_acc.item(), acc_log
+    
+    print('main.train_child_network best accuracy: ', best_acc)
     return best_acc.item()
 
 if __name__=='__main__':
