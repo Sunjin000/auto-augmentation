@@ -59,77 +59,86 @@
   <h3>Advanced Search</h3>
   <!-- action(data augmentation) space -->
   Which data augmentation method you would like exclude? <br>
-  <input type="radio" id="ShearX"
+  <input type="checkbox" id="ShearX"
     name="action_space" value="ShearX">
   <label for="ShearX">ShearX</label><br>
 
-  <input type="radio" id="ShearY"
+  <input type="checkbox" id="ShearY"
     name="action_space" value="ShearY">
   <label for="ShearY">ShearY</label><br>
 
-  <input type="radio" id="TranslateX"
+  <input type="checkbox" id="TranslateX"
     name="action_space" value="TranslateX">
   <label for="TranslateX">TranslateX</label><br>
 
-  <input type="radio" id="TranslateY"
+  <input type="checkbox" id="TranslateY"
   name="action_space" value="TranslateY">
   <label for="TranslateY">TranslateY</label><br>
 
-  <input type="radio" id="Rotate"
+  <input type="checkbox" id="Rotate"
     name="Rotate" value="Rotate">
   <label for="Rotate">Rotate</label><br>
 
-  <input type="radio" id="Brightness"
+  <input type="checkbox" id="Brightness"
   name="action_space" value="Brightness">
   <label for="Brightness">Brightness</label><br>
 
-  <input type="radio" id="Color"
+  <input type="checkbox" id="Color"
   name="action_space" value="Color">
   <label for="Color">Color</label><br>
 
-  <input type="radio" id="Contrast"
+  <input type="checkbox" id="Contrast"
   name="action_space" value="Contrast">
   <label for="Contrast">Contrast</label><br>
 
-  <input type="radio" id="Sharpness"
+  <input type="checkbox" id="Sharpness"
   name="action_space" value="Sharpness">
   <label for="Sharpness">Sharpness</label><br>
 
-  <input type="radio" id="Posterize"
+  <input type="checkbox" id="Posterize"
   name="action_space" value="Posterize">
   <label for="Posterize">Posterize</label><br>
 
-  <input type="radio" id="Solarize"
+  <input type="checkbox" id="Solarize"
   name="action_space" value="Solarize">
   <label for="Solarize">Solarize</label><br>
 
-  <input type="radio" id="AutoContrast"
+  <input type="checkbox" id="AutoContrast"
   name="action_space" value="AutoContrast">
   <label for="AutoContrast">AutoContrast</label><br>
 
-  <input type="radio" id="Equalize"
+  <input type="checkbox" id="Equalize"
   name="action_space" value="Equalize">
   <label for="Equalize">Equalize</label><br>
 
-  <input type="radio" id="Invert"
+  <input type="checkbox" id="Invert"
   name="action_space" value="Invert">
   <label for="Invert">Invert</label><br><br><br>
 
 
+  <!-- <div id="exclude_augments" class="dropdown-check-list" tabindex="100">
+    <span class="anchor">Select data augmentation method(s) to exclude:</span>
+    <ul class="items">
+      <input type="checkbox" />Translate 
+      <input type="checkbox" />Rotate
+      <input type="checkbox" />AutoContrast 
+      <input type="checkbox" />Equalize 
+      <br>
+      <input type="checkbox" />Solarize
+      <input type="checkbox" />Posterize 
+      <input type="checkbox" />Contrast
+      <input type="checkbox" />Brightness
+    </ul>
+  </div> -->
 
-  <!-- action space -->
-  <!-- <label for="data_aug_method">Which data augmentation method you would like exclude?</label>
-    <select id="data_aug_method" name="data_aug_method">
-        <option value="Translate">Translate</option>
-        <option value="Rotate">Rotate</option>
-        <option value="AutoContrast">AutoContrast</option>
-        <option value="Equalize">Equalize</option>
-        <option value="Solarize">Solarize</option>
-        <option value="Posterize">Posterize</option>
-        <option value="Contrast">Contrast</option>
-        <option value="Brightness">Brightness</option>
+  <div id="exclude_augments">
+    <span class="anchor">Hyperparameter (Learning Rate):</span>
+    <ul class="items">
+      Automatic: <input type="checkbox" /> <div></div>
+      Manual: <input type="number" />
+    </ul>
+  </div>
 
-    </select><br><br> -->
   
 
   <input type="submit">

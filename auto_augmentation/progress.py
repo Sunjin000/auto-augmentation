@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, flash, send_file
 import subprocess
+import os
 
 import numpy as np
 import torch
@@ -15,7 +16,10 @@ from numpy import save, load
 from tqdm import trange
 torch.manual_seed(0)
 # import agents and its functions
-from MetaAugment import UCB1_JC  
+
+from MetaAugment import UCB1_JC_py as UCB1_JC
+
+
 
 bp = Blueprint("progress", __name__)
 

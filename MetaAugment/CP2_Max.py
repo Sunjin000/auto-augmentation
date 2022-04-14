@@ -94,72 +94,53 @@ class Learner(nn.Module):
         return y
 
 
+# class LeNet(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.conv1 = nn.Conv2d(1, 6, 5)
+#         self.relu1 = nn.ReLU()
+#         self.pool1 = nn.MaxPool2d(2)
+#         self.conv2 = nn.Conv2d(6, 16, 5)
+#         self.relu2 = nn.ReLU()
+#         self.pool2 = nn.MaxPool2d(2)
+#         self.fc1 = nn.Linear(256, 120)
+#         self.relu3 = nn.ReLU()
+#         self.fc2 = nn.Linear(120, 84)
+#         self.relu4 = nn.ReLU()
+#         self.fc3 = nn.Linear(84, 10)
+#         self.relu5 = nn.ReLU()
+
+#     def forward(self, x):
+#         y = self.conv1(x)
+#         y = self.relu1(y)
+#         y = self.pool1(y)
+#         y = self.conv2(y)
+#         y = self.relu2(y)
+#         y = self.pool2(y)
+#         y = y.view(y.shape[0], -1)
+#         y = self.fc1(y)
+#         y = self.relu3(y)
+#         y = self.fc2(y)
+#         y = self.relu4(y)
+#         y = self.fc3(y)
+#         return y
+
+
 class LeNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(1, 6, 5)
+        self.fc1 = nn.Linear(784, 2048)
         self.relu1 = nn.ReLU()
-        self.pool1 = nn.MaxPool2d(2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc2 = nn.Linear(2048, 10)
         self.relu2 = nn.ReLU()
-        self.pool2 = nn.MaxPool2d(2)
-        self.fc1 = nn.Linear(256, 120)
-        self.relu3 = nn.ReLU()
-        self.fc2 = nn.Linear(120, 84)
-        self.relu4 = nn.ReLU()
-        self.fc3 = nn.Linear(84, 10)
-        self.relu5 = nn.ReLU()
 
     def forward(self, x):
-        y = self.conv1(x)
+        x = x.reshape((-1, 784))
+        y = self.fc1(x)
         y = self.relu1(y)
-        y = self.pool1(y)
-        y = self.conv2(y)
-        y = self.relu2(y)
-        y = self.pool2(y)
-        y = y.view(y.shape[0], -1)
-        y = self.fc1(y)
-        y = self.relu3(y)
         y = self.fc2(y)
-        y = self.relu4(y)
-        y = self.fc3(y)
+        y = self.relu2(y)
         return y
-
-
-
-# code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
-# def train_model(full_policy, child_network):
-#     """
-#     Takes in the specific transformation index and probability 
-#     """
-
-#     # transformation = generate_policy(5, ps, mags)
-
-#     train_transform = transforms.Compose([
-#                                             full_policy,
-#                                             transforms.ToTensor()
-#                                         ])
-
-#     batch_size = 32
-#     n_samples = 0.005
-
-#     train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, transform=train_transform)
-#     test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False, transform=torchvision.transforms.ToTensor())
-
-#     train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, 0.01)
-
-
-#     sgd = optim.SGD(child_network.parameters(), lr=1e-1)
-#     cost = nn.CrossEntropyLoss()
-#     epoch = 20
-
-
-#     best_acc = train_child_network(child_network, train_loader, test_loader,
-#                                      sgd, cost, max_epochs=100, print_every_epoch=False)
-
-#     return best_acc
-
-
 
 
 
@@ -179,6 +160,7 @@ indices_test = torch.arange(int(n_samples*len(test_dataset)))
 reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
 
 train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=60000)
+
 
 
 
@@ -204,28 +186,23 @@ class Evolutionary_learner():
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
 
         self.set_up_instance()
-    
-
-    def generate_policy(self, sp_num, ps, mags):
-        """
-        
-        """
-        policies = []
-        for subpol in range(sp_num):
-            sub = []
-            for idx in range(2):
-                transformation = augmentation_space[(2*subpol) + idx]
-                p = ps[(2*subpol) + idx]
-                mag = mags[(2*subpol) + idx]
-                sub.append((transformation, p, mag))
-            policies.append(tuple(sub))
-        
-        return policies
 
 
     def get_full_policy(self, x):
         """
-        Generates the full policy (5 x 2 subpolicies)
+        Generates the full policy (self.num_sub_pol subpolicies). Network architecture requires
+        output size 5 * 2 * (self.fun_num + self.p_bins + self.mag_bins)
+
+        Parameters 
+        -----------
+        x -> PyTorch tensor
+            Input data for network 
+
+        Returns
+        ----------
+        full_policy -> [((String, float, float), (String, float, float)), ...)
+            Full policy consisting of tuples of subpolicies. Each subpolicy consisting of
+            two transformations, with a probability and magnitude float for each
         """
         section = self.auto_aug_agent.fun_num + self.auto_aug_agent.p_bins + self.auto_aug_agent.m_bins
         y = self.auto_aug_agent.forward(x)
@@ -244,11 +221,26 @@ class Evolutionary_learner():
             full_policy.append(tuple(int_pol))
 
         return full_policy
-# 
+
     
     def get_policy_cov(self, x, alpha = 0.5):
         """
-        Need p_bins = 1, num_sub_pol = 1, mag_bins = 1
+        Selects policy using population and covariance matrices. For this method 
+        we require p_bins = 1, num_sub_pol = 1, mag_bins = 1. 
+
+        Parameters
+        ------------
+        x -> PyTorch Tensor
+            Input data for the AutoAugment network 
+
+        alpha -> Float
+            Proportion for covariance and population matrices 
+
+        Returns
+        -----------
+        Subpolicy -> [(String, float, float), (String, float, float)]
+            Subpolicy consisting of two tuples of policies, each with a string associated 
+            to a transformation, a float for a probability, and a float for a magnittude
         """
         section = self.auto_aug_agent.fun_num + self.auto_aug_agent.p_bins + self.auto_aug_agent.m_bins
 
@@ -284,7 +276,7 @@ class Evolutionary_learner():
             mag1 = None
         if not self.augmentation_space[max_idx[1]][1]:
             mag2 = None
-   
+    
         for idx in range(y.shape[0]):
             if (torch.argmax(y_1[idx]) == max_idx[0]) and (torch.argmax(y_2[idx]) == max_idx[1]):
                 prob1 += torch.sigmoid(y[idx, self.auto_aug_agent.fun_num]).item()
@@ -313,6 +305,23 @@ class Evolutionary_learner():
     def run_instance(self, return_weights = False):
         """
         Runs the GA instance and returns the model weights as a dictionary
+
+        Parameters
+        ------------
+        return_weights -> Bool
+            Determines if the weight of the GA network should be returned 
+        
+        Returns
+        ------------
+        If return_weights:
+            Network weights -> Dictionary
+        
+        Else:
+            Solution -> Best GA instance solution
+
+            Solution fitness -> Float
+
+            Solution_idx -> Int
         """
         self.ga_instance.run()
         solution, solution_fitness, solution_idx = self.ga_instance.best_solution()
@@ -331,12 +340,25 @@ class Evolutionary_learner():
 
 
     def set_up_instance(self):
+        """
+        Initialises GA instance, as well as fitness and on_generation functions
+        
+        """
 
         def fitness_func(solution, sol_idx):
             """
-            Defines fitness function (accuracy of the model)
+            Defines the fitness function for the parent selection
+
+            Parameters
+            --------------
+            solution -> GA solution instance (parsed automatically)
+
+            sol_idx -> GA solution index (parsed automatically)
+
+            Returns 
+            --------------
+            fit_val -> float            
             """
-            print("FITNESS HERE")
 
             model_weights_dict = torchga.model_weights_as_dict(model=self.auto_aug_agent,
                                                             weights_vector=solution)
@@ -345,18 +367,23 @@ class Evolutionary_learner():
 
             for idx, (test_x, label_x) in enumerate(train_loader):
                 full_policy = self.get_policy_cov(test_x)
-            print("FULL POLICY: ", full_policy)
 
-
-            fit_val = (test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0]) #+ test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0]) / 2
-
-            print("DONE FITNESS")
+            fit_val = ((test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0])/
+                        + test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0]) / 2
 
             return fit_val
 
         def on_generation(ga_instance):
             """
-            Just prints stuff while running
+            Prints information of generational fitness
+
+            Parameters 
+            -------------
+            ga_instance -> GA instance
+
+            Returns
+            -------------
+            None
             """
             print("Generation = {generation}".format(generation=ga_instance.generations_completed))
             print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
@@ -369,13 +396,6 @@ class Evolutionary_learner():
             mutation_percent_genes = 0.1,
             fitness_func=fitness_func,
             on_generation = on_generation)
-
-
-
-
-
-
-
 
 
 
@@ -407,8 +427,8 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
 
 
 def train_child_network(child_network, train_loader, test_loader, sgd,
-                         cost, max_epochs=2000, early_stop_num = 5, logging=False,
-                         print_every_epoch=True):
+                            cost, max_epochs=2000, early_stop_num = 5, logging=False,
+                            print_every_epoch=True):
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -451,12 +471,10 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
 
                 predict_y = child_network(test_x.float()).detach()
                 predict_ys = torch.argmax(predict_y, axis=-1)
-
-                # label_np = test_label.numpy()
-
+    
                 _ = predict_ys == test_label
                 correct += torch.sum(_, axis=-1)
-                # correct += torch.sum(_.numpy(), axis=-1)
+
                 _sum += _.shape[0]
         
         # update best validation accuracy if it was higher, otherwise increase early stop count
@@ -511,19 +529,19 @@ __all__ = ["AutoAugmentPolicy", "AutoAugment", "RandAugment", "TrivialAugmentWid
 
 
 def _apply_op(img: Tensor, op_name: str, magnitude: float,
-              interpolation: InterpolationMode, fill: Optional[List[float]]):
+                interpolation: InterpolationMode, fill: Optional[List[float]]):
     if op_name == "ShearX":
         img = F.affine(img, angle=0.0, translate=[0, 0], scale=1.0, shear=[math.degrees(magnitude), 0.0],
-                       interpolation=interpolation, fill=fill)
+                        interpolation=interpolation, fill=fill)
     elif op_name == "ShearY":
         img = F.affine(img, angle=0.0, translate=[0, 0], scale=1.0, shear=[0.0, math.degrees(magnitude)],
-                       interpolation=interpolation, fill=fill)
+                        interpolation=interpolation, fill=fill)
     elif op_name == "TranslateX":
         img = F.affine(img, angle=0.0, translate=[int(magnitude), 0], scale=1.0,
-                       interpolation=interpolation, shear=[0.0, 0.0], fill=fill)
+                        interpolation=interpolation, shear=[0.0, 0.0], fill=fill)
     elif op_name == "TranslateY":
         img = F.affine(img, angle=0.0, translate=[0, int(magnitude)], scale=1.0,
-                       interpolation=interpolation, shear=[0.0, 0.0], fill=fill)
+                        interpolation=interpolation, shear=[0.0, 0.0], fill=fill)
     elif op_name == "Rotate":
         img = F.rotate(img, magnitude, interpolation=interpolation, fill=fill)
     elif op_name == "Brightness":
@@ -728,18 +746,6 @@ class AutoAugment(torch.nn.Module):
                 fill = [float(f) for f in fill]
 
         transform_id, probs, signs = self.get_params(len(self.subpolicies))
-        # print("transform_id, probs, signs : ", transform_id, probs, signs )
-
-        # for i, (op_name, p, magnitude_id) in enumerate(self.subpolicies[transform_id]):
-        # for i, (op_name, p, magnitude_id) in enumerate(self.subpolicies):
-        #     print("op_name, p, magnitude_id: ", op_name, p, magnitude_id)
-        #     if probs[i] <= p:
-        #         op_meta = self._augmentation_space(10, F.get_image_size(img))
-        #         magnitudes, signed = op_meta[op_name]
-        #         magnitude = float(magnitudes[magnitude_id].item()) if magnitude_id is not None else 0.0
-        #         if signed and signs[i] == 0:
-        #             magnitude *= -1.0
-        #         img = _apply_op(img, op_name, magnitude, interpolation=self.interpolation, fill=fill)
 
         for i, (op_name, p, magnitude) in enumerate(self.subpolicies):
             img = _apply_op(img, op_name, magnitude, interpolation=self.interpolation, fill=fill)
@@ -771,8 +777,8 @@ class RandAugment(torch.nn.Module):
         """
 
     def __init__(self, num_ops: int = 2, magnitude: int = 9, num_magnitude_bins: int = 31,
-                 interpolation: InterpolationMode = InterpolationMode.NEAREST,
-                 fill: Optional[List[float]] = None) -> None:
+                    interpolation: InterpolationMode = InterpolationMode.NEAREST,
+                    fill: Optional[List[float]] = None) -> None:
         super().__init__()
         self.num_ops = num_ops
         self.magnitude = magnitude
@@ -853,7 +859,7 @@ class TrivialAugmentWide(torch.nn.Module):
         """
 
     def __init__(self, num_magnitude_bins: int = 31, interpolation: InterpolationMode = InterpolationMode.NEAREST,
-                 fill: Optional[List[float]] = None) -> None:
+                    fill: Optional[List[float]] = None) -> None:
         super().__init__()
         self.num_magnitude_bins = num_magnitude_bins
         self.interpolation = interpolation
@@ -938,4 +944,4 @@ print(f"Fitness value of the best solution = {solution_fitness}")
 print(f"Index of the best solution : {solution_idx}")
 # Fetch the parameters of the best solution.
 best_solution_weights = torchga.model_weights_as_dict(model=ev_learner.auto_aug_agent,
-                                                      weights_vector=solution)
+                                                        weights_vector=solution)
