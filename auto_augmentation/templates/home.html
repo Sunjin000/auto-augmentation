@@ -6,8 +6,9 @@
 <h3>Choose your dataset</h3>
 <form action="/user_input">
   <!-- upload dataset -->
-  <label for="dataset_upload">You can upload your dataset here:</label>
-  <input type="file" name="dataset_upload" class="upload"><br><br>
+  <label for="dataset_upload">You can upload your dataset folder here:</label>
+  <!-- <input type="file" name="dataset_upload" class="upload"><br><br> -->
+  <input type="file" webkitdirectory mozdirectory /><br><br>
 
   <!-- dataset radio button -->
   Or you can select a dataset from our database: <br>
@@ -34,7 +35,7 @@
 <!-- --------------------------------------------------------------- -->
 
 
-  <h3>Choose the network which the dataset is trained on</h3>
+  <h3>Choose the network the dataset is trained on</h3>
   <!-- upload network -->
   <label for="network_upload">Please upload your network here:</label>
   <input type="file" name="network_upload" class="upload"><br><br>

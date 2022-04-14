@@ -230,20 +230,20 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
 
         # open data and apply these transformations
         if ds == "MNIST":
-            train_dataset = datasets.MNIST(root='./MetaAugment/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.MNIST(root='./MetaAugment/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', train=False, download=True, transform=transform)
         elif ds == "KMNIST":
-            train_dataset = datasets.KMNIST(root='./MetaAugment/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.KMNIST(root='./MetaAugment/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/test', train=False, download=True, transform=transform)
         elif ds == "FashionMNIST":
-            train_dataset = datasets.FashionMNIST(root='./MetaAugment/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.FashionMNIST(root='./MetaAugment/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
         elif ds == "CIFAR10":
-            train_dataset = datasets.CIFAR10(root='./MetaAugment/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.CIFAR10(root='./MetaAugment/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
         elif ds == "CIFAR100":
-            train_dataset = datasets.CIFAR100(root='./MetaAugment/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.CIFAR100(root='./MetaAugment/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
 
         # check sizes of images
         img_height = len(train_dataset[0][0][0])
