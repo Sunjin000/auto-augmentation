@@ -4,11 +4,15 @@
 <h1>Meta Reinforcement Learning for Data Augmentation</h1>
 
 <h3>Choose your dataset</h3>
-<form action="/user_input">
+<form action="/user_input" method="POST" enctype="multipart/form-data">
   <!-- upload dataset -->
   <label for="dataset_upload">You can upload your dataset folder here:</label>
-  <!-- <input type="file" name="dataset_upload" class="upload"><br><br> -->
-  <input type="file" webkitdirectory mozdirectory /><br><br>
+  <input type="file" id='dataset_upload' name="dataset_upload" class="upload"><br><br>
+  
+  <!-- <label for="dataset_upload">Upload your train dataset folder here:</label> -->
+  <!-- <input type="file" id='dataset_upload' name="dataset_upload" webkitdirectory mozdirectory /><br> -->
+  <!-- <label for="dataset_upload">Upload your test dataset folder here:</label>
+  <input type="file" id='test_upload' name="test_upload" webkitdirectory mozdirectory /><br><br> -->
 
   <!-- dataset radio button -->
   Or you can select a dataset from our database: <br>
@@ -30,15 +34,19 @@
 
   <input type="radio" id="dataset5"
   name="dataset_selection" value="CIFAR100">
-  <label for="dataset5">CIFAR100 dataset</label><br><br> 
+  <label for="dataset5">CIFAR100 dataset</label><br>
+
+  <input type="radio" id="dataset6"
+  name="dataset_selection" value="Other">
+  <label for="dataset6">Other dataset DIFFERENT</label><br><br> 
 
 <!-- --------------------------------------------------------------- -->
 
 
   <h3>Choose the network the dataset is trained on</h3>
   <!-- upload network -->
-  <label for="network_upload">Please upload your network here:</label>
-  <input type="file" name="network_upload" class="upload"><br><br>
+  <label for="network_upload">Please upload your network here as a .pkl file:</label>
+  <input type="file" id='network_upload' name="network_upload" class="upload"><br><br>
 
 
   <!-- network selection -->
@@ -53,7 +61,11 @@
 
   <input type="radio" id="network3"
   name="network_selection" value="SimpleNet">
-  <label for="network3">SimpleNet</label><br><br> 
+  <label for="network3">SimpleNet</label><br>
+
+  <input type="radio" id="network4"
+  name="network_selection" value="Other">
+  <label for="network4">Other</label><br><br> 
 
 
 
