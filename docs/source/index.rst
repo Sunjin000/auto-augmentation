@@ -1,33 +1,25 @@
-Welcome to metarl's documentation!
+MetaAugment Documentation
 ==================================
+
+
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents:
+   :caption: Table of Contents Tree:
 
-   usage/installation
-
-.. autoclass:: MetaAugment.autoaugment_learners.aa_learner.aa_learner
-   
-.. autoclass:: MetaAugment.autoaugment_learners.randomsearch_learner.randomsearch_learner
-.. autoclass:: MetaAugment.autoaugment_learners.gru_learner.gru_learner
-
-.. automodule:: MetaAugment.controller_networks
-   :members:
-
-.. automodule:: MetaAugment.child_networks
-   :members:
-
-
-   
+   usage/tutorial_for_team
+   MetaAugment_library/autoaugment_learners/aa_learners
 
 
 
 
 
-Indices and tables
-==================
+.. 
+   I've commented this out for now
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   Indices and tables
+   ==================
+
+   * :ref:`genindex`
+   * :ref:`modindex`
+   * :ref:`search`

@@ -31,7 +31,11 @@ augmentation_space = [
         ]
 
 class randomsearch_learner(aa_learner):
-    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
+    """
+    Tests randomly sampled policies from the search space specified by the AutoAugment
+    paper. Acts as a baseline for other aa_learner's.
+    """
+    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=True):
         super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
         
 

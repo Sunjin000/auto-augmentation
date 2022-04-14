@@ -20,9 +20,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'metarl'
-copyright = '2022, metarl_team'
-author = 'metarl_team'
+project = 'MetaAugment'
+copyright = '2022, metaaug_team'
+author = 'metaaug_team'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0'
@@ -42,7 +42,7 @@ extensions = [
 ]
 
 # turn on sphinx.ext.autosummary
-autosummary_generate = False
+autosummary_generate = True
 
 # turn on sphinx.ext.coverage
 coverage_show_missing_items = True
@@ -61,7 +61,7 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'furo'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

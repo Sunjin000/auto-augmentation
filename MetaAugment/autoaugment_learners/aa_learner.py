@@ -1,4 +1,4 @@
-# The parent class for all other autoaugment learners
+
 
 import torch
 import torch.nn as nn
@@ -34,6 +34,9 @@ augmentation_space = [
 
 
 class aa_learner:
+    """
+    The parent class for all aa_learner's
+    """
     def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
         """
         Args:
