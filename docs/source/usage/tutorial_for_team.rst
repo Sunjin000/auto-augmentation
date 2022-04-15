@@ -1,13 +1,13 @@
-How to use the ``aa_learner`` class to find an optimal policy for a dataset-child_network pair
+aa_learner object and its children
 ------------------------------------------------------------------------------------------------
 
 This is a page dedicated to demonstrating functionalities of :class:`aa_learner`.
 
 This is a how-to guide (in the sense describe in https://documentation.divio.com/structure/).
 
-###################################################
-Using an AutoAutgment learner to find a good policy
-###################################################
+######################################################################################################
+How to use the ``aa_learner`` class to find an optimal policy for a dataset-child_network pair
+######################################################################################################
 
 This section can also be read as a ``.py`` file in ``./tutorials/how_use_aalearner.py``.
 
