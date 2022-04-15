@@ -39,6 +39,7 @@ extensions = [
     'sphinx.ext.coverage', 
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
     'sphinx_rtd_theme',
 ]
 
@@ -50,6 +51,13 @@ coverage_show_missing_items = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# settings for intersphinx
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'torch': ('https://docs.python.org/3', None),
+    'torchvision': ('https://docs.python.org/3', None),
+    }
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
