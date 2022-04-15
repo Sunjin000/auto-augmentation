@@ -28,6 +28,10 @@ python:
    install:
    # install requirements
    - requirements: docs/requirements.txt
+
+python:
+  # Install our python package before building the docs
+  install:
    # install our root directory
    - method: pip
       path: .
