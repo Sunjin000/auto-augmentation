@@ -123,7 +123,7 @@ class randomsearch_learner(aa_learner):
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
         # test out 15 random policies
-        for _ in range(1500):
+        for _ in range(15):
             policy = self.generate_new_policy()
 
             pprint(policy)
