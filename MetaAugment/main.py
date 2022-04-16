@@ -19,7 +19,7 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
     reduced_train_dataset = torch.utils.data.Subset(shuffled_train_dataset, indices_train)
     
     # shuffle and take first n_samples %age of test dataset
-    shuffle_order_test = np.random.RandomState(seed=seed).permutation(len(test_dataset))
+    shuffle_order_test = np.random.RandomState(seed=10*seed).permutation(len(test_dataset))
     shuffled_test_dataset = torch.utils.data.Subset(test_dataset, shuffle_order_test)
 
     big = 1 # how much bigger is the test set
