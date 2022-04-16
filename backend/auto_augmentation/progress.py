@@ -24,7 +24,7 @@ from MetaAugment import UCB1_JC_py as UCB1_JC
 
 bp = Blueprint("progress", __name__)
 
-
+# 
 @bp.route("/user_input", methods=["GET", "POST"])
 def response():
 
