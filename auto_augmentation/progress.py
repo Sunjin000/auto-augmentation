@@ -39,7 +39,7 @@ def response():
         early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
         num_policies = 5      # fix number of policies
         num_sub_policies = 5  # fix number of sub-policies in a policy
-        iterations = 10      # total iterations, should be more than the number of policies
+        iterations = 5      # total iterations, should be more than the number of policies
         IsLeNet = request.form.get("network_selection")   # using LeNet or EasyNet or SimpleNet ->> default 
 
         print(f'@@@@@ dataset is: {ds}, network is :{IsLeNet}')
@@ -66,6 +66,11 @@ def response():
         # generate random policies at start
         policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
         q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
+        print("q_values: ", q_values)
+
+        plt.figure()
+        plt.plot(q_values)
+        plt.savefig('/static/image/test.png')
 
         # plt.plot(best_q_values)
 

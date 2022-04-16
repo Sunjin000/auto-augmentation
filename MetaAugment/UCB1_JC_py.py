@@ -252,9 +252,6 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
             len_train = int(0.8*len(dataset))
             train_dataset, test_dataset = torch.utils.data.random_split(dataset, [len_train, len(dataset)-len_train])
 
-        print('train_dataset', len(train_dataset), 'test_dataset', len(test_dataset))
-
-
         # check sizes of images
         img_height = len(train_dataset[0][0][0])
         img_width = len(train_dataset[0][0][0][0])
@@ -335,7 +332,7 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         best_q_value = max(q_values)
         best_q_values.append(best_q_value)
 
-        if (policy+1) % 1 == 0:
+        if (policy+1) % 5 == 0:
             print("Iteration: {},\tQ-Values: {}, Best Policy: {}".format(policy+1, list(np.around(np.array(q_values),2)), max(list(np.around(np.array(q_values),2)))))
 
         # update counts
@@ -347,6 +344,7 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
             for i in range(num_policies):
                 q_plus_cnt[i] = q_values[i] + np.sqrt(2*np.log(total_count)/cnts[i])
 
+        # yield q_values, best_q_values
     return q_values, best_q_values
 
 

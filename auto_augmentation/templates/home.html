@@ -129,32 +129,105 @@
   <label for="Invert">Invert</label><br><br><br>
 
 
-  <!-- <div id="exclude_augments" class="dropdown-check-list" tabindex="100">
-    <span class="anchor">Select data augmentation method(s) to exclude:</span>
-    <ul class="items">
-      <input type="checkbox" />Translate 
-      <input type="checkbox" />Rotate
-      <input type="checkbox" />AutoContrast 
-      <input type="checkbox" />Equalize 
-      <br>
-      <input type="checkbox" />Solarize
-      <input type="checkbox" />Posterize 
-      <input type="checkbox" />Contrast
-      <input type="checkbox" />Brightness
-    </ul>
-  </div> -->
-
-  <div id="exclude_augments">
-    <span class="anchor">Hyperparameter (Learning Rate):</span>
-    <ul class="items">
-      Automatic: <input type="checkbox" /> <div></div>
-      Manual: <input type="number" />
-    </ul>
-  </div>
-
   
+  <div id="like_button_container"></div>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- <script src="metarl/auto_augmentation/templates/like_button.js"></script> -->
+
+  <script type = 'module'> 
+  // 'use strict';
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+
+  </script>
+   
+
+  <script>
+   const e = React.createElement;
+
+   class LikeButton extends React.Component {
+     constructor(props) {
+       super(props);
+       this.state = { liked: false };
+     }
+   
+     render() {
+       if (this.state.liked) {
+         return 'You liked this.';
+       }
+   
+       return e(
+         'button',
+         { onClick: () => this.setState({ liked: true }) },
+         'Like'
+       );
+     }
+   }
+   
+  
+   const domContainer = document.querySelector('#like_button_container');
+   const root = ReactDOM.createRoot(domContainer);
+   root.render(e(LikeButton));
+   </script>
+  
+
+
+
+
+
+
+
+  <!-- 3
+  <div id="mydiv"></div>
+
+    <script type="text/babel" type="javascript">
+      import ReactDOM from 'react-dom';
+      function Hello() {
+        return <h1>Hello World!</h1>;
+      }
+
+      ReactDOM.render(<Hello />, document.getElementById('mydiv'))
+    </script>
+  3 -->
+
+
+  <!-- ----------------- -->
+
+
+  <!-- <script
+    src="https://unpkg.com/react@16/umd/react.production.min.js"
+    crossorigin
+    type="javascript"
+  ></script>
+  <script
+    src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"
+    crossorigin
+  ></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel" src="WelcomeBack.js"></script>
+  <script type="text/babel" src="CoolButton.js"></script>
+
+  <script type="text/babel">
+    ReactDOM.render(<WelcomeBack />, document.querySelector(".welcome-back"));
+  </script> -->
+
+
+
+
+
+
+
+
+
+
 
   <input type="submit">
+
+
 </form>
-  
+ 
+
 {% endblock %}
