@@ -139,48 +139,45 @@
   <script type = 'module'> 
   // 'use strict';
     import React from 'react';
-    import ReactDOM from 'react-dom';
-
+    import ReactDOM from "react-dom/client";
   </script>
    
 
   <script>
    const e = React.createElement;
-  //  var dirServer = process.env.PWD;
-   var path = document.location.pathname;
-   var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
 
-   console.log('here')
-  //  console.log(dirServer);
-   console.log('here2')
+  var path = document.location.pathname;
+  var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
+  // var loc = window.location.pathname;
 
 
 
-   class LikeButton extends React.Component {
-     constructor(props) {
-       super(props);
-       this.state = { liked: false };
-     }
-   
-     render() {
-       if (this.state.liked) {
-         return 'You liked this.';
-       }
-   
-       return e(
-         'button',
-         { onClick: () => this.setState({ liked: true }) },
-         'Like'
-       );
-     }
-   }
-   
-  
-   const domContainer = document.querySelector('#like_button_container');
-   const root = ReactDOM.createRoot(domContainer);
-   root.render(e(LikeButton));
-   </script>
-  
+  class LikeButton extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { liked: false };
+    }
+
+    render() {
+      if (this.state.liked) {
+        return 'You liked this.';
+      }
+
+      return e(
+        'button',
+        { onClick: () => this.setState({ liked: true }) },
+        'Like'
+      );
+    }
+  }
+
+
+  const domContainer = document.querySelector('#like_button_container');
+  const root = ReactDOM.createRoot(domContainer);
+  root.render(e(LikeButton));
+
+  </script>
+    
 
 
 

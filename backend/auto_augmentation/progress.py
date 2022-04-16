@@ -66,13 +66,11 @@ def response():
         # generate random policies at start
         policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
         q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
-        print("q_values: ", q_values)
+        print("q_values testing: ", q_values)
 
         plt.figure()
         plt.plot(q_values)
-        plt.savefig('/static/image/test.png')
 
-        # plt.plot(best_q_values)
 
         best_q_values = np.array(best_q_values)
         # save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
