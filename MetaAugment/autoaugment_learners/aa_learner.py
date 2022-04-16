@@ -217,7 +217,8 @@ class aa_learner:
         which is:
             1. <generate a random policy>
             2. <see how good that policy is>
-            3. <save how good the policy is in a list/dictionary>
+            3. <save how good the policy is in a list/dictionary and 
+                (if applicable,) update the controller (e.g. RL agent)>
         
         Args:
             train_dataset (torchvision.dataset.vision.VisionDataset)
@@ -234,16 +235,17 @@ class aa_learner:
         """
 
         # This is dummy code
+
         # test out 15 random policies
-        for _ in range(15):
-            policy = self.generate_new_policy()
+        # for _ in range(15):
+            # policy = self.generate_new_policy()
 
-            pprint(policy)
-            child_network = child_network_architecture()
-            reward = self.test_autoaugment_policy(policy, child_network, train_dataset,
-                                                test_dataset, toy_flag)
+            # pprint(policy)
+            # child_network = child_network_architecture()
+            # reward = self.test_autoaugment_policy(policy, child_network, train_dataset,
+            #                                     test_dataset, toy_flag)
 
-            self.history.append((policy, reward))
+            # self.history.append((policy, reward))
     
 
     def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, 
