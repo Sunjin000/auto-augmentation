@@ -146,6 +146,15 @@
 
   <script>
    const e = React.createElement;
+  //  var dirServer = process.env.PWD;
+   var path = document.location.pathname;
+   var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
+
+   console.log('here')
+  //  console.log(dirServer);
+   console.log('here2')
+
+
 
    class LikeButton extends React.Component {
      constructor(props) {
