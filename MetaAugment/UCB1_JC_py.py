@@ -21,7 +21,7 @@ from numpy import save, load
 from tqdm import trange
 
 from MetaAugment.child_networks import *
-from MetaAugment.main import create_toy
+from MetaAugment.main import create_toy, train_child_network
 
 
 # In[6]:
@@ -184,46 +184,9 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         sgd = optim.SGD(model.parameters(), lr=1e-1)
         cost = nn.CrossEntropyLoss()
 
-        # set variables for best validation accuracy and early stop count
-        best_acc = 0
-        early_stop_cnt = 0
-
-        # train model and check validation accuracy each epoch
-        for _epoch in range(max_epochs):
-
-            # train model
-            model.train()
-            for idx, (train_x, train_label) in enumerate(train_loader):
-                label_np = np.zeros((train_label.shape[0], num_labels))
-                sgd.zero_grad()
-                predict_y = model(train_x.float())
-                loss = cost(predict_y, train_label.long())
-                loss.backward()
-                sgd.step()
-
-            # check validation accuracy on validation set
-            correct = 0
-            _sum = 0
-            model.eval()
-            for idx, (test_x, test_label) in enumerate(test_loader):
-                predict_y = model(test_x.float()).detach()
-                predict_ys = np.argmax(predict_y, axis=-1)
-                label_np = test_label.numpy()
-                _ = predict_ys == test_label
-                correct += np.sum(_.numpy(), axis=-1)
-                _sum += _.shape[0]
-            
-            # update best validation accuracy if it was higher, otherwise increase early stop count
-            acc = correct / _sum
-            if acc > best_acc :
-                best_acc = acc
-                early_stop_cnt = 0
-            else:
-                early_stop_cnt += 1
-
-            # exit if validation gets worse over 10 runs
-            if early_stop_cnt >= early_stop_num:
-                break
+        best_acc = train_child_network(model, train_loader, test_loader, sgd,
+                         cost, max_epochs, early_stop_num, logging=False,
+                         print_every_epoch=False)
 
         # update q_values
         if policy < num_policies:
@@ -253,25 +216,25 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
 # # In[9]:
 
 
-# batch_size = 32       # size of batch the inner NN is trained with
-# learning_rate = 1e-1  # fix learning rate
-# ds = "MNIST"          # pick dataset (MNIST, KMNIST, FashionMNIST, CIFAR10, CIFAR100)
-# toy_size = 0.02       # total propeortion of training and test set we use
-# max_epochs = 100      # max number of epochs that is run if early stopping is not hit
-# early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
-# num_policies = 5      # fix number of policies
-# num_sub_policies = 5  # fix number of sub-policies in a policy
-# iterations = 100      # total iterations, should be more than the number of policies
-# IsLeNet = "SimpleNet" # using LeNet or EasyNet or SimpleNet
+batch_size = 32       # size of batch the inner NN is trained with
+learning_rate = 1e-1  # fix learning rate
+ds = "MNIST"          # pick dataset (MNIST, KMNIST, FashionMNIST, CIFAR10, CIFAR100)
+toy_size = 0.02       # total propeortion of training and test set we use
+max_epochs = 100      # max number of epochs that is run if early stopping is not hit
+early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
+num_policies = 5      # fix number of policies
+num_sub_policies = 5  # fix number of sub-policies in a policy
+iterations = 100      # total iterations, should be more than the number of policies
+IsLeNet = "SimpleNet" # using LeNet or EasyNet or SimpleNet
 
-# # generate random policies at start
-# policies = generate_policies(num_policies, num_sub_policies)
+# generate random policies at start
+policies = generate_policies(num_policies, num_sub_policies)
 
-# q_values, best_q_values = run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet)
+q_values, best_q_values = run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet)
 
-# plt.plot(best_q_values)
+plt.plot(best_q_values)
 
-# best_q_values = np.array(best_q_values)
-# save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
-# #best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
+best_q_values = np.array(best_q_values)
+save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
+#best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
 

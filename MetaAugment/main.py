@@ -106,9 +106,8 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
 
     if logging:
         return best_acc.item(), acc_log
-    
-    print('main.train_child_network best accuracy: ', best_acc)
-    return best_acc.item()
+    else:
+        return best_acc.item()
 
 if __name__=='__main__':
     import MetaAugment.child_networks as cn
