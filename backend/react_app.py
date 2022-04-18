@@ -1,8 +1,11 @@
-from flask import Flask
+from flask import Flask, request
+from flask_cors import CORS
 
-api = Flask(__name__)
+app = Flask(__name__)
+CORS(app)
 
-@api.route('/')
+
+@app.route('/profile')
 def my_profile():
     response_body = {
         "name": "Nagato",
@@ -10,3 +13,7 @@ def my_profile():
     }
 
     return response_body
+
+# def get_user_input():
+
+#     return request.args
