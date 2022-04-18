@@ -1,6 +1,15 @@
 {% extends "basic.html" %}
 {% block title%}Progress{% endblock %}
 {% block body %}
+
+
+<ul>
+Excluded methods:
+    {% for method in exclude_method %} 
+        {{method}},
+    {% endfor %}
+
+</ul>
 Training the model...
 
 <div>

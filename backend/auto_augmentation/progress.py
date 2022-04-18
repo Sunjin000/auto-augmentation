@@ -31,6 +31,11 @@ def response():
     # hyperparameters to change
     # print("thing: ", request.files['dataset_upload'] )
     if request.method == 'POST':
+
+        exclude_method = request.form.getlist("action_space")
+        num_funcs = len(exclude_method)
+
+
         batch_size = 1       # size of batch the inner NN is trained with
         learning_rate = 1e-1  # fix learning rate
         ds = request.form.get("dataset_selection")      # pick dataset (MNIST, KMNIST, FashionMNIST, CIFAR10, CIFAR100)
@@ -76,9 +81,10 @@ def response():
         # save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
         #best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
         print("DONE")
+    print("HEREHERE exclude_method: ", exclude_method)
 
 
-    return render_template("progress.html")
+    return render_template("progress.html", exclude_method = exclude_method)
 
 
 

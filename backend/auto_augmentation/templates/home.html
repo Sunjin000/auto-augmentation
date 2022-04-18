@@ -71,7 +71,7 @@
 
   <h3>Advanced Search</h3>
   <!-- action(data augmentation) space -->
-  Which data augmentation method you would like exclude? <br>
+  Which data augmentation method you would like exclude? <br> <br>
   <input type="checkbox" id="ShearX"
     name="action_space" value="ShearX">
   <label for="ShearX">ShearX</label>
@@ -89,7 +89,7 @@
   <label for="TranslateY">TranslateY</label>
 
   <input type="checkbox" id="Rotate"
-    name="Rotate" value="Rotate">
+    name="action_space" value="Rotate">
   <label for="Rotate">Rotate</label><br>
 
   <input type="checkbox" id="Brightness"
@@ -129,79 +129,87 @@
   <label for="Invert">Invert</label><br><br><br>
 
 
-  
-  <div id="like_button_container"></div>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+  <!-- <link rel="stylesheet" href="multiselect/jquery.multiselect.css"> -->
+  <!-- <script src="multiselect/jquery.multiselect.js"></script> -->
+  <!-- <div class="container"> -->
+  <!-- <select name="langOpt[]" multiple id="langOpt"> -->
+    <!-- <option value="C++">C++</option> -->
+    <!-- <option value="C#">C#</option> -->
+    <!-- <option value="Java">Java</option> -->
+    <!-- <option value="Objective-C">Objective-C</option> -->
+    <!-- <option value="JavaScript">JavaScript</option> -->
+    <!-- <option value="Perl">Perl</option> -->
+    <!-- <option value="PHP">PHP</option> -->
+    <!-- <option value="Ruby on Rails">Ruby on Rails</option> -->
+    <!-- <option value="Android">Android</option> -->
+    <!-- <option value="iOS">iOS</option> -->
+    <!-- <option value="HTML">HTML</option> -->
+    <!-- <option value="XML">XML</option> -->
+  <!-- </select> -->
+  <!-- <script> -->
+  <!-- $('select[multiple]').multiselect(); -->
+  <!-- $('#langOpt').multiselect({ -->
+    <!-- columns: 1, -->
+    <!-- placeholder: 'Select Languages' -->
+<!-- }); -->
+  <!-- </script> -->
+  <!-- </div> -->
+
+
+  <!-- <div id="like_button_container"></div> -->
+  <!-- <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script> -->
+  <!-- <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script> -->
   <!-- <script src="metarl/auto_augmentation/templates/like_button.js"></script> -->
-
   <script type = 'module'> 
   // 'use strict';
-    import React from 'react';
-    import ReactDOM from "react-dom/client";
+    // import React from 'react';
+    // import ReactDOM from "react-dom/client";
   </script>
-   
-
-  <script>
-   const e = React.createElement;
-
-  var path = document.location.pathname;
-  var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
-  // var loc = window.location.pathname;
-
-
-
-  class LikeButton extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { liked: false };
-    }
-
-    render() {
-      if (this.state.liked) {
-        return 'You liked this.';
-      }
-
-      return e(
-        'button',
-        { onClick: () => this.setState({ liked: true }) },
-        'Like'
-      );
-    }
-  }
-
-
-  const domContainer = document.querySelector('#like_button_container');
-  const root = ReactDOM.createRoot(domContainer);
-  root.render(e(LikeButton));
-
-  </script>
+  <!-- <script> -->
+  <!-- //  const e = React.createElement;
+  // var path = document.location.pathname;
+  // var directory = path.substring(path.indexOf('/'), path.lastIndexOf('/'));
+  // // var loc = window.location.pathname;
+  // class LikeButton extends React.Component {
+  //   constructor(props) {
+  //     super(props);
+  //     this.state = { liked: false };
+  //   }
+  //   render() {
+  //     if (this.state.liked) {
+  //       return 'You liked this.';
+  //     }
+  //     return e(
+  //       'button',
+  //       { onClick: () => this.setState({ liked: true }) },
+  //       'Like'
+  //     );
+  //   }
+  // }
+  // const domContainer = document.querySelector('#like_button_container');
+  // const root = ReactDOM.createRoot(domContainer);
+  // root.render(e(LikeButton)); -->
+   <!-- </script> -->
     
-
-
-
 
 
 
 
   <!-- 3
   <div id="mydiv"></div>
-
     <script type="text/babel" type="javascript">
       import ReactDOM from 'react-dom';
       function Hello() {
         return <h1>Hello World!</h1>;
       }
-
       ReactDOM.render(<Hello />, document.getElementById('mydiv'))
     </script>
   3 -->
-
-
   <!-- ----------------- -->
-
-
   <!-- <script
     src="https://unpkg.com/react@16/umd/react.production.min.js"
     crossorigin
@@ -219,14 +227,6 @@
   <script type="text/babel">
     ReactDOM.render(<WelcomeBack />, document.querySelector(".welcome-back"));
   </script> -->
-
-
-
-
-
-
-
-
 
 
 
