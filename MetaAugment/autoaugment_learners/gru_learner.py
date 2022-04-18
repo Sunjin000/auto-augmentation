@@ -44,21 +44,60 @@ class gru_learner(aa_learner):
     the LSTM for the GRU.
     """
 
-    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=True, alpha=0.2):
+    def __init__(self,
+                # parameters that define the search space
+                sp_num=5,
+                fun_num=14,
+                p_bins=11,
+                m_bins=10,
+                discrete_p_m=False,
+                # hyperparameters for when training the child_network
+                batch_size=8,
+                toy_flag=False,
+                toy_size=0.1,
+                learning_rate=1e-1,
+                max_epochs=float('inf'),
+                early_stop_num=20,
+                # GRU-specific attributes that aren't in all other aa_learners's
+                alpha=0.2,
+                cont_mb_size=8):
         """
         Args:
-            alpha (float): Exploration parameter. It is multiplied to 
+            alpha (float, optional): Exploration parameter. It is multiplied to 
                     operation tensors before they're softmaxed. 
                     The lower this value, the more smoothed the output
                     of the softmaxed will be, hence more exploration.
+                    Defaults to 0.2.
+            cont_mb_size (int, optional): Controller Minibatch Size. How many
+                    policies do we test in order to calculate the 
+                    PPO(proximal policy update) gradient to update
+                    the controller. Defaults to 
         """
+        if discrete_p_m==True:
+            print('Warning: Incompatible discrete_p_m=True input into gru_learner. \
+                discrete_p_m=False will be used')
         
-        super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m=True)
-        self.alpha = alpha
+        super().__init__(sp_num, 
+                fun_num, 
+                p_bins, 
+                m_bins, 
+                discrete_p_m=True, 
+                batch_size=batch_size, 
+                toy_flag=toy_flag, 
+                toy_size=toy_size, 
+                learning_rate=learning_rate,
+                max_epochs=max_epochs,
+                early_stop_num=early_stop_num,)
 
-        self.rnn_output_size = fun_num+p_bins+m_bins
-        self.controller = RNNModel(mode='GRU', output_size=self.rnn_output_size, 
+        # GRU-specific attributes that aren't in general aa_learner's
+        self.alpha = alpha
+        self.cont_mb_size = cont_mb_size
+
+        # CONTROLLER (GRU NETWORK) SETTINGS
+        self.controller = RNNModel(mode='GRU', output_size=self.op_tensor_length, 
                                     num_layers=2, bias=True)
+        self.cont_optim = torch.optim.SGD(self.controller.parameters(), lr=1e-2)
+
         self.softmax = torch.nn.Softmax(dim=0)
 
 
@@ -102,7 +141,7 @@ class gru_learner(aa_learner):
         log_prob = 0
 
         # we need a random input to put in
-        random_input = torch.zeros(self.rnn_output_size, requires_grad=False)
+        random_input = torch.zeros(self.op_tensor_length, requires_grad=False)
 
         # 2*self.sp_num because we need 2 operations for every subpolicy
         vectors = self.controller(input=random_input, time_steps=2*self.sp_num)
@@ -136,16 +175,17 @@ class gru_learner(aa_learner):
         return new_policy, log_prob
 
 
-    def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag, mb_size=8):
-        # optimizer for training the GRU controller
-        cont_optim = torch.optim.SGD(self.controller.parameters(), lr=1e-2)
+    def learn(self, 
+            train_dataset, 
+            test_dataset, 
+            child_network_architecture, 
+            iterations=15,):
 
-        mb_size = 8 # minibatch size
-        b = 0.88 # b is the running exponential mean of the rewards, used for training stability
+        b = 0.5 # b is the running exponential mean of the rewards, used for training stability
                # (see section 3.2 of https://arxiv.org/abs/1611.01578)
 
-        for _ in range(1000):
-            cont_optim.zero_grad()
+        for _ in range(iterations):
+            self.cont_optim.zero_grad()
 
             # obj(objective) is $ \sum_{k=1}^m (reward_k-b) \sum_{t=1}^T log(P(a_t|a_{(t-1):1};\theta_c))$,
             # which is used in PPO
@@ -154,14 +194,15 @@ class gru_learner(aa_learner):
             # sum up the rewards within a minibatch in order to update the running mean, 'b'
             mb_rewards_sum = 0
 
-            for k in range(mb_size):
+            for k in range(self.cont_mb_size):
                 # log_prob is $\sum_{t=1}^T log(P(a_t|a_{(t-1):1};\theta_c))$, used in PPO
                 policy, log_prob = self.generate_new_policy()
 
                 pprint(policy)
-                child_network = child_network_architecture()
-                reward = self.test_autoaugment_policy(policy, child_network, train_dataset,
-                                                    test_dataset, toy_flag)
+                reward = self.test_autoaugment_policy(policy,
+                                                    child_network_architecture, 
+                                                    train_dataset,
+                                                    test_dataset)
                 mb_rewards_sum += reward
 
                 # log
@@ -171,11 +212,11 @@ class gru_learner(aa_learner):
                 obj += (reward-b)*log_prob
             
             # update running mean of rewards
-            b = 0.7*b + 0.3*(mb_rewards_sum/mb_size)
+            b = 0.7*b + 0.3*(mb_rewards_sum/self.cont_mb_size)
 
             (-obj).backward() # We put a minus because we want to maximize the objective, not 
                               # minimize it.
-            cont_optim.step()
+            self.cont_optim.step()
 
             # save the history every 1 epochs as a pickle
             with open('gru_logs.pkl', 'wb') as file:
@@ -195,13 +236,31 @@ if __name__=='__main__':
     import torchvision
     torch.manual_seed(0)
 
-    train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, 
-                                transform=None)
-    test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True,
-                                transform=torchvision.transforms.ToTensor())
-    child_network = cn.lenet
+    # train_dataset = datasets.MNIST(root='./datasets/mnist/train',
+    #                                 train=True, download=True, transform=None)
+    # test_dataset = datasets.MNIST(root='./datasets/mnist/test', 
+    #                         train=False, download=True, 
+    #                         transform=torchvision.transforms.ToTensor())
+    train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
+                            train=True, download=True, transform=None)
+    test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
+                            train=False, download=True,
+                            transform=torchvision.transforms.ToTensor())
+    child_network_architecture = cn.lenet
+    # child_network_architecture = cn.lenet()
 
-
-    learner = gru_learner(discrete_p_m=False)
-    learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
-    pprint(learner.history)
+    agent = gru_learner(
+                        sp_num=7,
+                        toy_flag=True,
+                        toy_size=0.01,
+                        batch_size=4,
+                        learning_rate=0.05,
+                        max_epochs=float('inf'),
+                        early_stop_num=35,
+                        )
+    agent.learn(train_dataset,
+                test_dataset,
+                child_network_architecture=child_network_architecture,
+                iterations=3)
+    
+    pprint(agent.history)

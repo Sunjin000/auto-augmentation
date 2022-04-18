@@ -35,8 +35,33 @@ class randomsearch_learner(aa_learner):
     Tests randomly sampled policies from the search space specified by the AutoAugment
     paper. Acts as a baseline for other aa_learner's.
     """
-    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=True):
-        super().__init__(sp_num, fun_num, p_bins, m_bins, discrete_p_m)
+    def __init__(self,
+                # parameters that define the search space
+                sp_num=5,
+                fun_num=14,
+                p_bins=11,
+                m_bins=10,
+                discrete_p_m=True,
+                # hyperparameters for when training the child_network
+                batch_size=8,
+                toy_flag=False,
+                toy_size=0.1,
+                learning_rate=1e-1,
+                max_epochs=float('inf'),
+                early_stop_num=30,
+                ):
+        
+        super().__init__(sp_num, 
+                fun_num, 
+                p_bins, 
+                m_bins, 
+                discrete_p_m=discrete_p_m,
+                batch_size=batch_size,
+                toy_flag=toy_flag,
+                toy_size=toy_size,
+                learning_rate=learning_rate,
+                max_epochs=max_epochs,
+                early_stop_num=early_stop_num,)
         
 
     def generate_new_discrete_operation(self):
@@ -121,22 +146,22 @@ class randomsearch_learner(aa_learner):
         return new_policy
 
 
-    def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
-        # test out 15 random policies
-        for _ in range(15):
+    def learn(self, 
+            train_dataset, 
+            test_dataset, 
+            child_network_architecture, 
+            iterations=15):
+        # test out `iterations` number of  random policies
+        for _ in range(iterations):
             policy = self.generate_new_policy()
 
             pprint(policy)
-            child_network = child_network_architecture()
-            reward = self.test_autoaugment_policy(policy, child_network, train_dataset,
-                                                test_dataset, toy_flag)
+            reward = self.test_autoaugment_policy(policy,
+                                                child_network_architecture,
+                                                train_dataset,
+                                                test_dataset)
 
             self.history.append((policy, reward))
-
-            # save the history every 10 epochs as a pickle
-            if _%10==1:
-                with open('randomsearch_logs.pkl', 'wb') as file:
-                    pickle.dump(self.history, file)
     
 
 
@@ -148,12 +173,32 @@ if __name__=='__main__':
     import torchvision.datasets as datasets
     import torchvision
     
-    train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train',
-                                    train=True, download=True, transform=None)
-    test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
-                            train=False, download=True, transform=torchvision.transforms.ToTensor())
-    child_network = cn.bad_lenet
+    # train_dataset = datasets.MNIST(root='./datasets/mnist/train',
+    #                                 train=True, download=True, transform=None)
+    # test_dataset = datasets.MNIST(root='./datasets/mnist/test', 
+    #                         train=False, download=True, transform=torchvision.transforms.ToTensor())
+    train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
+                            train=True, download=True, transform=None)
+    test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
+                            train=False, download=True,
+                            transform=torchvision.transforms.ToTensor())
+    child_network_architecture = cn.lenet
+    # child_network_architecture = cn.lenet()
 
-    rs_learner = randomsearch_learner(discrete_p_m=True)
-    rs_learner.learn(train_dataset, test_dataset, child_network, toy_flag=True)
-    pprint(rs_learner.history)
+    agent = randomsearch_learner(
+                                sp_num=7,
+                                toy_flag=True,
+                                toy_size=0.01,
+                                batch_size=4,
+                                learning_rate=0.05,
+                                max_epochs=float('inf'),
+                                early_stop_num=35,
+                                )
+    agent.learn(train_dataset,
+                test_dataset,
+                child_network_architecture=child_network_architecture,
+                iterations=3)
+
+    # with open('randomsearch_logs.pkl', 'wb') as file:
+    #                 pickle.dump(self.history, file)
+    pprint(agent.history)

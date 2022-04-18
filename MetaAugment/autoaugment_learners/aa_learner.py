@@ -1,3 +1,4 @@
+from numpy import isin
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,6 +9,8 @@ import torchvision.transforms as transforms
 
 from pprint import pprint
 import matplotlib.pyplot as plt
+import copy
+import types
 
 
 # We will use this augmentation_space temporarily. Later on we will need to 
@@ -34,30 +37,67 @@ augmentation_space = [
 class aa_learner:
     """
     The parent class for all aa_learner's
+    
+    Attributes:
+        op_tensor_length (int): what is the dimension of the tensor that represents
+                            each 'operation' (which is made up of fun_name, prob,
+                            and mag).
     """
-    def __init__(self, sp_num=5, fun_num=14, p_bins=11, m_bins=10, discrete_p_m=False):
+    def __init__(self, 
+                # parameters that define the search space
+                sp_num=5,
+                fun_num=14,
+                p_bins=11,
+                m_bins=10,
+                discrete_p_m=False,
+                # hyperparameters for when training the child_network
+                batch_size=32,
+                toy_flag=False,
+                toy_size=0.1,
+                learning_rate=1e-1,
+                max_epochs=float('inf'),
+                early_stop_num=20,
+                ):
         """
         Args:
-            spdim (int): number of subpolicies per policy
-            fun_num (int): number of image functions in our search space
-            p_bins (int): number of bins we divide the interval [0,1] for probabilities
-            m_bins (int): number of bins we divide the magnitude space
-
-            discrete_p_m (boolean): Whether or not the agent should represent probability and 
-                                    magnitude as discrete variables as the out put of the 
-                                    controller (A controller can be a neural network, genetic
-                                    algorithm, etc.)
-
+            sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+            fun_num (int, optional): number of image functions in our search space.
+                            Defaults to 14.
+            p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                            probabilities. Defaults to 11.
+            m_bins (int, optional): number of bins we divide the magnitude space.
+                            Defaults to 10.
+            discrete_p_m (bool, optional):
+                            Whether or not the agent should represent probability and 
+                            magnitude as discrete variables as the out put of the 
+                            controller (A controller can be a neural network, genetic
+                            algorithm, etc.). Defaults to False
+            
+            batch_size (int, optional): child_network training parameter. Defaults to 32.
+            toy_flag (bool, optional): child_network training parameter. Defaults to False.
+            toy_size (int, optional): child_network training parameter. ratio of original
+                                dataset used in toy dataset. Defaults to 0.1.
+            learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
+            max_epochs (Union[int, float], optional): child_network training parameter. 
+                                Defaults to float('inf').
+            early_stop_num (int, optional): child_network training parameter. Defaults to 20.
         """
+        # related to defining the search space
         self.sp_num = sp_num
         self.fun_num = fun_num
         self.p_bins = p_bins
         self.m_bins = m_bins
-
+        self.discrete_p_m = discrete_p_m
         self.op_tensor_length = fun_num+p_bins+m_bins if discrete_p_m else fun_num+2
 
-        # should we repre
-        self.discrete_p_m = discrete_p_m
+        # related to training of the child_network
+        self.batch_size = batch_size
+        self.toy_flag = toy_flag
+        self.toy_size = toy_size
+        self.learning_rate = learning_rate
+
+        self.max_epochs = max_epochs
+        self.early_stop_num = early_stop_num
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
@@ -208,7 +248,7 @@ class aa_learner:
         raise NotImplementedError('generate_new_policy not implemented in aa_learner')
 
 
-    def learn(self, train_dataset, test_dataset, child_network_architecture, toy_flag):
+    def learn(self, train_dataset, test_dataset, child_network_architecture, iterations=15):
         """
         Runs the main loop (of finding a good policy for the given child network,
         training dataset, and test(validation) dataset)
@@ -223,33 +263,53 @@ class aa_learner:
         Args:
             train_dataset (torchvision.dataset.vision.VisionDataset)
             test_dataset (torchvision.dataset.vision.VisionDataset)
-            child_network_architecture (type): NOTE THAT THIS VARIABLE IS NOT
-                                    A nn.module object. Therefore, this needs
-                                    to be, say, `models.LeNet` instead of 
-                                    `models.LeNet()`.
-            toy_flag (boolean): whether we want to obtain a toy version of 
-                            train_dataset and test_dataset and use those.
-
+            child_network_architecture (Union[function, nn.Module]):
+                                NOTE This can be both, for example,
+                                    MyNetworkArchitecture
+                                    and
+                                    MyNetworkArchitecture()
+            iterations (int): how many different policies do you want to test
         Returns:
             none
+        
+        
+        If child_network_architecture is a <function>, then we make an 
+        instance of it. If this is a <nn.Module>, we make a copy.deepcopy
+        of it. We make a copy of it because we we want to keep an untrained 
+        (initialized but not trained) version of the child network
+        architecture, because we need to train it multiple times
+        for each policy. Keeping child_network_architecture as a `function` is
+        potentially better than keeping it as a nn.Module because every
+        time we make a new instance, the weights are differently initialized
+        which means that our results will be less biased
+        (https://en.wikipedia.org/wiki/Bias_(statistics)).
+        
+
+        Example code:
+
+        .. code-block::
+            :caption: This is an example dummy code which tests out 15 
+                      different policies
+            
+            for _ in range(15):
+                policy = self.generate_new_policy()
+
+                pprint(policy)
+                reward = self.test_autoaugment_policy(policy,
+                                        child_network_architecture,
+                                        train_dataset,
+                                        test_dataset, toy_flag)
+
+                self.history.append((policy, reward))
         """
-
-        # This is dummy code
-
-        # test out 15 random policies
-        # for _ in range(15):
-            # policy = self.generate_new_policy()
-
-            # pprint(policy)
-            # child_network = child_network_architecture()
-            # reward = self.test_autoaugment_policy(policy, child_network, train_dataset,
-            #                                     test_dataset, toy_flag)
-
-            # self.history.append((policy, reward))
     
 
-    def test_autoaugment_policy(self, policy, child_network, train_dataset, test_dataset, 
-                                toy_flag, logging=False):
+    def test_autoaugment_policy(self,
+                                policy,
+                                child_network_architecture,
+                                train_dataset,
+                                test_dataset,
+                                logging=False):
         """
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
@@ -257,7 +317,11 @@ class aa_learner:
 
         Args: 
             policy (list[tuple]): A list of tuples representing a policy.
-            child_network (nn.module)
+            child_network_architecture (Union[function, nn.Module]):
+                                If this is a :code:`function`, then we make
+                                an instance of it. If this is a 
+                                :code:`nn.Module`, we make a :code:`copy.deepcopy`
+                                of it.
             train_dataset (torchvision.dataset.vision.VisionDataset)
             test_dataset (torchvision.dataset.vision.VisionDataset)
             toy_flag (boolean): Whether we want to obtain a toy version of 
@@ -267,6 +331,17 @@ class aa_learner:
         Returns:
             accuracy (float): best accuracy reached in any
         """
+
+        
+        if isinstance(child_network_architecture, types.FunctionType):
+            child_network = child_network_architecture()
+        elif isinstance(child_network_architecture, torch.nn.Module):
+            child_network = copy.deepcopy(child_network_architecture)
+        else:
+            raise ValueError('child_network_architecture must either be \
+                            a <function> or a <torch.nn.Module>. Type of : ',
+                            child_network_architecture, ': ' ,
+                            type(child_network_architecture))
 
         # We need to define an object aa_transform which takes in the image and 
         # transforms it with the policy (specified in its .policies attribute)
@@ -282,21 +357,30 @@ class aa_learner:
         train_dataset.transform = train_transform
 
         # create Dataloader objects out of the Dataset objects
-        train_loader, test_loader = create_toy(train_dataset,
+        if self.toy_flag:
+            train_loader, test_loader = create_toy(train_dataset,
                                                 test_dataset,
-                                                batch_size=32,
-                                                n_samples=0.5,
+                                                batch_size=self.batch_size,
+                                                n_samples=self.toy_size,
                                                 seed=100)
+        else:
+            train_loader = torch.utils.data.DataLoader(train_dataset, 
+                                                batch_size=self.batch_size)
+            test_loader = torch.utils.data.DataLoader(test_dataset, 
+                                                batch_size=self.batch_size)
         
         # train the child network with the dataloaders equipped with our specific policy
         accuracy = train_child_network(child_network, 
                                     train_loader, 
                                     test_loader, 
-                                    sgd = optim.SGD(child_network.parameters(), lr=3e-1),
-                                    # sgd = optim.Adadelta(child_network.parameters(), lr=1e-2),
+                                    sgd = optim.SGD(child_network.parameters(),
+                                                    lr=self.learning_rate),
+                                    # sgd = optim.Adadelta(
+                                    #               child_network.parameters(),
+                                    #               lr=self.learning_rate),
                                     cost = nn.CrossEntropyLoss(),
-                                    max_epochs = 3000000, 
-                                    early_stop_num = 15, 
+                                    max_epochs = self.max_epochs, 
+                                    early_stop_num = self.early_stop_num, 
                                     logging = logging,
                                     print_every_epoch=True)
         
@@ -304,7 +388,7 @@ class aa_learner:
         return accuracy
     
 
-    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, toy_flag, n=5):
+    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
         """
         I made this to plot a couple of accuracy graphs to help manually tune my gradient 
         optimizer hyperparameters.
@@ -320,9 +404,12 @@ class aa_learner:
             policy = self.generate_new_policy()
 
             pprint(policy)
-            child_network = child_network_architecture()
-            reward, acc_list = self.test_autoaugment_policy(policy, child_network, train_dataset,
-                                                test_dataset, toy_flag, logging=True)
+            reward, acc_list = self.test_autoaugment_policy(policy,
+                                                child_network_architecture,
+                                                train_dataset,
+                                                test_dataset,
+                                                toy_flag=self.toy_flag,
+                                                logging=True)
 
             self.history.append((policy, reward))
             acc_lists.append(acc_list)

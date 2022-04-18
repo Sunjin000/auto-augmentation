@@ -34,9 +34,15 @@ def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
     return train_loader, test_loader
 
 
-def train_child_network(child_network, train_loader, test_loader, sgd,
-                         cost, max_epochs=2000, early_stop_num = 10, logging=False,
-                         print_every_epoch=True):
+def train_child_network(child_network,
+                        train_loader,
+                        test_loader,
+                        sgd,
+                        cost,
+                        max_epochs=2000,
+                        early_stop_num=10,
+                        logging=False,
+                        print_every_epoch=True):
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -50,7 +56,8 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
     acc_log = [] 
 
     # train child_network and check validation accuracy each epoch
-    for _epoch in range(max_epochs):
+    _epoch=0
+    while _epoch < max_epochs:
 
         # train child_network
         child_network.train()
@@ -103,6 +110,8 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         if print_every_epoch:
             print('main.train_child_network best accuracy: ', best_acc)
         acc_log.append(acc)
+
+        _epoch+=1
 
     if logging:
         return best_acc.item(), acc_log

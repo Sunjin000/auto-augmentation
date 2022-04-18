@@ -33,21 +33,14 @@ Defining the problem setting:
     child_network = cn.lenet
 
 
-
-.. note:: 
-    It is important not to type
-
-    .. code-block::
-
-        child_network = cn.lenet()
-
-    We need the ``child_network`` variable to be a ``type`` object, not a ``nn.Module`` object
-    because the ``child_network`` will be called multiple times to initialize a 
-    ``nn.Module`` of its architecture multiple times. This is because every time
-    we need to evaluate a different policy, we need to train another new network
-    of the same architecture.
-
-
+.. warning:: 
+    
+    In earlier versions, we had to write ``child_network=cn.LeNet`` 
+    and not ``child_network=cn.LeNet()``. But now we can do both. 
+    Both types of objects can be input into ``aa_learner.learn()``.
+    
+    A downside (or maybe the upside??) of doing the latter is that 
+    the same randomly initialized weights are used for every policy.
 
 Using the random search learner to evaluate randomly generated policies: (You
 can use any other learner in place of random search learner as well)
@@ -58,10 +51,24 @@ can use any other learner in place of random search learner as well)
     # aa_agent = aal.evo_learner()
     # aa_agent = aal.ucb_learner()
     # aa_agent = aal.ac_learner()
-    aa_agent = aal.randomsearch_learner()
-    aa_agent.learn(train_dataset, test_dataset, child_network)
+    aa_agent = aal.randomsearch_learner(
+                                    sp_num=7,
+                                    toy_flag=True,
+                                    toy_size=0.01,
+                                    batch_size=4,
+                                    learning_rate=0.05,
+                                    max_epochs=float('inf'),
+                                    early_stop_num=35,
+                                    )
+    aa_agent.learn(train_dataset,
+                test_dataset,
+                child_network_architecture=child_network,
+                iterations=15000)
 
+You can set further hyperparameters when defining a aa_learner. 
 
+Also, depending on what learner you are using, there might be unique hyperparameters.
+For example, in the GRU learner you can tune the exploration parameter ``alpha``.
 
 Viewing the results:
 
