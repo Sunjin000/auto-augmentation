@@ -46,18 +46,19 @@ def response():
         num_sub_policies = 5  # fix number of sub-policies in a policy
         iterations = 5      # total iterations, should be more than the number of policies
         IsLeNet = request.form.get("network_selection")   # using LeNet or EasyNet or SimpleNet ->> default 
-
-        print(f'@@@@@ dataset is: {ds}, network is :{IsLeNet}')
-
+        print("HERHERHERHEHR")
+        
         # if user upload datasets and networks, save them in the database
         if ds == 'Other':
             ds_folder = request.files['dataset_upload']
-            print('@@@ ds_folder', ds_folder)
             ds_name_zip = ds_folder.filename
             ds_folder.save('./MetaAugment/datasets/'+ ds_name_zip)
             with zipfile.ZipFile('./MetaAugment/datasets/'+ ds_name_zip, 'r') as zip_ref:
-                zip_ref.extractall('./MetaAugment/datasets/')
+                zip_ref.extractall('./MetaAugment/datasets/upload_dataset/')
+                print("zip_ref name: ", zip_ref.namelist())
             ds_name = ds_name_zip.split('.')[0]
+            print("DATASET NAMe: ", ds_name_zip)
+            os.remove(f'./MetaAugment/datasets/{ds_name_zip}')
 
         else: 
             ds_name = None
@@ -71,7 +72,6 @@ def response():
         # generate random policies at start
         policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
         q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
-        print("q_values testing: ", q_values)
 
         plt.figure()
         plt.plot(q_values)
@@ -81,7 +81,6 @@ def response():
         # save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
         #best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
         print("DONE")
-    print("HEREHERE exclude_method: ", exclude_method)
 
 
     return render_template("progress.html", exclude_method = exclude_method)
