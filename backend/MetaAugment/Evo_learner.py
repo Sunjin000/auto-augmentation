@@ -18,23 +18,12 @@ from torchvision.transforms import functional as F, InterpolationMode
 from typing import List, Tuple, Optional, Dict
 import heapq
 import math
-
-import math
 import torch
 
 from enum import Enum
 from torch import Tensor
-from typing import List, Tuple, Optional, Dict
-
-from torchvision.transforms import functional as F, InterpolationMode
-
-# import MetaAugment.child_networks as child_networks
-# from main import *
-# from autoaugment_learners.autoaugment import *
 
 
-# np.random.seed(0)
-# random.seed(0)
 
 
 augmentation_space = [
@@ -54,6 +43,7 @@ augmentation_space = [
             ("Equalize", False),
             ("Invert", False),
         ]
+
 
 class Learner(nn.Module):
     def __init__(self, fun_num=14, p_bins=11, m_bins=10, sub_num_pol=5):
@@ -92,96 +82,52 @@ class Learner(nn.Module):
         return y
 
 
-# class LeNet(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.conv1 = nn.Conv2d(1, 6, 5)
-#         self.relu1 = nn.ReLU()
-#         self.pool1 = nn.MaxPool2d(2)
-#         self.conv2 = nn.Conv2d(6, 16, 5)
-#         self.relu2 = nn.ReLU()
-#         self.pool2 = nn.MaxPool2d(2)
-#         self.fc1 = nn.Linear(256, 120)
-#         self.relu3 = nn.ReLU()
-#         self.fc2 = nn.Linear(120, 84)
-#         self.relu4 = nn.ReLU()
-#         self.fc3 = nn.Linear(84, 10)
-#         self.relu5 = nn.ReLU()
-
-#     def forward(self, x):
-#         y = self.conv1(x)
-#         y = self.relu1(y)
-#         y = self.pool1(y)
-#         y = self.conv2(y)
-#         y = self.relu2(y)
-#         y = self.pool2(y)
-#         y = y.view(y.shape[0], -1)
-#         y = self.fc1(y)
-#         y = self.relu3(y)
-#         y = self.fc2(y)
-#         y = self.relu4(y)
-#         y = self.fc3(y)
-#         return y
-
-
-class LeNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(784, 2048)
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.Linear(2048, 10)
-        self.relu2 = nn.ReLU()
-
-    def forward(self, x):
-        x = x.reshape((-1, 784))
-        y = self.fc1(x)
-        y = self.relu1(y)
-        y = self.fc2(y)
-        y = self.relu2(y)
-        return y
-
-
-
-# ORGANISING DATA
-
-# transforms = ['RandomResizedCrop', 'RandomHorizontalFlip', 'RandomVerticalCrop', 'RandomRotation']
-train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, transform=torchvision.transforms.ToTensor())
-test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True, transform=torchvision.transforms.ToTensor())
-n_samples = 0.02
-# shuffle and take first n_samples  %age of training dataset
-shuffled_train_dataset = torch.utils.data.Subset(train_dataset, torch.randperm(len(train_dataset)).tolist())
-indices_train = torch.arange(int(n_samples*len(train_dataset)))
-reduced_train_dataset = torch.utils.data.Subset(shuffled_train_dataset, indices_train)
-# shuffle and take first n_samples %age of test dataset
-shuffled_test_dataset = torch.utils.data.Subset(test_dataset, torch.randperm(len(test_dataset)).tolist())
-indices_test = torch.arange(int(n_samples*len(test_dataset)))
-reduced_test_dataset = torch.utils.data.Subset(shuffled_test_dataset, indices_test)
-
-train_loader = torch.utils.data.DataLoader(reduced_train_dataset, batch_size=60000)
-
-
-
-
-
 class Evolutionary_learner():
 
-    def __init__(self, network, num_solutions = 10, num_generations = 5, num_parents_mating = 5, train_loader = None, child_network = None, p_bins = 11, mag_bins = 10, sub_num_pol=5, fun_num = 14, augmentation_space = None, train_dataset = None, test_dataset = None):
+    def __init__(self, network, num_solutions = 10, num_generations = 5, num_parents_mating = 5, batch_size=32, child_network = None, p_bins = 11, mag_bins = 10, sub_num_pol=5, fun_num = 14, exclude_method=[], augmentation_space = None, ds=None, ds_name=None):
         self.auto_aug_agent = Learner(fun_num=fun_num, p_bins=p_bins, m_bins=mag_bins, sub_num_pol=sub_num_pol)
         self.torch_ga = torchga.TorchGA(model=network, num_solutions=num_solutions)
         self.num_generations = num_generations
         self.num_parents_mating = num_parents_mating
         self.initial_population = self.torch_ga.population_weights
-        self.train_loader = train_loader
         self.child_network = child_network
         self.p_bins = p_bins 
         self.sub_num_pol = sub_num_pol
         self.mag_bins = mag_bins
         self.fun_num = fun_num
-        self.augmentation_space = augmentation_space
-        self.train_dataset = train_dataset
-        self.test_dataset = test_dataset
+        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
+
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
+
+
+        transform = torchvision.transforms.Compose([
+                    torchvision.transforms.CenterCrop(28),
+                    torchvision.transforms.ToTensor()])
+
+
+        if ds == "MNIST":
+            self.train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train', train=True, download=True, transform=transform)
+            self.test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', train=False, download=True, transform=transform)
+        elif ds == "KMNIST":
+            self.train_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/train', train=True, download=True, transform=transform)
+            self.test_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/test', train=False, download=True, transform=transform)
+        elif ds == "FashionMNIST":
+            self.train_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            self.test_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
+        elif ds == "CIFAR10":
+            self.train_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            self.test_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
+        elif ds == "CIFAR100":
+            self.train_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            self.test_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
+        elif ds == 'Other':
+            dataset = datasets.ImageFolder('./MetaAugment/datasets/upload_dataset/'+ ds_name, transform=transform)
+            len_train = int(0.8*len(dataset))
+            self.train_dataset, self.test_dataset = torch.utils.data.random_split(dataset, [len_train, len(dataset)-len_train])
+
+        self.train_loader = torch.utils.data.DataLoader(self.train_dataset, batch_size=batch_size)
+
 
         self.set_up_instance()
 
@@ -296,10 +242,6 @@ class Evolutionary_learner():
         return [(self.augmentation_space[max_idx[0]][0], prob1, mag1), (self.augmentation_space[max_idx[1]][0], prob2, mag2)]
 
 
-        
-
-
-
     def run_instance(self, return_weights = False):
         """
         Runs the GA instance and returns the model weights as a dictionary
@@ -329,14 +271,6 @@ class Evolutionary_learner():
             return solution, solution_fitness, solution_idx
 
 
-    def new_model(self):
-        """
-        Simple function to create a copy of the secondary model (used for classification)
-        """
-        copy_model = copy.deepcopy(self.child_network)
-        return copy_model
-
-
     def set_up_instance(self):
         """
         Initialises GA instance, as well as fitness and on_generation functions
@@ -363,7 +297,7 @@ class Evolutionary_learner():
 
             self.auto_aug_agent.load_state_dict(model_weights_dict)
 
-            for idx, (test_x, label_x) in enumerate(train_loader):
+            for idx, (test_x, label_x) in enumerate(self.train_loader):
                 full_policy = self.get_policy_cov(test_x)
 
             fit_val = ((test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0])/
@@ -436,34 +370,25 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
     best_acc=0
     early_stop_cnt = 0
     
-    # logging accuracy for plotting
     acc_log = [] 
 
-    # train child_network and check validation accuracy each epoch
     for _epoch in range(max_epochs):
 
-        # train child_network
         child_network.train()
         for idx, (train_x, train_label) in enumerate(train_loader):
-            # onto device
             train_x = train_x.to(device=device, dtype=train_x.dtype)
             train_label = train_label.to(device=device, dtype=train_label.dtype)
-
-            # label_np = np.zeros((train_label.shape[0], 10))
-
             sgd.zero_grad()
             predict_y = child_network(train_x.float())
             loss = cost(predict_y, train_label.long())
             loss.backward()
             sgd.step()
 
-        # check validation accuracy on validation set
         correct = 0
         _sum = 0
         child_network.eval()
         with torch.no_grad():
             for idx, (test_x, test_label) in enumerate(test_loader):
-                # onto device
                 test_x = test_x.to(device=device, dtype=test_x.dtype)
                 test_label = test_label.to(device=device, dtype=test_label.dtype)
 
@@ -475,7 +400,6 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
 
                 _sum += _.shape[0]
         
-        # update best validation accuracy if it was higher, otherwise increase early stop count
         acc = correct / _sum
 
         if acc > best_acc :
@@ -484,20 +408,18 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         else:
             early_stop_cnt += 1
 
-        # exit if validation gets worse over 10 runs
         if early_stop_cnt >= early_stop_num:
             print('main.train_child_network best accuracy: ', best_acc)
             break
-        
-        # if print_every_epoch:
-            # print('main.train_child_network best accuracy: ', best_acc)
+
         acc_log.append(acc)
 
     if logging:
         return best_acc.item(), acc_log
     return best_acc.item()
+    
 
-def test_autoaugment_policy(subpolicies, train_dataset, test_dataset):
+def test_autoaugment_policy(subpolicies, train_dataset, test_dataset, train_network):
 
     aa_transform = AutoAugment()
     aa_transform.subpolicies = subpolicies
@@ -512,7 +434,7 @@ def test_autoaugment_policy(subpolicies, train_dataset, test_dataset):
     # create toy dataset from above uploaded data
     train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size=32, n_samples=0.1)
 
-    child_network = LeNet()
+    child_network = train_network
     sgd = optim.SGD(child_network.parameters(), lr=1e-1)
     cost = nn.CrossEntropyLoss()
 
@@ -748,7 +670,6 @@ class AutoAugment(torch.nn.Module):
         for i, (op_name, p, magnitude) in enumerate(self.subpolicies):
             img = _apply_op(img, op_name, magnitude, interpolation=self.interpolation, fill=fill)
 
-
         return img
 
     def __repr__(self) -> str:
@@ -915,31 +836,8 @@ class TrivialAugmentWide(torch.nn.Module):
         s += ')'
         return s.format(**self.__dict__)
 
-# HEREHEREHEREHERE1
 
 
 
 
 
-
-
-
-# train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=False, 
-#                             transform=None)
-# test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=False,
-#                             transform=torchvision.transforms.ToTensor())
-
-
-# auto_aug_agent = Learner()
-# ev_learner = Evolutionary_learner(auto_aug_agent, train_loader=train_loader, child_network=LeNet(), augmentation_space=augmentation_space, p_bins=1, mag_bins=1, sub_num_pol=1, train_dataset=train_dataset, test_dataset=test_dataset)
-# ev_learner.run_instance()
-
-
-# solution, solution_fitness, solution_idx = ev_learner.ga_instance.best_solution()
-
-# print(f"Best solution : {solution}")
-# print(f"Fitness value of the best solution = {solution_fitness}")
-# print(f"Index of the best solution : {solution_idx}")
-# # Fetch the parameters of the best solution.
-# best_solution_weights = torchga.model_weights_as_dict(model=ev_learner.auto_aug_agent,
-#                                                         weights_vector=solution)

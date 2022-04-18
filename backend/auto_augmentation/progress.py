@@ -19,6 +19,7 @@ torch.manual_seed(0)
 # import agents and its functions
 
 from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment import Evo_learner as Evo
 
 
 
@@ -33,7 +34,7 @@ def response():
     if request.method == 'POST':
 
         exclude_method = request.form.getlist("action_space")
-        num_funcs = len(exclude_method)
+        num_funcs = 14 - len(exclude_method)
 
 
         batch_size = 1       # size of batch the inner NN is trained with
@@ -74,8 +75,18 @@ def response():
 
         
         # generate random policies at start
-        policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-        q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
+        auto_aug_leanrer = request.form.get("auto_aug_selection")
+
+        if auto_aug_leanrer == 'UCB':
+            policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
+            q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
+        elif auto_aug_leanrer == 'Evolutionary Learner':
+            learner = Evo.Evolutionary_learner(fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds_name=ds_name, exclude_method=exclude_method)
+            learner.run_instance()
+        elif auto_aug_leanrer == 'Random Searcher':
+            pass 
+        elif auto_aug_leanrer == 'Genetic Learner':
+            pass
 
         plt.figure()
         plt.plot(q_values)
