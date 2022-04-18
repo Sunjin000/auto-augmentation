@@ -29,7 +29,7 @@ bp = Blueprint("progress", __name__)
 def response():
 
     # hyperparameters to change
-    # print("thing: ", request.files['dataset_upload'] )
+
     if request.method == 'POST':
 
         exclude_method = request.form.getlist("action_space")
@@ -82,8 +82,10 @@ def response():
 
 
         best_q_values = np.array(best_q_values)
+
         # save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
-        #best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
+        # best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
+
         print("DONE")
 
 
