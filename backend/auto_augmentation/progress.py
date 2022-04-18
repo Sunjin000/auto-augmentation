@@ -46,24 +46,28 @@ def response():
         num_sub_policies = 5  # fix number of sub-policies in a policy
         iterations = 5      # total iterations, should be more than the number of policies
         IsLeNet = request.form.get("network_selection")   # using LeNet or EasyNet or SimpleNet ->> default 
-        print("HERHERHERHEHR")
-        
+
         # if user upload datasets and networks, save them in the database
         if ds == 'Other':
             ds_folder = request.files['dataset_upload']
             ds_name_zip = ds_folder.filename
+            ds_name = ds_name_zip.split('.')[0]
             ds_folder.save('./MetaAugment/datasets/'+ ds_name_zip)
             with zipfile.ZipFile('./MetaAugment/datasets/'+ ds_name_zip, 'r') as zip_ref:
                 zip_ref.extractall('./MetaAugment/datasets/upload_dataset/')
-                print("zip_ref name: ", zip_ref.namelist())
-            ds_name = ds_name_zip.split('.')[0]
-            print("DATASET NAMe: ", ds_name_zip)
             os.remove(f'./MetaAugment/datasets/{ds_name_zip}')
 
         else: 
             ds_name = None
 
-        
+        for (dirpath, dirnames, filenames) in os.walk(f'./MetaAugment/datasets/upload_dataset/{ds_name}/'):
+            for dirname in dirnames:
+                if dirname[0:6] != 'class_':
+                    return render_template("fail_dataset.html")
+                else:
+                    pass
+
+
         if IsLeNet == 'Other':
             childnetwork = request.files['network_upload']
             childnetwork.save('./MetaAugment/child_networks/'+childnetwork.filename)
