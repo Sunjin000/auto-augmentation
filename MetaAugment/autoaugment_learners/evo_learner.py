@@ -12,7 +12,7 @@ from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation
 import MetaAugment.child_networks as cn
 
 
-class Evolutionary_learner():
+class evo_learner():
 
     def __init__(self, 
                 sp_num=1,
