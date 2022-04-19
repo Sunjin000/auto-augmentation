@@ -1,48 +1,231 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { Grid, RadioGroup, FormControlLabel, FormControl, FormLabel, Radio, Card, CardContent, Typography } from '@mui/material';
+import {Button, TextField, Checkbox, FormGroup} from '@mui/material';
+import Box from '@mui/material/Box';
+import Switch from '@mui/material/Switch';
+import Grow from '@mui/material/Grow';
 
-class Home extends React.Component{
+const hyperparameter = (
+    <Grid container spacing={1} style={{maxWidth:500, padding:"0px 10px"}}>
+        <Grid xs={12} sm={6} item>
+            <TextField name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
+        </Grid>
+        <Grid xs={12} sm={6} item>
+            <TextField name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
+        </Grid>
+        <Grid xs={12} sm={6} item>
+            <TextField name="num_policies" placeholder="Number of Policies" label="Number of Policies" variant="outlined" fullWidth />
+        </Grid>
+        <Grid xs={12} sm={6} item>
+            <TextField name="num_sub_policies" placeholder="Number of Subpolicies" label="Number of Subpolicies" variant="outlined" fullWidth />
+        </Grid>
+        <Grid xs={12} sm={6} item>
+            <TextField name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+        </Grid>
+        <Grid xs={12} sm={6} item>
+            <TextField name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+        </Grid>
 
-    render(){
+    </Grid>
+);
+
+
+const action_space = (
+    <Grid style={{maxWidth:500, padding:"0px 10px"}}>
+        <FormLabel id="select-action" align="left" variant="h6">
+            Please select augmentation methods you'd like to exclude 
+        </FormLabel>
+        <FormGroup
+        row
+        aria-labelledby="select-action"
+        name="select-action"
+        >
+            <FormControlLabel value="ShearX" control={<Checkbox />} label="ShearX" />
+            <FormControlLabel value="ShearY" control={<Checkbox />} label="ShearY" />
+            <FormControlLabel value="TranslateX" control={<Checkbox />} label="TranslateX" />
+            <FormControlLabel value="TranslateY" control={<Checkbox />} label="TranslateY" />
+            <FormControlLabel value="Rotate" control={<Checkbox />} label="Rotate" />
+            <FormControlLabel value="Brightness" control={<Checkbox />} label="Brightness" />
+            <FormControlLabel value="Color" control={<Checkbox />} label="Color" />
+            <FormControlLabel value="Contrast" control={<Checkbox />} label="Contrast" />
+            <FormControlLabel value="Sharpness" control={<Checkbox />} label="Sharpness" />
+            <FormControlLabel value="Posterize" control={<Checkbox />} label="Posterize" />
+            <FormControlLabel value="Solarize" control={<Checkbox />} label="Solarize" />
+            <FormControlLabel value="AutoContrast" control={<Checkbox />} label="AutoContrast" />
+            <FormControlLabel value="Equalize" control={<Checkbox />} label="Equalize" />
+            <FormControlLabel value="Invert" control={<Checkbox />} label="Invert" />
+        </FormGroup>
+    </Grid>
+)
+
+// class Home extends React.Component{
+export default function Home() {
+
+    const [checked, setChecked] = React.useState(false);
+
+    const handleChange = () => {
+      setChecked((prev) => !prev);
+    };
+  
+
+    // render(){
         return (
-            <div>
-                <h1>Meta Reinforcement Learning for Data Augmentation</h1>
-                <h3>Choose your dataset</h3>
-                <form action="/user_input" method="POST" encType="multipart/form-data">
-                    <label htmlFor="dataset_upload">You can upload your dataset folder here:</label>
-                    <input type="file" id='dataset_upload' name="dataset_upload" className="upload" /><br></br>
+        <div className="App" style={{padding:"60px"}}> 
+            <Typography gutterBottom variant="h3" align="center" >
+            Data Auto-Augmentation 
+            </Typography>
+            <Grid >
+                <form>
+                <Grid style={{padding:"30px 0px"}}>
+                    <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" align="left">
+                                Dataset Uploading
+                            </Typography> 
 
-                    Or you can select a dataset from our database: <br/>
-                    <input type="radio" id="dataset1"
-                        name="dataset_selection" value="MNIST" />
-                    <label htmlFor="dataset1">MNIST dataset</label><br/>
+                            <FormControl style={{ maxWidth: 800, padding:"20px"}}>
+                                <FormLabel id="select-dataset" align="left" variant="h6">
+                                    Please select the dataset you'd like to use here or select 'Other' if you would like to upload your own dataset
+                                </FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="select-dataset"
+                                    defaultValue="Other"
+                                    name="select-dataset"
+                                    align="centre"
+                                    // value={value}
+                                    // onChange={handleChange}
+                                    >
+                                    <FormControlLabel value="MNIST" control={<Radio />} label="MNIST" />
+                                    <FormControlLabel value="KMNIST" control={<Radio />} label="KMNIST" />
+                                    <FormControlLabel value="FashionMNIST" control={<Radio />} label="FashionMNIST" />
+                                    <FormControlLabel value="CIFAR10" control={<Radio />} label="CIFAR10" />
+                                    <FormControlLabel value="CIFAR100" control={<Radio />} label="CIFAR100" />
+                                    <FormControlLabel value="Other" control={<Radio />} label="Other" />
+                                </RadioGroup>
+                                <Button
+                                variant="contained"
+                                component="label"
 
-                    <input type="radio" id="dataset2"
-                        name="dataset_selection" value="KMNIST" />
-                    <label htmlFor="dataset2">KMNIST dataset</label><br />
+                                >
+                                Upload File
+                                <input
+                                    type="file"
+                                    hidden
+                                />
+                                </Button>
+                            </FormControl>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid style={{padding:"30px 0px"}}>
+                    <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" align="left">
+                                Network Uploading
+                            </Typography> 
 
-                    <input type="radio" id="dataset3"
-                        name="dataset_selection" value="FashionMNIST" />
-                    <label htmlFor="dataset3">FashionMNIST dataset</label><br />
+                            <FormControl style={{ maxWidth: 800, padding:"20px"}}>
+                                <FormLabel id="select-network" align="left" variant="h6">
+                                    Please select the network you'd like to use here or select 'Other' if you would like to upload your own network
+                                </FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="select-network"
+                                    defaultValue="Other"
+                                    name="select-network"
+                                    align="centre"
+                                    // value={value}
+                                    // onChange={handleChange}
+                                    >
+                                    <FormControlLabel value="LeNet" control={<Radio />} label="LeNet" />
+                                    <FormControlLabel value="SimpleNet" control={<Radio />} label="SimpleNet" />
+                                    <FormControlLabel value="EasyNet" control={<Radio />} label="EasyNet" />
+                                    <FormControlLabel value="Other" control={<Radio />} label="Other" /> 
+                                </RadioGroup>
+                                <Typography style={{ maxWidth: 750}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
+                                    The networks provided above are for demonstration purposes. The relative training time is: LeNet {'>'} SimpleNet {'>'} EasyNet. 
+                                    We recommend you to choose EasyNet for a quick demonstration of how well our auto-augment agents can perform. 
+                                </Typography>
+                                <Button
+                                variant="contained"
+                                component="label"
+                                >
+                                Upload File
+                                <input
+                                    type="file"
+                                    hidden
+                                />
+                                </Button>
+                            </FormControl>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                    <input type="radio" id="dataset4"
-                    name="dataset_selection" value="CIFAR10" />
-                    <label htmlFor="dataset4">CIFAR10 dataset</label><br />
+                <Grid style={{padding:"30px 0px"}}>
+                    <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" align="left">
+                                Auto-augment Agent Selection
+                            </Typography> 
 
-                    <input type="radio" id="dataset5"
-                    name="dataset_selection" value="CIFAR100" />
-                    <label htmlFor="dataset5">CIFAR100 dataset</label><br />
+                            <FormControl style={{ maxWidth: 800, padding:"20px"}}>
+                                <FormLabel id="select-learner" align="left" variant="h6">
+                                    Please select the auto-augment learner you'd like to use
+                                </FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="select-learner"
+                                    defaultValue="UCB"
+                                    name="select-learner"
+                                    align="centre"
+                                    // value={value}
+                                    // onChange={handleChange}
+                                    >
+                                    <FormControlLabel value="UCB" control={<Radio />} label="UCB" />
+                                    <FormControlLabel value="Evolutionary" control={<Radio />} label="Evolutionary Learner" />
+                                    <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
+                                    <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
+                                </RadioGroup>
+                                <Typography style={{ width: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
+                                    (give user some recommendation here...)
+                                </Typography>
+                            </FormControl>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                    <input type="radio" id="dataset6"
-                    name="dataset_selection" value="Other" />
-                    <label htmlFor="dataset6">Other dataset DIFFERENT</label><br /><br /> 
 
-                    <input type="submit"></input>
+                <Grid style={{padding:"30px 0px", maxWidth: 900, margin: "0 auto"}}>
+                            <Typography gutterBottom variant="h5" align="left">
+                                Advanced Search
+                            </Typography>
+
+                            <Box sx={{ maxHeight: 500 }}>
+                                <FormControlLabel
+                                    control={<Switch checked={checked} onChange={handleChange} />}
+                                    label="Show"
+                                />
+                                <Box sx={{ display: 'flex' }}>
+                                    <Grow in={checked}>{hyperparameter}</Grow>
+                                    {/* Conditionally applies the timeout prop to change the entry speed. */}
+                                    <Grow
+                                    in={checked}
+                                    style={{ transformOrigin: '0 0 0' }}
+                                    {...(checked ? { timeout: 1000 } : {})}
+                                    >
+                                    {action_space}
+                                    </Grow>
+                                </Box>
+                            </Box>
+                </Grid>
+                
                 </form>
-            </div>
+                        
+            </Grid>
+        </div>
             
         );
     }
-}
 
-export default Home;
+// export default Home;
