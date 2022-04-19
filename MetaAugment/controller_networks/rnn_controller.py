@@ -135,13 +135,6 @@ class RNNModel(nn.Module):
                     X[i+1] = hx if self.mode == 'GRU' else hx[0]
                 
         outs = X
-    
-
-        # out = outs[-1].squeeze()
-
-        # out = self.fc(out)
-        
-        # return out
 
         return outs
     
