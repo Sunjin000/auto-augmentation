@@ -123,6 +123,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+node_modules./
 
 # Spyder project settings
 .spyderproject
@@ -159,3 +160,5 @@ cython_debug/
 MetaAugment/__pycache__/main.cpython-38.pyc
 
 **/mnist/
+
+**/.DS_Store

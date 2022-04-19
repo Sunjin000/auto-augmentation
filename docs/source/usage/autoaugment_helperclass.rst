@@ -18,7 +18,7 @@ AutoAugment paper:
 
 .. code-block::
 
-    my_policy = subpolicies1 = [
+    my_policy = [
                         (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
                         (("Rotate", 0.7, 2), ("Invert", 0.8, None)),
                         (("Sharpness", 0.8, 1), ("Sharpness", 0.9, 3)),
