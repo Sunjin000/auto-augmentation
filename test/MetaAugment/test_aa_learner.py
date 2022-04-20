@@ -5,7 +5,6 @@ import torchvision
 import torchvision.datasets as datasets
 
 import random
-from tqdm import trange
 
 
 def test_translate_operation_tensor():
@@ -22,7 +21,7 @@ def test_translate_operation_tensor():
     
     # discrete_p_m=True
 
-    for i in trange(2000):
+    for i in range(2000):
 
         softmax = torch.nn.Softmax(dim=0)
 
@@ -52,7 +51,7 @@ def test_translate_operation_tensor():
     # discrete_p_m=False
     softmax = torch.nn.Softmax(dim=0)
     sigmoid = torch.nn.Sigmoid()
-    for i in trange(2000):
+    for i in range(2000):
         
 
         fun_num = random.randint(1, 14)

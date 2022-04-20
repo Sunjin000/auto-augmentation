@@ -135,7 +135,7 @@ class gru_learner(aa_learner):
         This list can then be input into an AutoAugment object
         as is done in self.learn()
         
-        We return the list and the sum of the log probs
+        We return a tuple of the list and the sum of the log probs
         """
 
         log_prob = 0
@@ -218,11 +218,11 @@ class gru_learner(aa_learner):
                               # minimize it.
             self.cont_optim.step()
 
-            # save the history every 1 epochs as a pickle
-            with open('gru_logs.pkl', 'wb') as file:
-                pickle.dump(self.history, file)
-            with open('gru_learner.pkl', 'wb') as file:
-                pickle.dump(self, file)
+            # # save the history every 1 epochs as a pickle
+            # with open('gru_logs.pkl', 'wb') as file:
+            #     pickle.dump(self.history, file)
+            # with open('gru_learner.pkl', 'wb') as file:
+            #     pickle.dump(self, file)
              
 
 

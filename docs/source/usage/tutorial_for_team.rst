@@ -30,16 +30,20 @@ Defining the problem setting:
                                     train=True, download=True, transform=None)
     test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
                             train=False, download=True, transform=torchvision.transforms.ToTensor())
-    child_network = cn.lenet
+    child_network_architecture = cn.lenet
 
 
 .. warning:: 
     
-    In earlier versions, we had to write ``child_network=cn.LeNet`` 
-    and not ``child_network=cn.LeNet()``. But now we can do both. 
+    In earlier versions, we had to write ``child_network_architecture=cn.LeNet`` 
+    and not ``child_network_architecture=cn.LeNet()``. But now we can do both. 
     Both types of objects can be input into ``aa_learner.learn()``.
+
+    More precisely, the ``child_network_architecture`` parameter has to be either
+    as ``nn.Module``, a ``function`` which returns a ``nn.Module``, or a ``type`` 
+    which inherits ``nn.Module``.
     
-    A downside (or maybe the upside??) of doing the latter is that 
+    A downside (or maybe the upside??) of doing one of the latter two is that 
     the same randomly initialized weights are used for every policy.
 
 Using the random search learner to evaluate randomly generated policies: (You
@@ -62,7 +66,7 @@ can use any other learner in place of random search learner as well)
                                     )
     aa_agent.learn(train_dataset,
                 test_dataset,
-                child_network_architecture=child_network,
+                child_network_architecture=child_network_architecture,
                 iterations=15000)
 
 You can set further hyperparameters when defining a aa_learner. 
