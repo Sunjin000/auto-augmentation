@@ -2,6 +2,7 @@ build-job:
   stage: build
   script:
     - apt-get install python3
+    - python -m ensurepip --upgrade
     - pip install venv
     - python3 -m venv venv
     - . venv/bin/activate
