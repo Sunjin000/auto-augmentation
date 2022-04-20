@@ -1,7 +1,8 @@
 build-job:
   stage: build
   script:
-    - pip install venv
+    - apt-get install python3
+    - pip3 install venv
     - python3 -m venv venv
     - . venv/bin/activate
     - pip install -r requirements.txt
