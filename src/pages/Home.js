@@ -7,6 +7,7 @@ import { CardActions, Collapse, IconButton } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/material/styles';
 
+
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -19,54 +20,37 @@ const ExpandMore = styled((props) => {
   }));
 
 
-
 // class Home extends React.Component{
 export default function Home() {
 
     const [selectLearner, setSelectLearner] = useState([]);
-    // const [checked, setChecked] = useState(false); // advanced search toggle
-    // const [dsvalue, setDsvalue] = useState('Other'); // dataset selection
-    // const [netvalue, setNetvalue] = useState('Other'); // network selection
-
-    // const handleShow = () => {
-    //   setChecked((prev) => !prev);
-    // };
-
-    // const handleDsChange = (event) => {
-    //     setDsvalue(event.target.value);
-    // };
-
-    // const handleNetChange = (event) => {
-    //     setNetvalue(event.target.value);
-    // };
 
 // for form submission
-    const { control, handleSubmit, setValue } = useForm();
+    const { control, handleSubmit, setValue} = useForm();
     const onSubmit = data => console.log(data);
 
-// handling learner selection
-    // const handleLearnerSelect = (value) => {
-    //     const isPresent = selectLearner.indexOf(value);
-    //     if (isPresent !== -1) {
-    //     const remaining = selectLearner.filter((item) => item !== value);
-    //     setSelectLearner(remaining);
-    //     } else {
-    //     setSelectLearner((prevItems) => [...prevItems, value]);
-    //     }
-    // };
 
-    // useEffect(() => {
-    //     setValue('select-learner', selectLearner); 
-    //   }, [selectLearner]);
+// handling learner selection
+    const handleLearnerSelect = (value) => {
+        const isPresent = selectLearner.indexOf(value);
+        if (isPresent !== -1) {
+        const remaining = selectLearner.filter((item) => item !== value);
+        setSelectLearner(remaining);
+        } else {
+        setSelectLearner((prevItems) => [...prevItems, value]);
+        }
+    };
+
+    useEffect(() => {
+        setValue('select-learner', selectLearner); 
+      }, [selectLearner]);
 
 // collpase
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
-    };
-
-    
+    };   
   
 
     // render(){
@@ -97,6 +81,7 @@ export default function Home() {
                                     <RadioGroup
                                         row
                                         aria-labelledby="select-dataset"
+                                        // defaultValue="Other"
                                         name="select-dataset"
                                         align="centre"
                                         value={value ?? ""} 
@@ -185,51 +170,20 @@ export default function Home() {
                                 <FormLabel id="select-learner" align="left" variant="h6">
                                     Please select the auto-augment learner you'd like to use
                                 </FormLabel>
-                                
-                                {/* <div>
-                                    {['UCB learner', 'Evolutionary learner', 'Random Searcher', 'GRU Learner'].map((option) => {
-                                    return (
-                                        <FormControlLabel
-                                        control={
-                                            <Controller
-                                            name='select-learner'
-                                            render={({}) => {
-                                                return (
-                                                <Checkbox
-                                                    checked={selectLearner.includes(option)}
-                                                    onChange={() => handleLearnerSelect(option)}/>
-                                                );
-                                            }}
-                                            control={control}
-                                            />
-                                        }
-                                        label={option}
-                                        key={option}
-                                        />
-                                    );
-                                    })}
-                                </div> */}
-
-                                <Controller 
-                                        name='select-learner'
-                                        control={control}
-                                        rules={{ required: true }}
-                                        render={({field: { onChange, value }}) => (
-                                    <FormGroup
-                                        row
-                                        aria-labelledby="select-learner"
-                                        defaultValue="UCB"
-                                        name="select-learner"
-                                        align="centre"
-                                        value={value ?? ""} 
-                                        onChange={onChange}
-                                        >
-                                        <FormControlLabel value="UCB" control={<Checkbox />} label="UCB" />
-                                        <FormControlLabel value="Evolutionary" control={<Checkbox />} label="Evolutionary Learner" />
-                                        <FormControlLabel value="Random Searcher" control={<Checkbox />} label="Random Searcher" />
-                                        <FormControlLabel value="GRU Learner" control={<Checkbox />} label="GRU Learner" /> 
-                                    </FormGroup> )}
-                                />
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="select-learner"
+                                    defaultValue="UCB"
+                                    name="select-learner"
+                                    align="centre"
+                                    // value={netvalue}
+                                    // onChange={handleNetChange}
+                                    >
+                                    <FormControlLabel value="UCB" control={<Radio />} label="UCB" />
+                                    <FormControlLabel value="Evolutionary" control={<Radio />} label="Evolutionary Learner" />
+                                    <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
+                                    <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
+                                </RadioGroup>
                                 <Typography style={{ maxWidth: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
                                     (give user some recommendation here...)
                                 </Typography>

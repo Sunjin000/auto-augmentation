@@ -46,11 +46,11 @@ export default function Home() {
       }, [selectLearner]);
     
 // collpase
-const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = React.useState(false);
 
-const handleExpandClick = () => {
-    setExpanded(!expanded);
-};
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
 
 
         return (
@@ -162,7 +162,7 @@ const handleExpandClick = () => {
                     <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" align="left">
-                                Auto-augment Agent Selection
+                                Auto-augment Learner Selection
                             </Typography> 
 
                             <FormControl style={{ maxWidth: 800, padding:"20px"}}>
