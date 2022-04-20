@@ -3,14 +3,11 @@
 {% block body %}
 
 
+<br>
 <ul>
-Excluded methods:
-    {% for method in exclude_method %} 
-        {{method}},
-    {% endfor %}
+    Training the {{auto_aug_leanrer}} agent...
 
 </ul>
-Training the model...
 
 <div>
     <img src="{{url_for('static', filename='image/training_plot.png')}}" class="img-thumbnail" />

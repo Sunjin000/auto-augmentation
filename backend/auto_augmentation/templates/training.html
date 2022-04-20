@@ -1,0 +1,28 @@
+{% extends "basic.html" %}
+{% block title%}Progress{% endblock %}
+{% block body %}
+
+
+
+
+<ul>
+Excluded methods:
+    {% for method in exclude_method %} 
+        {{method}},
+    {% endfor %}
+
+</ul>
+
+<br>
+<ul>
+    Do you wish to start training your {{auto_aug_leanrer}} agent?
+
+</ul>
+<div>
+
+    <form action="/start_training">
+        <input type="submit" value='Begin training'>
+    </form>
+</div>
+ 
+{% endblock %}
