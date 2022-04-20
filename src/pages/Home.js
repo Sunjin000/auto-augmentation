@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Grid, RadioGroup, FormControlLabel, FormControl, FormLabel, Radio, Card, CardContent, Typography } from '@mui/material';
-import {Button, TextField, Checkbox, FormGroup} from '@mui/material';
-import Box from '@mui/material/Box';
-import Switch from '@mui/material/Switch';
-import Grow from '@mui/material/Grow';
+import {Button, TextField, Checkbox, FormGroup, Box, Switch, Grow} from '@mui/material';
+import { useForm, Controller} from "react-hook-form";
+import SendIcon from '@mui/icons-material/Send';
+
+
 
 const hyperparameter = (
     <Grid container spacing={1} style={{maxWidth:500, padding:"0px 10px"}}>
@@ -58,24 +59,42 @@ const action_space = (
     </Grid>
 )
 
+
 // class Home extends React.Component{
 export default function Home() {
 
-    const [checked, setChecked] = React.useState(false);
+    const [checked, setChecked] = useState(false); // advanced search toggle
+    const [dsvalue, setDsvalue] = useState('Other'); // dataset selection
+    const [netvalue, setNetvalue] = useState('Other'); // network selection
 
-    const handleChange = () => {
+    const handleShow = () => {
       setChecked((prev) => !prev);
     };
+
+    const handleDsChange = (event) => {
+        setDsvalue(event.target.value);
+    };
+
+    const handleNetChange = (event) => {
+        setNetvalue(event.target.value);
+    };
+
+// for form submission
+    const { control, handleSubmit } = useForm();
+    const onSubmit = data => console.log(data);
+
+    
   
 
     // render(){
         return (
+            
         <div className="App" style={{padding:"60px"}}> 
             <Typography gutterBottom variant="h3" align="center" >
             Data Auto-Augmentation 
             </Typography>
             <Grid >
-                <form>
+                <form action="/home" method="POST" onSubmit={handleSubmit(onSubmit)}>
                 <Grid style={{padding:"30px 0px"}}>
                     <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
                         <CardContent>
@@ -87,22 +106,28 @@ export default function Home() {
                                 <FormLabel id="select-dataset" align="left" variant="h6">
                                     Please select the dataset you'd like to use here or select 'Other' if you would like to upload your own dataset
                                 </FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="select-dataset"
-                                    defaultValue="Other"
-                                    name="select-dataset"
-                                    align="centre"
-                                    // value={value}
-                                    // onChange={handleChange}
-                                    >
-                                    <FormControlLabel value="MNIST" control={<Radio />} label="MNIST" />
-                                    <FormControlLabel value="KMNIST" control={<Radio />} label="KMNIST" />
-                                    <FormControlLabel value="FashionMNIST" control={<Radio />} label="FashionMNIST" />
-                                    <FormControlLabel value="CIFAR10" control={<Radio />} label="CIFAR10" />
-                                    <FormControlLabel value="CIFAR100" control={<Radio />} label="CIFAR100" />
-                                    <FormControlLabel value="Other" control={<Radio />} label="Other" />
-                                </RadioGroup>
+                                <Controller 
+                                        name='select-dataset'
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({field: { onChange, value }}) => (
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="select-dataset"
+                                        // defaultValue="Other"
+                                        name="select-dataset"
+                                        align="centre"
+                                        value={value ?? ""} 
+                                        onChange={onChange}
+                                        >
+                                        <FormControlLabel value="MNIST" control={<Radio />} label="MNIST" />
+                                        <FormControlLabel value="KMNIST" control={<Radio />} label="KMNIST" />
+                                        <FormControlLabel value="FashionMNIST" control={<Radio />} label="FashionMNIST" />
+                                        <FormControlLabel value="CIFAR10" control={<Radio />} label="CIFAR10" />
+                                        <FormControlLabel value="CIFAR100" control={<Radio />} label="CIFAR100" />
+                                        <FormControlLabel value="Other" control={<Radio />} label="Other" />
+                                    </RadioGroup> )}
+                                />
                                 <Button
                                 variant="contained"
                                 component="label"
@@ -135,8 +160,8 @@ export default function Home() {
                                     defaultValue="Other"
                                     name="select-network"
                                     align="centre"
-                                    // value={value}
-                                    // onChange={handleChange}
+                                    value={dsvalue}
+                                    onChange={handleDsChange}
                                     >
                                     <FormControlLabel value="LeNet" control={<Radio />} label="LeNet" />
                                     <FormControlLabel value="SimpleNet" control={<Radio />} label="SimpleNet" />
@@ -179,15 +204,15 @@ export default function Home() {
                                     defaultValue="UCB"
                                     name="select-learner"
                                     align="centre"
-                                    // value={value}
-                                    // onChange={handleChange}
+                                    value={netvalue}
+                                    onChange={handleNetChange}
                                     >
                                     <FormControlLabel value="UCB" control={<Radio />} label="UCB" />
                                     <FormControlLabel value="Evolutionary" control={<Radio />} label="Evolutionary Learner" />
                                     <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
                                     <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
                                 </RadioGroup>
-                                <Typography style={{ width: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
+                                <Typography style={{ maxWidth: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
                                     (give user some recommendation here...)
                                 </Typography>
                             </FormControl>
@@ -203,7 +228,7 @@ export default function Home() {
 
                             <Box sx={{ maxHeight: 500 }}>
                                 <FormControlLabel
-                                    control={<Switch checked={checked} onChange={handleChange} />}
+                                    control={<Switch checked={checked} onChange={handleShow} />}
                                     label="Show"
                                 />
                                 <Box sx={{ display: 'flex' }}>
@@ -219,7 +244,15 @@ export default function Home() {
                                 </Box>
                             </Box>
                 </Grid>
-                
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color='success'
+                    size='large'
+                    endIcon={<SendIcon />}
+                >
+                    Submit Form
+                </Button>
                 </form>
                         
             </Grid>

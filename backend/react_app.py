@@ -4,15 +4,8 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route('/profile')
-def my_profile():
-    response_body = {
-        "name": "Nagato",
-        "about" :"Hello! I'm a full stack developer that loves python and javascript"
-    }
+@app.route('/home', methods=["POST"])
+def home():
+    data = request.json
 
-    return response_body
-
-# def get_user_input():
-
-#     return request.args
+    return data

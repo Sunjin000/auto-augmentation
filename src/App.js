@@ -8,12 +8,12 @@ import logo from './logo.svg';
 
 function App() {
   useEffect(() => {
-    fetch('/', {
+    fetch('/home', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ })
     })
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) => console.log(data));
   }, []);
 
