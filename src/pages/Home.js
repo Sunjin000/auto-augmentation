@@ -1,87 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Grid, RadioGroup, FormControlLabel, FormControl, FormLabel, Radio, Card, CardContent, Typography } from '@mui/material';
-import {Button, TextField, Checkbox, FormGroup, Box, Switch, Grow} from '@mui/material';
+import {Button, TextField, Checkbox, FormGroup} from '@mui/material';
 import { useForm, Controller} from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send';
+import { CardActions, Collapse, IconButton } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { styled } from '@mui/material/styles';
 
+const ExpandMore = styled((props) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+  })(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  }));
 
-
-const hyperparameter = (
-    <Grid container spacing={1} style={{maxWidth:500, padding:"0px 10px"}}>
-        <Grid xs={12} sm={6} item>
-            <TextField name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
-        </Grid>
-        <Grid xs={12} sm={6} item>
-            <TextField name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
-        </Grid>
-        <Grid xs={12} sm={6} item>
-            <TextField name="num_policies" placeholder="Number of Policies" label="Number of Policies" variant="outlined" fullWidth />
-        </Grid>
-        <Grid xs={12} sm={6} item>
-            <TextField name="num_sub_policies" placeholder="Number of Subpolicies" label="Number of Subpolicies" variant="outlined" fullWidth />
-        </Grid>
-        <Grid xs={12} sm={6} item>
-            <TextField name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
-        </Grid>
-        <Grid xs={12} sm={6} item>
-            <TextField name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
-        </Grid>
-
-    </Grid>
-);
-
-
-const action_space = (
-    <Grid style={{maxWidth:500, padding:"0px 10px"}}>
-        <FormLabel id="select-action" align="left" variant="h6">
-            Please select augmentation methods you'd like to exclude 
-        </FormLabel>
-        <FormGroup
-        row
-        aria-labelledby="select-action"
-        name="select-action"
-        >
-            <FormControlLabel value="ShearX" control={<Checkbox />} label="ShearX" />
-            <FormControlLabel value="ShearY" control={<Checkbox />} label="ShearY" />
-            <FormControlLabel value="TranslateX" control={<Checkbox />} label="TranslateX" />
-            <FormControlLabel value="TranslateY" control={<Checkbox />} label="TranslateY" />
-            <FormControlLabel value="Rotate" control={<Checkbox />} label="Rotate" />
-            <FormControlLabel value="Brightness" control={<Checkbox />} label="Brightness" />
-            <FormControlLabel value="Color" control={<Checkbox />} label="Color" />
-            <FormControlLabel value="Contrast" control={<Checkbox />} label="Contrast" />
-            <FormControlLabel value="Sharpness" control={<Checkbox />} label="Sharpness" />
-            <FormControlLabel value="Posterize" control={<Checkbox />} label="Posterize" />
-            <FormControlLabel value="Solarize" control={<Checkbox />} label="Solarize" />
-            <FormControlLabel value="AutoContrast" control={<Checkbox />} label="AutoContrast" />
-            <FormControlLabel value="Equalize" control={<Checkbox />} label="Equalize" />
-            <FormControlLabel value="Invert" control={<Checkbox />} label="Invert" />
-        </FormGroup>
-    </Grid>
-)
 
 
 // class Home extends React.Component{
 export default function Home() {
 
-    const [checked, setChecked] = useState(false); // advanced search toggle
-    const [dsvalue, setDsvalue] = useState('Other'); // dataset selection
-    const [netvalue, setNetvalue] = useState('Other'); // network selection
+    const [selectLearner, setSelectLearner] = useState([]);
+    // const [checked, setChecked] = useState(false); // advanced search toggle
+    // const [dsvalue, setDsvalue] = useState('Other'); // dataset selection
+    // const [netvalue, setNetvalue] = useState('Other'); // network selection
 
-    const handleShow = () => {
-      setChecked((prev) => !prev);
-    };
+    // const handleShow = () => {
+    //   setChecked((prev) => !prev);
+    // };
 
-    const handleDsChange = (event) => {
-        setDsvalue(event.target.value);
-    };
+    // const handleDsChange = (event) => {
+    //     setDsvalue(event.target.value);
+    // };
 
-    const handleNetChange = (event) => {
-        setNetvalue(event.target.value);
-    };
+    // const handleNetChange = (event) => {
+    //     setNetvalue(event.target.value);
+    // };
 
 // for form submission
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, setValue } = useForm();
     const onSubmit = data => console.log(data);
+
+// handling learner selection
+    // const handleLearnerSelect = (value) => {
+    //     const isPresent = selectLearner.indexOf(value);
+    //     if (isPresent !== -1) {
+    //     const remaining = selectLearner.filter((item) => item !== value);
+    //     setSelectLearner(remaining);
+    //     } else {
+    //     setSelectLearner((prevItems) => [...prevItems, value]);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     setValue('select-learner', selectLearner); 
+    //   }, [selectLearner]);
+
+// collpase
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
 
     
   
@@ -114,7 +97,6 @@ export default function Home() {
                                     <RadioGroup
                                         row
                                         aria-labelledby="select-dataset"
-                                        // defaultValue="Other"
                                         name="select-dataset"
                                         align="centre"
                                         value={value ?? ""} 
@@ -154,20 +136,25 @@ export default function Home() {
                                 <FormLabel id="select-network" align="left" variant="h6">
                                     Please select the network you'd like to use here or select 'Other' if you would like to upload your own network
                                 </FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="select-network"
-                                    defaultValue="Other"
-                                    name="select-network"
-                                    align="centre"
-                                    value={dsvalue}
-                                    onChange={handleDsChange}
-                                    >
-                                    <FormControlLabel value="LeNet" control={<Radio />} label="LeNet" />
-                                    <FormControlLabel value="SimpleNet" control={<Radio />} label="SimpleNet" />
-                                    <FormControlLabel value="EasyNet" control={<Radio />} label="EasyNet" />
-                                    <FormControlLabel value="Other" control={<Radio />} label="Other" /> 
-                                </RadioGroup>
+                                <Controller 
+                                        name='select-network'
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({field: { onChange, value }}) => (
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="select-network"
+                                        name="select-network"
+                                        align="centre"
+                                        value={value ?? ""} 
+                                        onChange={onChange}
+                                        >
+                                        <FormControlLabel value="LeNet" control={<Radio />} label="LeNet" />
+                                        <FormControlLabel value="SimpleNet" control={<Radio />} label="SimpleNet" />
+                                        <FormControlLabel value="EasyNet" control={<Radio />} label="EasyNet" />
+                                        <FormControlLabel value="Other" control={<Radio />} label="Other" /> 
+                                    </RadioGroup> )}
+                                />
                                 <Typography style={{ maxWidth: 750}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
                                     The networks provided above are for demonstration purposes. The relative training time is: LeNet {'>'} SimpleNet {'>'} EasyNet. 
                                     We recommend you to choose EasyNet for a quick demonstration of how well our auto-augment agents can perform. 
@@ -198,20 +185,51 @@ export default function Home() {
                                 <FormLabel id="select-learner" align="left" variant="h6">
                                     Please select the auto-augment learner you'd like to use
                                 </FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="select-learner"
-                                    defaultValue="UCB"
-                                    name="select-learner"
-                                    align="centre"
-                                    value={netvalue}
-                                    onChange={handleNetChange}
-                                    >
-                                    <FormControlLabel value="UCB" control={<Radio />} label="UCB" />
-                                    <FormControlLabel value="Evolutionary" control={<Radio />} label="Evolutionary Learner" />
-                                    <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
-                                    <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
-                                </RadioGroup>
+                                
+                                {/* <div>
+                                    {['UCB learner', 'Evolutionary learner', 'Random Searcher', 'GRU Learner'].map((option) => {
+                                    return (
+                                        <FormControlLabel
+                                        control={
+                                            <Controller
+                                            name='select-learner'
+                                            render={({}) => {
+                                                return (
+                                                <Checkbox
+                                                    checked={selectLearner.includes(option)}
+                                                    onChange={() => handleLearnerSelect(option)}/>
+                                                );
+                                            }}
+                                            control={control}
+                                            />
+                                        }
+                                        label={option}
+                                        key={option}
+                                        />
+                                    );
+                                    })}
+                                </div> */}
+
+                                <Controller 
+                                        name='select-learner'
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({field: { onChange, value }}) => (
+                                    <FormGroup
+                                        row
+                                        aria-labelledby="select-learner"
+                                        defaultValue="UCB"
+                                        name="select-learner"
+                                        align="centre"
+                                        value={value ?? ""} 
+                                        onChange={onChange}
+                                        >
+                                        <FormControlLabel value="UCB" control={<Checkbox />} label="UCB" />
+                                        <FormControlLabel value="Evolutionary" control={<Checkbox />} label="Evolutionary Learner" />
+                                        <FormControlLabel value="Random Searcher" control={<Checkbox />} label="Random Searcher" />
+                                        <FormControlLabel value="GRU Learner" control={<Checkbox />} label="GRU Learner" /> 
+                                    </FormGroup> )}
+                                />
                                 <Typography style={{ maxWidth: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
                                     (give user some recommendation here...)
                                 </Typography>
@@ -222,27 +240,89 @@ export default function Home() {
 
 
                 <Grid style={{padding:"30px 0px", maxWidth: 900, margin: "0 auto"}}>
-                            <Typography gutterBottom variant="h5" align="left">
+                    <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
+                        <CardContent>
+                            <Typography variant="h5" align="left">
                                 Advanced Search
                             </Typography>
+                        </CardContent>
+                        <CardActions disableSpacing>
+                            <ExpandMore
+                            expand={expanded}
+                            onClick={handleExpandClick}
+                            aria-expanded={expanded}
+                            aria-label="show more"
+                            >
+                            <ExpandMoreIcon />
+                            </ExpandMore>
+                        </CardActions>
+                        <Collapse in={expanded} timeout="auto" unmountOnExit>
+                            <Grid container
+                                    spacing={0}
+                                    direction="column"
+                                    alignItems="center"
+                                    justify="center">
+                            <CardContent>
+                            <Typography gutterBottom variant="subtitle1" align='left'>
+                                    Please input the hyperparameter you'd like to train your dataset with
+                            </Typography>
+                            <Grid container spacing={1} style={{maxWidth:800, padding:"10px 10px"}}>
+                                <Grid xs={12} sm={6} item>
+                                    <TextField name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
+                                </Grid>
+                                <Grid xs={12} sm={6} item>
+                                    <TextField name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
+                                </Grid>
+                                <Grid xs={12} sm={6} item>
+                                    <TextField name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+                                </Grid>
+                                <Grid xs={12} sm={6} item>
+                                    <TextField name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+                                </Grid>
+                                <FormLabel variant="h8" align='centre'>
+                                    * Dataset Proportion defines the percentage of original dataset our auto-augment learner will use to find the 
+                                    augmentation policy. If your dataset is large, we recommend you to set Dataset Proportion a small value (0.1-0.3). 
+                                </FormLabel>
+                            </Grid>
 
-                            <Box sx={{ maxHeight: 500 }}>
-                                <FormControlLabel
-                                    control={<Switch checked={checked} onChange={handleShow} />}
-                                    label="Show"
-                                />
-                                <Box sx={{ display: 'flex' }}>
-                                    <Grow in={checked}>{hyperparameter}</Grow>
-                                    {/* Conditionally applies the timeout prop to change the entry speed. */}
-                                    <Grow
-                                    in={checked}
-                                    style={{ transformOrigin: '0 0 0' }}
-                                    {...(checked ? { timeout: 1000 } : {})}
+                            <Grid style={{maxWidth:800, padding:"40px 10px"}}>
+                                <Typography gutterBottom variant="subtitle1" align='left'>
+                                    Please select augmentation methods you'd like to exclude 
+                                </Typography>
+                                <Controller 
+                                    name='select-action'
+                                    control={control}
+                                    rules={{ required: true }}
+                                    render={({field: { onChange, value }}) => (
+                                    <FormGroup
+                                    row
+                                    aria-labelledby="select-action"
+                                    name="select-action"
+                                    value={value ?? ""} 
+                                    onChange={onChange}
                                     >
-                                    {action_space}
-                                    </Grow>
-                                </Box>
-                            </Box>
+                                        <FormControlLabel value="ShearX" control={<Checkbox />} label="ShearX" />
+                                        <FormControlLabel value="ShearY" control={<Checkbox />} label="ShearY" />
+                                        <FormControlLabel value="TranslateX" control={<Checkbox />} label="TranslateX" />
+                                        <FormControlLabel value="TranslateY" control={<Checkbox />} label="TranslateY" />
+                                        <FormControlLabel value="Rotate" control={<Checkbox />} label="Rotate" />
+                                        <FormControlLabel value="Brightness" control={<Checkbox />} label="Brightness" />
+                                        <FormControlLabel value="Color" control={<Checkbox />} label="Color" />
+                                        <FormControlLabel value="Contrast" control={<Checkbox />} label="Contrast" />
+                                        <FormControlLabel value="Sharpness" control={<Checkbox />} label="Sharpness" />
+                                        <FormControlLabel value="Posterize" control={<Checkbox />} label="Posterize" />
+                                        <FormControlLabel value="Solarize" control={<Checkbox />} label="Solarize" />
+                                        <FormControlLabel value="AutoContrast" control={<Checkbox />} label="AutoContrast" />
+                                        <FormControlLabel value="Equalize" control={<Checkbox />} label="Equalize" />
+                                        <FormControlLabel value="Invert" control={<Checkbox />} label="Invert" />
+                                    </FormGroup> )}
+                                />
+                            </Grid>
+                            </CardContent>
+                            </Grid>
+                        </Collapse>
+                         
+                    </Card>
                 </Grid>
                 <Button
                     type="submit"
