@@ -20,9 +20,9 @@ const ExpandMore = styled((props) => {
   }));
 
 
+
 // class Home extends React.Component{
 export default function Home() {
-
     const [selectLearner, setSelectLearner] = useState([]);
 
 // for form submission
@@ -44,21 +44,20 @@ export default function Home() {
     useEffect(() => {
         setValue('select-learner', selectLearner); 
       }, [selectLearner]);
-
+    
 // collpase
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
-    };   
-  
+    };
 
-    // render(){
+
         return (
             
         <div className="App" style={{padding:"60px"}}> 
             <Typography gutterBottom variant="h3" align="center" >
-            Data Auto-Augmentation 
+            Data Auto-Augmentation
             </Typography>
             <Grid >
                 <form action="/home" method="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -163,27 +162,34 @@ export default function Home() {
                     <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" align="left">
-                                Auto-augment Agent Selection
+                                Auto-augment Learner Selection
                             </Typography> 
 
                             <FormControl style={{ maxWidth: 800, padding:"20px"}}>
                                 <FormLabel id="select-learner" align="left" variant="h6">
                                     Please select the auto-augment learner you'd like to use
                                 </FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="select-learner"
-                                    defaultValue="UCB"
-                                    name="select-learner"
-                                    align="centre"
-                                    // value={netvalue}
-                                    // onChange={handleNetChange}
-                                    >
-                                    <FormControlLabel value="UCB" control={<Radio />} label="UCB" />
-                                    <FormControlLabel value="Evolutionary" control={<Radio />} label="Evolutionary Learner" />
-                                    <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
-                                    <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
-                                </RadioGroup>
+                                <div>
+                                    {['UCB learner', 'Evolutionary learner', 'Random Searcher', 'GRU Learner'].map((option) => {
+                                    return (
+                                        <FormControlLabel
+                                        control={
+                                            <Controller
+                                            name='select-learner'
+                                            render={({}) => {
+                                                return (
+                                                <Checkbox
+                                                    checked={selectLearner.includes(option)}
+                                                    onChange={() => handleLearnerSelect(option)}/> );
+                                            }}
+                                            control={control}
+                                            />}
+                                        label={option}
+                                        key={option}
+                                        />
+                                    );
+                                    })}
+                                </div>
                                 <Typography style={{ maxWidth: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
                                     (give user some recommendation here...)
                                 </Typography>
