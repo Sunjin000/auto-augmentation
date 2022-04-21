@@ -5,10 +5,10 @@ build-job:
     - . venv/bin/activate
     # - pip install -r requirements.txt
 
-test-job:
-  stage: test
-  script:
-    # - pytest
+# test-job:
+#   stage: test
+#   script:
+#     - pytest
 
 # deploy-job:
 #   stage: deploy
