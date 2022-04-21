@@ -29,9 +29,18 @@ export default function Home() {
     // for form submission  
     const {register, control, handleSubmit, setValue, watch, formState: { errors, dirtyFields}} = useForm();
     const watchFileds = watch(['select_dataset', 'select_network']);
-    const onSubmit = data => console.log('data', data); 
-    
-    console.log('errors', errors); 
+    const onSubmit = data => {
+        console.log('data', data);
+        fetch('/home', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+        })
+        .then((response) => response.text())
+        .then((method) => console.log('method', method));
+    }
+    // console.log('errors', errors); 
+    // console.log('handleSubmit', handleSubmit)
 
 
     // handling learner selection
