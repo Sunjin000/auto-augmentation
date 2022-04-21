@@ -4,8 +4,9 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route('/home', methods=["POST"])
+@app.route('/home', methods=["GET", "POST"])
 def home():
-    data = request.json
+    print('in flask home')
+    data = request.get('')
 
     return data
