@@ -26,8 +26,8 @@ def test_translate_operation_tensor():
         softmax = torch.nn.Softmax(dim=0)
 
         fun_num = random.randint(1, 14)
-        p_bins = random.randint(1, 15)
-        m_bins = random.randint(1, 15)
+        p_bins = random.randint(2, 15)
+        m_bins = random.randint(2, 15)
 
         agent = aal.aa_learner(
                 sp_num=5,
