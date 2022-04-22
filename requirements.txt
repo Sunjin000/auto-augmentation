@@ -4,5 +4,6 @@ numpy
 Flask
 react
 pytest
-trange
+tqdm
 pygad
+matplotlib
