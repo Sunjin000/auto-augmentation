@@ -102,12 +102,12 @@ def response():
                 test_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/test', train=False,
                                                 download=download, transform=torchvision.transforms.ToTensor())
             elif ds == "CIFAR10":
-                train_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=download)
-                test_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/fashionmnist/test', train=False,
+                train_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/cifar10/train', train=True, download=download)
+                test_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/cifar10/test', train=False,
                                                 download=download, transform=torchvision.transforms.ToTensor())
             elif ds == "CIFAR100":
-                train_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=download)
-                test_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/fashionmnist/test', train=False,
+                train_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/cifar100/train', train=True, download=download)
+                test_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/cifar100/test', train=False,
                                                 download=download, transform=torchvision.transforms.ToTensor())
             elif ds == 'Other':
                 dataset = datasets.ImageFolder('./MetaAugment/datasets/'+ ds_name)
