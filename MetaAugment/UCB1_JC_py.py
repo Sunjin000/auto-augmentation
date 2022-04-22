@@ -102,7 +102,7 @@ def sample_sub_policy(policies, policy, num_sub_policies):
 
 
 """Sample policy, open and apply above transformations"""
-def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name=None):
+def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, early_stop_flag, average_validation, iterations, IsLeNet, ds_name=None):
 
     # get number of policies and sub-policies
     num_policies = len(policies)
@@ -172,12 +172,13 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, toy_size)
 
         # create model
+	device = 'cuda' if torch.cuda.is_available() else 'cpu'
         if IsLeNet == "LeNet":
-            model = LeNet(img_height, img_width, num_labels, img_channels)
+            model = LeNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
         elif IsLeNet == "EasyNet":
-            model = EasyNet(img_height, img_width, num_labels, img_channels)
+            model = EasyNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
         elif IsLeNet == 'SimpleNet':
-            model = SimpleNet(img_height, img_width, num_labels, img_channels)
+            model = SimpleNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
         else:
             model = pickle.load(open(f'datasets/childnetwork', "rb"))
 
@@ -222,6 +223,8 @@ if __name__=='__main__':
     toy_size = 0.02       # total propeortion of training and test set we use
     max_epochs = 100      # max number of epochs that is run if early stopping is not hit
     early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
+    early_stop_flag = True        # implement early stopping or not
+    average_validation = [15,25]  # if not implementing early stopping, what epochs are we averaging over
     num_policies = 5      # fix number of policies
     num_sub_policies = 5  # fix number of sub-policies in a policy
     iterations = 100      # total iterations, should be more than the number of policies
@@ -230,7 +233,7 @@ if __name__=='__main__':
     # generate random policies at start
     policies = generate_policies(num_policies, num_sub_policies)
 
-    q_values, best_q_values = run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet)
+    q_values, best_q_values = run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, early_stop_flag, average_validation, iterations, IsLeNet)
 
     plt.plot(best_q_values)
 
