@@ -186,8 +186,8 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         cost = nn.CrossEntropyLoss()
 
         best_acc = train_child_network(model, train_loader, test_loader, sgd,
-                         cost, max_epochs, early_stop_num, logging=False,
-                         print_every_epoch=False)
+                         cost, max_epochs, early_stop_num, early_stop_flag,
+			 average_validation, logging=False, print_every_epoch=False)
 
         # update q_values
         if policy < num_policies:

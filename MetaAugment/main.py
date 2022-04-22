@@ -41,6 +41,8 @@ def train_child_network(child_network,
                         cost,
                         max_epochs=2000,
                         early_stop_num=10,
+                        early_stop_flag=True,
+                        average_validation=[15,25],
                         logging=False,
                         print_every_epoch=True):
     if torch.cuda.is_available():
@@ -94,17 +96,26 @@ def train_child_network(child_network,
                 # correct += torch.sum(_.numpy(), axis=-1)
                 _sum += _.shape[0]
         
-        # update best validation accuracy if it was higher, otherwise increase early stop count
+        
         acc = correct / _sum
 
+        if average_validation[0] <= _epoch <= average_validation[1]:
+            total_val += acc
+
+	# update best validation accuracy if it was higher, otherwise increase early stop count
         if acc > best_acc :
             best_acc = acc
             early_stop_cnt = 0
         else:
             early_stop_cnt += 1
 
-        # exit if validation gets worse over 10 runs
-        if early_stop_cnt >= early_stop_num:
+        # exit if validation gets worse over 10 runs and using early stopping
+        if early_stop_cnt >= early_stop_num and early_stop_flag:
+            break
+
+        # exit if using fixed epoch length
+        if _epoch >= average_validation[1] and not early_stop_flag:
+            best_acc = total_val / (average_validation[1] - average_validation[0] + 1)
             break
         
         if print_every_epoch:
