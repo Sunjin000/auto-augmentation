@@ -22,7 +22,8 @@ def test_generate_new_policy():
             sp_num=sp_num,
             fun_num=fun_num,
             p_bins=p_bins,
-            m_bins=m_bins
+            m_bins=m_bins,
+            cont_mb_size=2
             )
         for _ in range(4):
             new_policy = agent.generate_new_policy()
