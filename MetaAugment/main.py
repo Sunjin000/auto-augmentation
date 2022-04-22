@@ -51,8 +51,8 @@ def train_child_network(child_network,
         device = torch.device('cpu')
     child_network = child_network.to(device=device)
     
-    total_val=torch.tensor([0.0])
-    best_acc=torch.tensor([0.0])
+    total_val=torch.tensor([0.0]).to(device=device)
+    best_acc=torch.tensor([0.0]).to(device=device)
     early_stop_cnt = 0
     
     # logging accuracy for plotting
