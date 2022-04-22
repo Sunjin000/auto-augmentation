@@ -2,6 +2,7 @@ torch
 torchvision
 numpy
 Flask
+wheel
 react
 pytest
 trange
