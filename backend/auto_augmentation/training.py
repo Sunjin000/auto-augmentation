@@ -53,8 +53,6 @@ def response():
     if auto_aug_learner == 'UCB':
         policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
         q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)     
-        # plt.figure()
-        # plt.plot(q_values)
         best_q_values = np.array(best_q_values)
 
     elif auto_aug_learner == 'Evolutionary Learner':

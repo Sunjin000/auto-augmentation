@@ -19,6 +19,7 @@ from typing import List, Tuple, Optional, Dict
 import heapq
 import math
 import torch
+from flask import current_app
 
 from enum import Enum
 from torch import Tensor
@@ -94,6 +95,7 @@ class Evolutionary_learner():
         self.sub_num_pol = sub_num_pol
         self.mag_bins = mag_bins
         self.fun_num = fun_num
+        self.iter_count = 0
 
         full_augmentation_space = [
             # (function_name, do_we_need_to_specify_magnitude)
@@ -316,6 +318,9 @@ class Evolutionary_learner():
 
             fit_val = ((test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset, self.child_network)[0])/
                         + test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset, self.child_network)[0]) / 2
+
+            self.iter_count += 1
+            current_app.config['iteration'] = self.iter_count
 
             return fit_val
 

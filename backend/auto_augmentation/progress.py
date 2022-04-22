@@ -51,8 +51,6 @@ def response():
 
         # if user upload datasets and networks, save them in the database
 
-        # print("DS HERE3: ", ds)
-        # print("ds up: ", ds_up)
         if ds == None and ds_up != None:
             ds = 'Other'
             ds_folder = request.files['dataset_upload']
