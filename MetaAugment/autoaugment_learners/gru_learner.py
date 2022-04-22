@@ -61,7 +61,7 @@ class gru_learner(aa_learner):
                 # GRU-specific attributes that aren't in all other aa_learners's
                 alpha=0.2,
                 cont_mb_size=4,
-                cont_lr=0.1):
+                cont_lr=0.03):
         """
         Args:
             alpha (float, optional): Exploration parameter. It is multiplied to 

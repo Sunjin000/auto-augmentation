@@ -51,6 +51,7 @@ def train_child_network(child_network,
         device = torch.device('cpu')
     child_network = child_network.to(device=device)
     
+    total_val=torch.tensor([0.0])
     best_acc=torch.tensor([0.0])
     early_stop_cnt = 0
     
