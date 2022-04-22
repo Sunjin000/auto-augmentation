@@ -177,7 +177,7 @@ class aa_learner:
                 mag = torch.multinomial(mag_t, 1).item() # 0 <= m <= 9
 
             function = augmentation_space[fun_idx][0]
-            prob = prob_idx/self.p_bins
+            prob = prob_idx/(self.p_bins-1)
 
             indices = (fun_idx, prob_idx, mag)
 

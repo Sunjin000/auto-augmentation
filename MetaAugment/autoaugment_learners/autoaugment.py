@@ -416,15 +416,6 @@ if __name__=='__main__':
     import MetaAugment.child_networks as cn
     import torchvision.transforms as transforms
 
-    # If you get rid of this nextimport, the whole thing doesn't work... By the way this import also 
-    # exists on the top of this document.
-    # I think this is because "import torchvision.transforms as transforms" overrides the import at 
-    # the top of this file and does some funny stuff... Anyways we need to call this import again to get
-    # rid of the bug.
-    from torchvision.transforms import functional as F, InterpolationMode
-
-
-
 
     subpolicies1 = [
             (("Invert", 0.8, None), ("Contrast", 0.2, 6)),
