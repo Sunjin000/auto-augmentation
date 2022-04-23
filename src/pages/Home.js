@@ -29,16 +29,45 @@ export default function Home() {
     // for form submission  
     const {register, control, handleSubmit, setValue, watch, formState: { errors, dirtyFields}} = useForm();
     const watchFileds = watch(['select_dataset', 'select_network']);
-    const onSubmit = data => {
+
+    const onSubmit = async (data) => {
         console.log('data', data);
-        fetch('/home', {
+
+        const formData = new FormData();
+
+        formData.append("ds_upload", data.ds_upload[0]);
+        formData.append("network_upload", data.network_upload[0]);
+        formData.append("test", 'see');
+
+        for (var key of formData.entries()) {
+            console.log(key[0] + ', ' + key[1])}
+        
+        var responseClone
+        const res = await fetch('/home', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' , 
+                    'Accept': 'application/json'},
         body: JSON.stringify(data)
         })
-        .then((response) => response.text())
-        .then((method) => console.log('method', method));
-    }
+        .then((response) => response.json())
+        ///////// testing
+        // .then((response)=> {
+        //     responseClone = response.clone(); // 2
+        //     return response.json();
+        // })
+        // .then(function (data) {
+        //     console.log('data from flask', data)
+        // }, function (rejectionReason) { // 3
+        //     console.log('Error parsing JSON from response:', rejectionReason, responseClone); // 4
+        //     responseClone.text() // 5
+        //     .then(function (bodyText) {
+        //         console.log('Received the following instead of valid JSON:', bodyText); // 6
+        //     });
+        // });
+        
+    };
+    
+    // body: JSON.stringify(data)
     // console.log('errors', errors); 
     // console.log('handleSubmit', handleSubmit)
 
@@ -273,16 +302,16 @@ export default function Home() {
                             </Typography>
                             <Grid container spacing={1} style={{maxWidth:800, padding:"10px 10px"}}>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField {...register("batch_size")} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
+                                    <TextField type="number" {...register("batch_size", {valueAsNumber: true})} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField {...register("learning_rate")} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
+                                    <TextField type="number" {...register("learning_rate", {valueAsNumber: true})} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+                                    <TextField type="number" {...register("iterations", {valueAsNumber: true})} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+                                    <TextField type="number" {...register("toy_size", {valueAsNumber: true})} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
                                 </Grid>
                                 <FormLabel variant="h8" align='centre'>
                                     * Dataset Proportion defines the percentage of original dataset our auto-augment learner will use to find the 
@@ -348,4 +377,3 @@ export default function Home() {
         );
     }
 
-// export default Home;
