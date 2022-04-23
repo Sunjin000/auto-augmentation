@@ -1,0 +1,23 @@
+# build-job:
+#   stage: build
+#   script:
+#     - python3 -m venv venv
+#     - . venv/bin/activate
+#     - pip3 install wheel
+#     - pip3 install -r requirements.txt --no-cache-dir
+
+test-job:
+  stage: test
+  script:
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - pip3 install -r requirements.txt --no-cache-dir
+    - pytest
+
+# deploy-job:
+#   stage: deploy
+#   script:
+    # - echo "Now I'm Deploying to VM!"
+    # - flask run &
+    # - echo "Now I'm Deploying to Heroku!"
+    # - dpl --provider=heroku --app=metarl --api-key=5ccc3ae7-725e-4f9f-b441-0c9a28ebdc1b

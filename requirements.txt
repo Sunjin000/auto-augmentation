@@ -1,0 +1,10 @@
+torch
+torchvision
+numpy
+Flask
+wheel
+react
+pytest
+tqdm
+pygad
+matplotlib

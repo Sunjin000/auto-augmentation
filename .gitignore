@@ -1,27 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 **/__pycache__/
@@ -147,6 +123,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+node_modules./
 
 # Spyder project settings
 .spyderproject
@@ -183,3 +160,44 @@ cython_debug/
 MetaAugment/__pycache__/main.cpython-38.pyc
 
 **/mnist/
+
+**/.DS_Store
+node_modules
+
+cifar-10-batches-py
+cifar-10-python.tar.gz
+
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
