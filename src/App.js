@@ -1,4 +1,5 @@
 import Home from './pages/Home'
+import Confirm from './pages/Confirm'
 import './App.css';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -22,12 +23,13 @@ function App() {
   //     if(response.ok){
   //       return response.json()
   //     }
-  //   }).then(data => console.log(data))
+  //   }).then(data => console.log('api', data))
   // }, [])
 
   return (
     <div>
-      <Home />
+      {/* <Home /> */}
+      <Confirm />
     </div>
   );
 }

@@ -35,9 +35,9 @@ export default function Home() {
 
         const formData = new FormData();
 
-        formData.append("ds_upload", data.ds_upload[0]);
-        formData.append("network_upload", data.network_upload[0]);
-        formData.append("test", 'see');
+        // formData.append("ds_upload", data.ds_upload[0]);
+        // formData.append("network_upload", data.network_upload[0]);
+        // formData.append("test", 'see');
 
         for (var key of formData.entries()) {
             console.log(key[0] + ', ' + key[1])}
@@ -112,7 +112,7 @@ export default function Home() {
         return (
         <div className="App" style={{padding:"60px"}}> 
             <Typography gutterBottom variant="h3" align="center" >
-            Data Auto-Augmentation Old
+            Data Auto-Augmentation
             </Typography>
             <Grid >
                 <form action="/home" method="POST" onSubmit={handleSubmit(onSubmit)}>
