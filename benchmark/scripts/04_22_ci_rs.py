@@ -52,5 +52,6 @@ rerun_best_policy(
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
+    config=config,
     repeat_num=5
     )

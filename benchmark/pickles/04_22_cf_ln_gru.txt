@@ -1,0 +1,9 @@
+[(('ShearY', 0.2, 5), ('Rotate', 0.6, 6)),
+ (('TranslateX', 0.8, 3), ('Posterize', 0.1, 3)),
+ (('TranslateY', 0.0, 8), ('Equalize', 0.7, None)),
+ (('Equalize', 0.3, None), ('Contrast', 0.2, 0)),
+ (('ShearX', 0.4, 5), ('Contrast', 0.2, 8)),
+ (('TranslateX', 0.9, 3), ('Solarize', 0.4, 5)),
+ (('Color', 0.2, 4), ('Solarize', 0.6, 8)),
+ (('ShearX', 0.1, 8), ('Equalize', 0.4, None)),
+ (('Posterize', 0.7, 5), ('Solarize', 1.0, 4))][0.6056999564170837, 0.6329999566078186, 0.6171000003814697, 0.62909996509552]original small policys accuracies: [0.6236000061035156, 0.6187999844551086, 0.617900013923645]
