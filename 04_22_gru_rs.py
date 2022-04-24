@@ -50,7 +50,7 @@ def run_benchmark(
                     train_dataset=train_dataset,
                     test_dataset=test_dataset,
                     child_network_architecture=child_network_architecture,
-                    iterations=1
+                    iterations=10
                     )
         # save agent every iteration
         with open(save_file, 'wb+') as f:
@@ -75,7 +75,7 @@ total_iter=150
 
 # FashionMNIST with SimpleNet
 train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
-                            train=True, download=True, transform=None)
+                            train=True, download=True, transform=torchvision.transforms.ToTensor())
 test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
                         train=False, download=True,
                         transform=torchvision.transforms.ToTensor())
@@ -89,25 +89,26 @@ run_benchmark(
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
-    agent_arch=aal.gru_learner,
+    # agent_arch=aal.gru_learner,
+    agent_arch=aal.evo_learner,
     config=config,
     )
 
 # rs
-run_benchmark(
-    save_file='./benchmark/pickles/04_22_fm_sn_rs.pkl',
-    total_iter=total_iter,
-    train_dataset=train_dataset,
-    test_dataset=test_dataset,
-    child_network_architecture=child_network_architecture,
-    agent_arch=aal.randomsearch_learner,
-    config=config,
-    )
+# run_benchmark(
+#     save_file='./benchmark/pickles/04_22_fm_sn_rs.pkl',
+#     total_iter=total_iter,
+#     train_dataset=train_dataset,
+#     test_dataset=test_dataset,
+#     child_network_architecture=child_network_architecture,
+#     agent_arch=aal.randomsearch_learner,
+#     config=config,
+#     )
 
 
 # CIFAR10 with LeNet
 train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
-                        train=True, download=True, transform=None)
+                        train=True, download=True, transform=torchvision.transforms.ToTensor())
 test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
                         train=False, download=True, 
                         transform=torchvision.transforms.ToTensor())
@@ -121,17 +122,17 @@ run_benchmark(
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
-    agent_arch=aal.gru_learner,
+    agent_arch=aal.evo_learner,
     config=config,
     )
 
 # rs
-run_benchmark(
-    save_file='./benchmark/pickles/04_22_cf_ln_rs',
-    total_iter=total_iter,
-    train_dataset=train_dataset,
-    test_dataset=test_dataset,
-    child_network_architecture=child_network_architecture,
-    agent_arch=aal.randomsearch_learner,
-    config=config,
-    )
+# run_benchmark(
+#     save_file='./benchmark/pickles/04_22_cf_ln_rs',
+#     total_iter=total_iter,
+#     train_dataset=train_dataset,
+#     test_dataset=test_dataset,
+#     child_network_architecture=child_network_architecture,
+#     agent_arch=aal.randomsearch_learner,
+#     config=config,
+#     )

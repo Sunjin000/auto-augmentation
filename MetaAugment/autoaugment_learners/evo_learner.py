@@ -12,7 +12,7 @@ from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation
 import MetaAugment.child_networks as cn
 
 
-class evo_learner():
+class evo_learner(aa_learner):
 
     def __init__(self, 
                 sp_num=1,
@@ -90,11 +90,12 @@ class evo_learner():
 
                 trans, need_mag = self.augmentation_space[idx_ret]
 
-                p_ret = (1/(self.p_bins-1)) * torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0))
+                p_ret = min(1, max(0, torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0))))
                 mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)) if need_mag else None
                 int_pol.append((trans, p_ret, mag))
 
             full_policy.append(tuple(int_pol))
+
 
         return full_policy
 
@@ -174,7 +175,7 @@ class evo_learner():
         return [(self.augmentation_space[max_idx[0]][0], prob1, mag1), (self.augmentation_space[max_idx[1]][0], prob2, mag2)]
 
 
-    def learn(self, iterations = 15, return_weights = False):
+    def learn(self, train_dataset, test_dataset, child_network_architecture, iterations = 15, return_weights = False):
         """
         Runs the GA instance and returns the model weights as a dictionary
 
@@ -196,15 +197,18 @@ class evo_learner():
             Solution_idx -> Int
         """
         self.num_generations = iterations
-        self.history_best = [0 for i in range(iterations)]
-        self.history_avg = [0 for i in range(iterations)]
+        self.history_best = [0 for i in range(iterations+1)]
+        print("itations: ", iterations)
+
+        self.history_avg = [0 for i in range(iterations+1)]
         self.gen_count = 0
         self.best_model = 0
 
-        self.set_up_instance()
+        self.set_up_instance(train_dataset, test_dataset, child_network_architecture)
+        print("train_dataset: ", train_dataset)
 
         self.ga_instance.run()
-        self.history_avg = self.history_avg / self.num_solutions
+        self.history_avg = [x / self.num_solutions for x in self.history_avg]
 
         solution, solution_fitness, solution_idx = self.ga_instance.best_solution()
         if return_weights:
@@ -213,7 +217,7 @@ class evo_learner():
             return solution, solution_fitness, solution_idx
 
 
-    def set_up_instance(self, train_dataset, test_dataset):
+    def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
         """
         Initialises GA instance, as well as fitness and on_generation functions
         
@@ -241,16 +245,17 @@ class evo_learner():
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
 
             for idx, (test_x, label_x) in enumerate(self.train_loader):
-                if self.sp_num == 1:
-                    full_policy = self.get_single_policy_cov(test_x)
-                else:                    
-                    full_policy = self.get_full_policy(test_x)
+                # if self.sp_num == 1:
+                #     full_policy = self.get_single_policy_cov(test_x)
+                # else:                    
+                full_policy = self.get_full_policy(test_x)
+ 
 
-
-            fit_val = ((self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)[0]) /
-                        + self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)[0]) / 2
+            fit_val = self.test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset) #) /
+                      #  + self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)) / 2
 
             if fit_val > self.history_best[self.gen_count]:
+                print("best policy: ", full_policy)
                 self.history_best[self.gen_count] = fit_val 
                 self.best_model = model_weights_dict
             
