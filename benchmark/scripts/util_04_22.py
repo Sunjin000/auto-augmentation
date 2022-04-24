@@ -1,3 +1,4 @@
+from matplotlib.pyplot import get
 import torchvision.datasets as datasets
 import torchvision
 import torch
@@ -5,7 +6,7 @@ import torch
 import MetaAugment.child_networks as cn
 import MetaAugment.autoaugment_learners as aal
 
-
+from pprint import pprint
 
 """
 testing gru_learner and randomsearch_learner on
@@ -57,3 +58,60 @@ def run_benchmark(
             torch.save(agent, f)
 
     print('run_benchmark closing')
+
+
+def get_mega_policy(history, n):
+        """
+        we get the best n policies from an agent's history,
+        concatenate them to form our best mega policy
+
+        Args:
+            history (list[tuple])
+            n (int)
+        
+        Returns:
+            list[float]: validation accuracies
+        """
+        assert len(history) >= n
+
+        # agent.history is a list of (policy(list), val_accuracy(float)) tuples 
+        sorted_history = sorted(history, key=lambda x:x[1]) # sort wrt acc
+
+        best_history = sorted_history[:n]
+
+        megapolicy = []
+        for policy,acc in best_history:
+            for subpolicy in policy:
+                megapolicy.append(subpolicy)
+        
+        return megapolicy
+
+
+def rerun_best_policy(
+    agent_pickle,
+    accs_txt,
+    train_dataset,
+    test_dataset,
+    child_network_architecture,
+    repeat_num
+    ):
+
+    with open(agent_pickle, 'rb') as f:
+        agent = torch.load(f, map_location=device)
+    
+    megapol = get_mega_policy(agent.history)
+    print('mega policy to be tested:')
+    pprint(megapol)
+    
+    accs=[]
+    for _ in range(repeat_num):
+        print(f'{_}/{repeat_num}')
+        accs.append(
+                agent.test_autoaugment_policy(megapol,
+                                    child_network_architecture,
+                                    train_dataset,
+                                    test_dataset,
+                                    logging=False)
+                    )
+        with open(accs_txt, 'w') as f:
+            f.write(str(accs))
