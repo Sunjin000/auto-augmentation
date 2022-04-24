@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, flash, send_file
+from flask import Blueprint, request, render_template, flash, send_file, current_app, g, session
 import subprocess
 import os
 import zipfile
@@ -19,9 +19,12 @@ torch.manual_seed(0)
 # import agents and its functions
 
 from MetaAugment import UCB1_JC_py as UCB1_JC
+
+from MetaAugment import Evo_learner as Evo
+
 import MetaAugment.autoaugment_learners as aal
 from MetaAugment.main import create_toy
-from MetaAugment.child_networks import *
+import MetaAugment.child_networks as cn
 import pickle
 
 
@@ -32,11 +35,17 @@ bp = Blueprint("progress", __name__)
 def response():
 
     # hyperparameters to change
-    # print("thing: ", request.files['dataset_upload'] )
+
     if request.method == 'POST':
+
+        exclude_method = request.form.getlist("action_space")
+        num_funcs = 14 - len(exclude_method)
+
         batch_size = 1       # size of batch the inner NN is trained with
         learning_rate = 1e-1  # fix learning rate
         ds = request.form.get("dataset_selection")      # pick dataset (MNIST, KMNIST, FashionMNIST, CIFAR10, CIFAR100)
+        ds_up = request.files['dataset_upload']
+        nw_up = childnetwork = request.files['network_upload']
         toy_size = 1      # total propeortion of training and test set we use
         max_epochs = 10      # max number of epochs that is run if early stopping is not hit
         early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
@@ -45,46 +54,45 @@ def response():
         iterations = 5      # total iterations, should be more than the number of policies
         IsLeNet = request.form.get("network_selection")   # using LeNet or EasyNet or SimpleNet ->> default 
 
-        print(f'@@@@@ dataset is: {ds}, network is :{IsLeNet}')
-
         # if user upload datasets and networks, save them in the database
-        if ds == 'Other':
+
+        if ds == None and ds_up != None:
+            ds = 'Other'
             ds_folder = request.files['dataset_upload']
-            print('@@@ ds_folder', ds_folder)
             ds_name_zip = ds_folder.filename
+            ds_name = ds_name_zip.split('.')[0]
             ds_folder.save('./MetaAugment/datasets/'+ ds_name_zip)
             with zipfile.ZipFile('./MetaAugment/datasets/'+ ds_name_zip, 'r') as zip_ref:
-                zip_ref.extractall('./MetaAugment/datasets/')
-            ds_name = ds_name_zip.split('.')[0]
+                zip_ref.extractall('./MetaAugment/datasets/upload_dataset/')
+            if not current_app.debug:
+                os.remove(f'./MetaAugment/datasets/{ds_name_zip}')
+
 
         else: 
             ds_name = None
 
-        
-        if IsLeNet == 'Other':
+        for (dirpath, dirnames, filenames) in os.walk(f'./MetaAugment/datasets/upload_dataset/{ds_name}/'):
+            for dirname in dirnames:
+                if dirname[0:6] != 'class_':
+                    return render_template("fail_dataset.html")
+                else:
+                    pass
+
+
+        if IsLeNet == None and nw_up != None:
             childnetwork = request.files['network_upload']
             childnetwork.save('./MetaAugment/child_networks/'+childnetwork.filename)
+        
+        # generate random policies at start
+        auto_aug_leanrer = request.form.get("auto_aug_selection")
 
-
-        ucb = True # I made this dummy variable so my commit does not change this file's
-                   # behaviour
-        if ucb==True:
-            # generate random policies at start
+        if auto_aug_leanrer == 'UCB':
             policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
             q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
-            print("q_values: ", q_values)
-
-            plt.figure()
-            plt.plot(q_values)
-            plt.savefig('/static/image/test.png')
-
-            # plt.plot(best_q_values)
-
-            best_q_values = np.array(best_q_values)
-            # save('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), best_q_values)
-            #best_q_values = load('best_q_values_{}_{}percent_{}.npy'.format(IsLeNet, int(toy_size*100), ds), allow_pickle=True)
-
-        else: 
+        elif auto_aug_leanrer == 'Evolutionary Learner':
+            learner = Evo.Evolutionary_learner(fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds_name=ds_name, exclude_method=exclude_method)
+            learner.run_instance()
+        elif auto_aug_leanrer == 'Random Searcher':
             # As opposed to when ucb==True, `ds` and `IsLenet` are processed outside of the agent
             # This system makes more sense for the user who is not using the webapp and is instead
             # using the library within their code
@@ -129,11 +137,11 @@ def response():
             train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, toy_size)
             # create model
             if IsLeNet == "LeNet":
-                model = LeNet(img_height, img_width, num_labels, img_channels)
+                model = cn.LeNet(img_height, img_width, num_labels, img_channels)
             elif IsLeNet == "EasyNet":
-                model = EasyNet(img_height, img_width, num_labels, img_channels)
+                model = cn.EasyNet(img_height, img_width, num_labels, img_channels)
             elif IsLeNet == 'SimpleNet':
-                model = SimpleNet(img_height, img_width, num_labels, img_channels)
+                model = cn.SimpleNet(img_height, img_width, num_labels, img_channels)
             else:
                 model = pickle.load(open(f'datasets/childnetwork', "rb"))
 
@@ -149,39 +157,54 @@ def response():
                         test_dataset,
                         child_network_architecture=model,
                         iterations=iterations)
+        elif auto_aug_leanrer == 'Genetic Learner':
+            pass
 
-        print("DONE")
-
-
-    return render_template("progress.html")
-
-
+        plt.figure()
+        plt.plot(q_values)
 
 
+        # if auto_aug_learner == 'UCB':
+        #     policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
+        #     q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)     
+        #     # plt.figure()
+        #     # plt.plot(q_values)
+        #     best_q_values = np.array(best_q_values)
 
-########### TESTING STUFF
+        # elif auto_aug_learner == 'Evolutionary Learner':
+        #     network = Evo.Learner(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
+        #     child_network = Evo.LeNet()
+        #     learner = Evo.Evolutionary_learner(network=network, fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds = ds, ds_name=ds_name, exclude_method=exclude_method, child_network=child_network)
+        #     learner.run_instance()
+        # elif auto_aug_learner == 'Random Searcher':
+        #     pass 
+        # elif auto_aug_learner == 'Genetic Learner':
+        #     pass
 
-# UPLOAD_FOLDER = '/datasets'
 
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    current_app.config['AAL'] = auto_aug_learner
+    current_app.config['NP'] = num_policies
+    current_app.config['NSP'] = num_sub_policies
+    current_app.config['BS'] = batch_size
+    current_app.config['LR'] = learning_rate
+    current_app.config['TS'] = toy_size
+    current_app.config['ME'] = max_epochs
+    current_app.config['ESN'] = early_stop_num
+    current_app.config['IT'] = iterations
+    current_app.config['ISLENET'] = IsLeNet
+    current_app.config['DSN'] = ds_name
+    current_app.config['NUMFUN'] = num_funcs
+    current_app.config['ds'] = ds
+    current_app.config['exc_meth'] = exclude_method
 
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# @app.route('/user_input', methods = ['GET', 'POST'])
-# def upload_file():
-#     if request.method == 'POST':
-#         if 'file' not in request.files:
-#             flash('No file part')
-#             return redirect(request.url)
-#         file = request.files['file']
-#         if file.filename == '':
-#             flash('No selected file')
-#             return redirect(request.url)
-#         if file and allowed_file(file.filename):
-#             filename = secure_filename(file.filename)
-#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#             return redirect(url_for('uploaded_file', filename=filename))
-#     return '''
-    
-#     '''
+
+
+
+
+
+    # return render_template("progress.html", exclude_method = exclude_method, auto_aug_learner=auto_aug_learner)
+    return render_template("training.html", exclude_method = exclude_method, auto_aug_learner=auto_aug_learner)
+
+
+

@@ -20,8 +20,8 @@ from matplotlib import pyplot as plt
 from numpy import save, load
 from tqdm import trange
 
-from MetaAugment.child_networks import *
-from MetaAugment.main import create_toy, train_child_network
+from .child_networks import *
+from .main import create_toy, train_child_network
 
 
 # In[6]:
@@ -130,27 +130,27 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         # create transformations using above info
         transform = torchvision.transforms.Compose(
             [torchvision.transforms.RandomAffine(degrees=(degrees,degrees), shear=(shear,shear), scale=(scale,scale)),
-            torchvision.transforms.CenterCrop(28),
+            torchvision.transforms.CenterCrop(28), # <--- need to remove after finishing testing
             torchvision.transforms.ToTensor()])
 
         # open data and apply these transformations
         if ds == "MNIST":
-            train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.MNIST(root='./datasets/mnist/test', train=False, download=True, transform=transform)
         elif ds == "KMNIST":
-            train_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.KMNIST(root='./MetaAugment/datasets/kmnist/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.KMNIST(root='./datasets/kmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.KMNIST(root='./datasets/kmnist/test', train=False, download=True, transform=transform)
         elif ds == "FashionMNIST":
-            train_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.FashionMNIST(root='./MetaAugment/datasets/fashionmnist/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', train=False, download=True, transform=transform)
         elif ds == "CIFAR10":
-            train_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/cifar10/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.CIFAR10(root='./MetaAugment/datasets/cifar10/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.CIFAR10(root='./datasets/cifar10/test', train=False, download=True, transform=transform)
         elif ds == "CIFAR100":
-            train_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/cifar100/train', train=True, download=True, transform=transform)
-            test_dataset = datasets.CIFAR100(root='./MetaAugment/datasets/cifar100/test', train=False, download=True, transform=transform)
+            train_dataset = datasets.CIFAR100(root='./datasets/cifar100/train', train=True, download=True, transform=transform)
+            test_dataset = datasets.CIFAR100(root='./datasets/cifar100/test', train=False, download=True, transform=transform)
         elif ds == 'Other':
-            dataset = datasets.ImageFolder('./MetaAugment/datasets/'+ ds_name, transform=transform)
+            dataset = datasets.ImageFolder('./datasets/upload_dataset/'+ ds_name, transform=transform)
             len_train = int(0.8*len(dataset))
             train_dataset, test_dataset = torch.utils.data.random_split(dataset, [len_train, len(dataset)-len_train])
 
@@ -172,7 +172,11 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         train_loader, test_loader = create_toy(train_dataset, test_dataset, batch_size, toy_size)
 
         # create model
-	device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        if torch.cuda.is_available():
+            device='cuda'
+        else:
+            device='cpu'
+        
         if IsLeNet == "LeNet":
             model = LeNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
         elif IsLeNet == "EasyNet":
@@ -182,7 +186,7 @@ def run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, earl
         else:
             model = pickle.load(open(f'datasets/childnetwork', "rb"))
 
-        sgd = optim.SGD(model.parameters(), lr=1e-1)
+        sgd = optim.SGD(model.parameters(), lr=learning_rate)
         cost = nn.CrossEntropyLoss()
 
         best_acc = train_child_network(model, train_loader, test_loader, sgd,

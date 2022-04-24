@@ -1,0 +1,2 @@
+FLASK_APP=auto_augmentation
+FLASK_ENV=development

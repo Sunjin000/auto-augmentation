@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, request, flash
 
-from auto_augmentation import home, progress,result
+from auto_augmentation import home, progress,result, training
 
 def create_app(test_config=None):
     # create and configure the app
@@ -25,6 +25,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(home.bp)
     app.register_blueprint(progress.bp)
+    app.register_blueprint(training.bp)
     app.register_blueprint(result.bp)
     app.register_blueprint(download_file.bp)
     
