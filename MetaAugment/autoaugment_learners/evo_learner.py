@@ -98,10 +98,12 @@ class evo_learner(aa_learner):
 
 
                 if need_mag:
+                    # print("original mag", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0))
                     if self.m_bins == 1:
                         mag = min(9, max(0, (y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())))
                     else:
                         mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())
+                    mag = int(mag)
                 else:
                     mag = None
                 int_pol.append((trans, p_ret, mag))

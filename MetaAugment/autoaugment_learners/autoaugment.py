@@ -238,8 +238,6 @@ class AutoAugment(torch.nn.Module):
             if probs[i] <= p:
                 op_meta = self._augmentation_space(10, F.get_image_size(img))
                 magnitudes, signed = op_meta[op_name]
-                print("magnitudes: ", magnitudes)
-                print("signed: ", signed)
                 magnitude = float(magnitudes[magnitude_id].item()) if magnitude_id is not None else 0.0
                 if signed and signs[i] == 0:
                     magnitude *= -1.0
