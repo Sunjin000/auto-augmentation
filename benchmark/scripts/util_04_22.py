@@ -6,7 +6,7 @@ import torch
 import MetaAugment.child_networks as cn
 import MetaAugment.autoaugment_learners as aal
 
-from pprint import pprint
+import pprint
 
 """
 testing gru_learner and randomsearch_learner on
@@ -75,16 +75,21 @@ def get_mega_policy(history, n):
         assert len(history) >= n
 
         # agent.history is a list of (policy(list), val_accuracy(float)) tuples 
-        sorted_history = sorted(history, key=lambda x:x[1]) # sort wrt acc
+        sorted_history = sorted(history, key=lambda x:x[1], reverse=True) # sort wrt acc
 
         best_history = sorted_history[:n]
 
         megapolicy = []
+        # we also want to keep track of how good the best policies were
+        # maybe if we add them all up, they'll become worse! Hopefully better tho
+        orig_accs = []
+
         for policy,acc in best_history:
             for subpolicy in policy:
                 megapolicy.append(subpolicy)
+            orig_accs.append(acc)
         
-        return megapolicy
+        return megapolicy, orig_accs
 
 
 def rerun_best_policy(
@@ -93,25 +98,30 @@ def rerun_best_policy(
     train_dataset,
     test_dataset,
     child_network_architecture,
+    config,
     repeat_num
     ):
 
     with open(agent_pickle, 'rb') as f:
-        agent = torch.load(f, map_location=device)
+        agent = torch.load(f)
     
-    megapol = get_mega_policy(agent.history)
+    megapol, orig_accs = get_mega_policy(agent.history,3)
     print('mega policy to be tested:')
-    pprint(megapol)
-    
+    pprint.pprint(megapol)
+    print(orig_accs)
+
     accs=[]
     for _ in range(repeat_num):
         print(f'{_}/{repeat_num}')
+        temp_agent = aal.aa_learner(**config)
         accs.append(
-                agent.test_autoaugment_policy(megapol,
+                temp_agent.test_autoaugment_policy(megapol,
                                     child_network_architecture,
                                     train_dataset,
                                     test_dataset,
                                     logging=False)
                     )
         with open(accs_txt, 'w') as f:
+            f.write(pprint.pformat(megapol))
             f.write(str(accs))
+            f.write(f'original small policys accuracies: {orig_accs}')
