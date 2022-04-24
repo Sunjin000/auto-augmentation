@@ -205,7 +205,8 @@ def training():
                                     sub_num_pol=1, 
                                     ds = ds, 
                                     ds_name=ds_name, 
-                                    exclude_method=exclude_method, child_network=child_network
+                                    exclude_method=exclude_method, 
+                                    child_network=child_network
                                     )
 
         learner.run_instance()
