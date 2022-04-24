@@ -5,8 +5,7 @@ import Result from './pages/Result'
 import './App.css';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-// import {BrowerRouter as Router, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Routes, Switch} from 'react-router-dom';
 
 function App() {
   // useEffect(() => {
@@ -30,12 +29,20 @@ function App() {
 
   return (
     <div>
-      <Home />
+      {/* <Home /> */}
       {/* <Confirm /> */}
       {/* <Progress /> */}
       {/* <Result /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<Home/>}/>
+          <Route exact path="/confirm" element={<Confirm/>}/>
+          {/* <Route exact path="/Progress" element={<Training/>}/> */}
+        </Routes>
+      </BrowserRouter>
     </div>
   );
+
 }
 
 

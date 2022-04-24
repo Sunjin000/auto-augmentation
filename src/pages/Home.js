@@ -7,6 +7,14 @@ import { CardActions, Collapse, IconButton } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/material/styles';
 
+// import {
+//     BrowserRouter as Router,
+//     Switch,
+//     Route,
+//     Redirect,
+//   } from "react-router-dom";
+// import Confirm from './pages/Confirm'
+import {useNavigate, Route} from "react-router-dom";
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -30,14 +38,16 @@ export default function Home() {
     const {register, control, handleSubmit, setValue, watch, formState: { errors, dirtyFields}} = useForm();
     const watchFileds = watch(['select_dataset', 'select_network']);
 
+    let navigate = useNavigate();
+
     const onSubmit = async (data) => {
         console.log('data', data);
 
         const formData = new FormData();
 
-        // formData.append("ds_upload", data.ds_upload[0]);
-        // formData.append("network_upload", data.network_upload[0]);
-        // formData.append("test", 'see');
+        formData.append("ds_upload", data.ds_upload[0]);
+        formData.append("network_upload", data.network_upload[0]);
+        formData.append("test", 'see');
 
         for (var key of formData.entries()) {
             console.log(key[0] + ', ' + key[1])}
@@ -45,11 +55,11 @@ export default function Home() {
         var responseClone
         const res = await fetch('/home', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 
-                    'Accept': 'application/json'},
-        body: JSON.stringify(data)
-        })
-        .then((response) => response.json())
+        body: formData
+        }).then((response) => response.json());
+        console.log('check if it is here')
+        navigate('/confirm', {replace:true});
+        // 
         ///////// testing
         // .then((response)=> {
         //     responseClone = response.clone(); // 2
@@ -66,6 +76,7 @@ export default function Home() {
         // });
         
     };
+
     
     // body: JSON.stringify(data)
     // console.log('errors', errors); 
