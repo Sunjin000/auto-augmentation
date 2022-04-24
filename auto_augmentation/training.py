@@ -29,25 +29,30 @@ bp = Blueprint("training", __name__)
 @bp.route("/start_training", methods=["GET", "POST"])
 def response():
 
-    # hyperparameters to change
 
+
+    # aa learner
+    auto_aug_learner = current_app.config.get('AAL')
     # auto_aug_learner = session
 
-    auto_aug_learner = current_app.config.get('AAL')
-
+    # search space & problem setting
+    ds = current_app.config.get('ds')
+    ds_name = current_app.config.get('DSN')
+    exclude_method = current_app.config.get('exc_meth')
+    num_funcs = current_app.config.get('NUMFUN')
     num_policies = current_app.config.get('NP')
     num_sub_policies = current_app.config.get('NSP')
-    batch_size = current_app.config.get('BS')
-    learning_rate = current_app.config.get('LR')
     toy_size = current_app.config.get('TS')
-    max_epochs = current_app.config.get('ME')
+
+    # child network
+    IsLeNet = current_app.config.get('ISLENET')
+
+    # child network training hyperparameters
+    batch_size = current_app.config.get('BS')
     early_stop_num = current_app.config.get('ESN')
     iterations = current_app.config.get('IT')
-    IsLeNet = current_app.config.get('ISLENET')
-    ds_name = current_app.config.get('DSN')
-    num_funcs = current_app.config.get('NUMFUN')
-    ds = current_app.config.get('ds')
-    exclude_method = current_app.config.get('exc_meth')
+    learning_rate = current_app.config.get('LR')
+    max_epochs = current_app.config.get('ME')
 
 
     if auto_aug_learner == 'UCB':
