@@ -24,8 +24,10 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # import agents and its functions
-from MetaAugment import UCB1_JC_py as UCB1_JC
-from MetaAugment import Evo_learner as Evo
+from ..MetaAugment import UCB1_JC_py as UCB1_JC
+from ..MetaAugment.autoaugment_learners import evo_learner
+import MetaAugment.controller_networks as cn
+import MetaAugment.autoaugment_learners as aal
 print('@@@ import successful')
 
 # import agents and its functions
@@ -158,9 +160,9 @@ def training():
         best_q_values = np.array(best_q_values)
 
     elif auto_aug_learner == 'Evolutionary Learner':
-        network = Evo.Learner(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
-        child_network = Evo.LeNet()
-        learner = Evo.Evolutionary_learner(network=network, fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds = ds, ds_name=ds_name, exclude_method=exclude_method, child_network=child_network)
+        network = cn.evo_controller.evo_controller(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
+        child_network = aal.evo.LeNet()
+        learner = aal.evo.evo_learner(network=network, fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds = ds, ds_name=ds_name, exclude_method=exclude_method, child_network=child_network)
         learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
         pass 
