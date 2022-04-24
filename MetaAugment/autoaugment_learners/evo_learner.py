@@ -6,7 +6,7 @@ import pygad
 import pygad.torchga as torchga
 import copy
 import torch
-from MetaAugment.controller_networks.evo_controller import Evo_learner
+from MetaAugment.controller_networks.evo_controller import evo_controller
 
 from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation_space
 import MetaAugment.child_networks as cn
@@ -46,7 +46,7 @@ class evo_learner():
             early_stop_num=early_stop_num,)
 
         self.num_solutions = num_solutions
-        self.auto_aug_agent = Evo_learner(fun_num=fun_num, p_bins=p_bins, m_bins=m_bins, sub_num_pol=sp_num)
+        self.auto_aug_agent = evo_controller(fun_num=fun_num, p_bins=p_bins, m_bins=m_bins, sub_num_pol=sp_num)
         self.torch_ga = torchga.TorchGA(model=self.auto_aug_agent, num_solutions=num_solutions)
         self.num_parents_mating = num_parents_mating
         self.initial_population = self.torch_ga.population_weights
@@ -246,6 +246,7 @@ class evo_learner():
                 else:                    
                     full_policy = self.get_full_policy(test_x)
 
+# Checkpoint -> save learner as a pickle 
 
             fit_val = ((self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)[0]) /
                         + self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)[0]) / 2

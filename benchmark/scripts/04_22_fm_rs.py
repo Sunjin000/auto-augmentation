@@ -30,12 +30,23 @@ test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test',
 child_network_architecture = cn.SimpleNet
 
 
+save_dir='./benchmark/pickles/04_22_fm_sn_rs'
+
 # rs
 run_benchmark(
-    save_file='./benchmark/pickles/04_22_fm_sn_rs.pkl',
+    save_file=save_dir+'.pkl',
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
     agent_arch=aal.randomsearch_learner,
     config=config,
+    )
+
+rerun_best_policy(
+    agent_pickle=save_dir+'.pkl',
+    accs_txt=save_dir+'.txt',
+    train_dataset=train_dataset,
+    test_dataset=test_dataset,
+    child_network_architecture=child_network_architecture,
+    repeat_num=5
     )
