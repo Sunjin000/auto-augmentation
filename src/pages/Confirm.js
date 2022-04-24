@@ -3,7 +3,7 @@ import { Grid, List, ListItem, Avatar, ListItemAvatar, ListItemText, Card, CardC
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 
-export default function Training() {
+export default function Confirm() {
     const [myData, setMyData] = useState([{}])
   useEffect(() => {
     fetch('/api').then(

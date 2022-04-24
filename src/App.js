@@ -1,5 +1,7 @@
 import Home from './pages/Home'
 import Confirm from './pages/Confirm'
+import Progress from './pages/Progress'
+import Result from './pages/Result'
 import './App.css';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -29,7 +31,9 @@ function App() {
   return (
     <div>
       {/* <Home /> */}
-      <Confirm />
+      {/* <Confirm /> */}
+      {/* <Progress /> */}
+      <Result />
     </div>
   );
 }
