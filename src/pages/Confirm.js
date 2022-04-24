@@ -4,14 +4,19 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 
 export default function Confirm() {
+    const [batchSize, setBatchSize] = useState(0)
 //     // const [myData, setMyData] = useState([{}])
-//   useEffect(async () => {
-//     await fetch('/confirm').then(
-//       response => {console.log('response', response, 'response.json()', response.json()); response.json()}
-//     )
-//     // .then(data => {console.log('training', data); 
-//     //     })
-//   }, []);
+  useEffect(() => {
+    const res = fetch('/confirm').then(
+      response => response.json()
+      ).then(data => setBatchSize(data.batch_size));
+
+    console.log("batchsize", batchSize)
+    // setBatchSize(res.batch_size)
+
+    // .then(data => {console.log('training', data); 
+    //     })
+  }, []);
 
 
 
@@ -34,7 +39,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <TuneRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Batch size" secondary="[Batch size]" />
+                                <ListItemText primary="Batch size" secondary={batchSize} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item > 
