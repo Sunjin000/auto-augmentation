@@ -23,9 +23,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-# import agents and its functions
-from ..MetaAugment import UCB1_JC_py as UCB1_JC
-from ..MetaAugment.autoaugment_learners import evo_learner
+# # import agents and its functions
+from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment.autoaugment_learners import evo_learner
 import MetaAugment.controller_networks as cn
 import MetaAugment.autoaugment_learners as aal
 print('@@@ import successful')
@@ -43,8 +43,8 @@ app = Flask(__name__)
 def get_form_data():
     print('@@@ in Flask Home')
     # form_data = request.get_json() 
-    form_data = request.files['ds_upload'] 
-    print('@@@ form_data', form_data) 
+    # form_data = request.files['ds_upload'] 
+    # print('@@@ form_data', form_data) 
  
     # form_data = request.form.get('test') 
     # print('@@@ this is form data', request.get_data())
@@ -156,7 +156,7 @@ def confirm():
     data = {'ds': ds, 'ds_name': ds_name, 'IsLeNet': IsLeNet, 'ds_folder.filename': ds_name,
             'auto_aug_learner':auto_aug_learner, 'batch_size': batch_size, 'learning_rate': learning_rate, 
             'toy_size':toy_size, 'iterations':iterations, }
-    return {'data 1': 'show data'}
+    return {'batch_size': '12'}
 
 # ========================================================================
 @app.route('/training', methods=['POST', 'GET'])
