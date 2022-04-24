@@ -19,30 +19,12 @@ from typing import List, Tuple, Optional, Dict
 import heapq
 import math
 import torch
+from flask import current_app
 
 from enum import Enum
 from torch import Tensor
 
 
-
-
-augmentation_space = [
-            # (function_name, do_we_need_to_specify_magnitude)
-            ("ShearX", True),
-            ("ShearY", True),
-            ("TranslateX", True),
-            ("TranslateY", True),
-            ("Rotate", True),
-            ("Brightness", True),
-            ("Color", True),
-            ("Contrast", True),
-            ("Sharpness", True),
-            ("Posterize", True),
-            ("Solarize", True),
-            ("AutoContrast", False),
-            ("Equalize", False),
-            ("Invert", False),
-        ]
 
 
 class Learner(nn.Module):
@@ -66,6 +48,7 @@ class Learner(nn.Module):
         self.fc3 = nn.Linear(84, self.sub_num_pol * 2 * (self.fun_num + self.p_bins + self.m_bins))
         
     def forward(self, x):
+        x = x[:, 0:1, :, :]
         y = self.conv1(x)
         y = self.relu1(y)
         y = self.pool1(y)
@@ -81,12 +64,29 @@ class Learner(nn.Module):
 
         return y
 
+class LeNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(784, 2048)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Linear(2048, 10)
+        self.relu2 = nn.ReLU()
+
+    def forward(self, x):
+        x = x.reshape((-1, 784))
+        y = self.fc1(x)
+        y = self.relu1(y)
+        y = self.fc2(y)
+        y = self.relu2(y)
+        return y
+
 
 class Evolutionary_learner():
 
     def __init__(self, network, num_solutions = 10, num_generations = 5, num_parents_mating = 5, batch_size=32, child_network = None, p_bins = 11, mag_bins = 10, sub_num_pol=5, fun_num = 14, exclude_method=[], augmentation_space = None, ds=None, ds_name=None):
-        self.auto_aug_agent = Learner(fun_num=fun_num, p_bins=p_bins, m_bins=mag_bins, sub_num_pol=sub_num_pol)
-        self.torch_ga = torchga.TorchGA(model=network, num_solutions=num_solutions)
+        self.auto_aug_agent = network
+        self.torch_ga = torchga.TorchGA(model=self.auto_aug_agent, num_solutions=num_solutions)
+
         self.num_generations = num_generations
         self.num_parents_mating = num_parents_mating
         self.initial_population = self.torch_ga.population_weights
@@ -95,16 +95,32 @@ class Evolutionary_learner():
         self.sub_num_pol = sub_num_pol
         self.mag_bins = mag_bins
         self.fun_num = fun_num
-        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
+        self.iter_count = 0
 
-
+        full_augmentation_space = [
+            # (function_name, do_we_need_to_specify_magnitude)
+            ("ShearX", True),
+            ("ShearY", True),
+            ("TranslateX", True),
+            ("TranslateY", True),
+            ("Rotate", True),
+            ("Brightness", True),
+            ("Color", True),
+            ("Contrast", True),
+            ("Sharpness", True),
+            ("Posterize", True),
+            ("Solarize", True),
+            ("AutoContrast", False),
+            ("Equalize", False),
+            ("Invert", False),
+        ]
+        self.augmentation_space = [x for x in full_augmentation_space if x[0] not in exclude_method]
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
 
 
         transform = torchvision.transforms.Compose([
                     torchvision.transforms.CenterCrop(28),
                     torchvision.transforms.ToTensor()])
-
 
         if ds == "MNIST":
             self.train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train', train=True, download=True, transform=transform)
@@ -300,8 +316,11 @@ class Evolutionary_learner():
             for idx, (test_x, label_x) in enumerate(self.train_loader):
                 full_policy = self.get_policy_cov(test_x)
 
-            fit_val = ((test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0])/
-                        + test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset)[0]) / 2
+            fit_val = ((test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset, self.child_network)[0])/
+                        + test_autoaugment_policy(full_policy, self.train_dataset, self.test_dataset, self.child_network)[0]) / 2
+
+            self.iter_count += 1
+            current_app.config['iteration'] = self.iter_count
 
             return fit_val
 
@@ -387,8 +406,12 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
         correct = 0
         _sum = 0
         child_network.eval()
+        print("here0")
         with torch.no_grad():
+            print("here1")
+            print("len test_loader: ", len(test_loader))
             for idx, (test_x, test_label) in enumerate(test_loader):
+                print("here2")
                 test_x = test_x.to(device=device, dtype=test_x.dtype)
                 test_label = test_label.to(device=device, dtype=test_label.dtype)
 
@@ -399,6 +422,7 @@ def train_child_network(child_network, train_loader, test_loader, sgd,
                 correct += torch.sum(_, axis=-1)
 
                 _sum += _.shape[0]
+                print("SUM: ", _sum)
         
         acc = correct / _sum
 
@@ -835,6 +859,7 @@ class TrivialAugmentWide(torch.nn.Module):
         s += ', fill={fill}'
         s += ')'
         return s.format(**self.__dict__)
+
 
 
 
