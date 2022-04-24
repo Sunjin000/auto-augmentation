@@ -90,12 +90,23 @@ class evo_learner(aa_learner):
 
                 trans, need_mag = self.augmentation_space[idx_ret]
 
-                p_ret = min(1, max(0, torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0))))
-                mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)) if need_mag else None
+                if self.p_bins == 1:
+                    p_ret = min(1, max(0, (y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0).item())))
+                    # p_ret = torch.sigmoid(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0))
+                else:
+                    p_ret = torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0).item()) * 0.1
+
+
+                if need_mag:
+                    if self.m_bins == 1:
+                        mag = min(9, max(0, (y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())))
+                    else:
+                        mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())
+                else:
+                    mag = None
                 int_pol.append((trans, p_ret, mag))
 
             full_policy.append(tuple(int_pol))
-
 
         return full_policy
 
