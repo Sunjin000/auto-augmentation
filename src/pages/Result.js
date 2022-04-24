@@ -34,12 +34,11 @@ export default function Result() {
                             color='primary'
                             size='large'
                         >
-                            Donwload
+                            Download
                     </Button>
                     <Typography>
                         Please follow our documentation to apply this policy to your dataset.
                     </Typography>
-
                 </CardContent>
             </Card>
 

@@ -30,10 +30,10 @@ function App() {
 
   return (
     <div>
-      {/* <Home /> */}
+      <Home />
       {/* <Confirm /> */}
       {/* <Progress /> */}
-      <Result />
+      {/* <Result /> */}
     </div>
   );
 }

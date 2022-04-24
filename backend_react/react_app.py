@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from flask import Flask, request, current_app
+from flask import Flask, request, current_app, render_template
 # from flask_cors import CORS
 import subprocess
 import os
@@ -19,10 +19,19 @@ from numpy import save, load
 from tqdm import trange
 torch.manual_seed(0)
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 # import agents and its functions
-from ..MetaAugment import UCB1_JC_py as UCB1_JC
-from ..MetaAugment import Evo_learner as Evo
+from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment import Evo_learner as Evo
 print('@@@ import successful')
+
+# import agents and its functions
+# from ..MetaAugment import UCB1_JC_py as UCB1_JC
+# from ..MetaAugment import Evo_learner as Evo
+# print('@@@ import successful')
 
 app = Flask(__name__)
 
