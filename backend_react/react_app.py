@@ -24,7 +24,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # # import agents and its functions
-from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment.autoaugment_learners import ucb_learner as UCB1_JC
 from MetaAugment.autoaugment_learners import evo_learner
 import MetaAugment.controller_networks as cn
 import MetaAugment.autoaugment_learners as aal

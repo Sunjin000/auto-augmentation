@@ -18,7 +18,7 @@ from tqdm import trange
 torch.manual_seed(0)
 # import agents and its functions
 
-from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment.autoaugment_learners import ucb_learner as UCB1_JC
 from MetaAugment import Evo_learner as Evo
 
 
