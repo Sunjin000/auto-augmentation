@@ -4,13 +4,16 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 
 export default function Confirm() {
-    const [myData, setMyData] = useState([{}])
-  useEffect(() => {
-    fetch('/api').then(
-      response => {console.log('response', response); response.json()}
-    ).then(data => {console.log('training', data); 
-        })
-  }, []);
+//     // const [myData, setMyData] = useState([{}])
+//   useEffect(async () => {
+//     await fetch('/confirm').then(
+//       response => {console.log('response', response, 'response.json()', response.json()); response.json()}
+//     )
+//     // .then(data => {console.log('training', data); 
+//     //     })
+//   }, []);
+
+
 
 
     return (
