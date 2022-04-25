@@ -17,13 +17,16 @@ from MetaAugment.main import create_toy
 import pickle
 
 def parse_users_learner_spec(
+            # aalearner type
             auto_aug_learner, 
+            # search space settings
             ds, 
             ds_name, 
             exclude_method, 
             num_funcs, 
             num_policies, 
             num_sub_policies, 
+            # child network settings
             toy_size, 
             IsLeNet, 
             batch_size, 
