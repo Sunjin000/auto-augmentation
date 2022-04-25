@@ -58,6 +58,7 @@ export default function Home() {
         body: formData
         }).then((response) => response.json());
         console.log('check if it is here')
+        
         navigate('/confirm', {replace:true});
         // 
         ///////// testing

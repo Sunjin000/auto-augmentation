@@ -18,8 +18,8 @@ from tqdm import trange
 torch.manual_seed(0)
 # import agents and its functions
 
-from MetaAugment import UCB1_JC_py as UCB1_JC
-
+from MetaAugment.autoaugment_learners import ucb_learner
+# hi
 from MetaAugment import Evo_learner as Evo
 
 import MetaAugment.autoaugment_learners as aal
@@ -38,21 +38,28 @@ def response():
 
     if request.method == 'POST':
 
-        exclude_method = request.form.getlist("action_space")
-        num_funcs = 14 - len(exclude_method)
-
-        batch_size = 1       # size of batch the inner NN is trained with
-        learning_rate = 1e-1  # fix learning rate
+        # generate random policies at start
+        auto_aug_learner = request.form.get("auto_aug_selection")
+        
+        # search space & problem setting
         ds = request.form.get("dataset_selection")      # pick dataset (MNIST, KMNIST, FashionMNIST, CIFAR10, CIFAR100)
         ds_up = request.files['dataset_upload']
-        nw_up = childnetwork = request.files['network_upload']
-        toy_size = 1      # total propeortion of training and test set we use
-        max_epochs = 10      # max number of epochs that is run if early stopping is not hit
-        early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
+        exclude_method = request.form.getlist("action_space")
+        num_funcs = 14 - len(exclude_method)
         num_policies = 5      # fix number of policies
         num_sub_policies = 5  # fix number of sub-policies in a policy
-        iterations = 5      # total iterations, should be more than the number of policies
+        toy_size = 1      # total propeortion of training and test set we use
+
+        # child network
         IsLeNet = request.form.get("network_selection")   # using LeNet or EasyNet or SimpleNet ->> default 
+        nw_up = childnetwork = request.files['network_upload']
+
+        # child network training hyperparameters
+        batch_size = 1       # size of batch the inner NN is trained with
+        early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
+        iterations = 5      # total iterations, should be more than the number of policies
+        learning_rate = 1e-1  # fix learning rate
+        max_epochs = 10      # max number of epochs that is run if early stopping is not hit
 
         # if user upload datasets and networks, save them in the database
 
@@ -83,16 +90,15 @@ def response():
             childnetwork = request.files['network_upload']
             childnetwork.save('./MetaAugment/child_networks/'+childnetwork.filename)
         
-        # generate random policies at start
-        auto_aug_leanrer = request.form.get("auto_aug_selection")
 
-        if auto_aug_leanrer == 'UCB':
-            policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-            q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
-        elif auto_aug_leanrer == 'Evolutionary Learner':
+
+        if auto_aug_learner == 'UCB':
+            policies = ucb_learner.generate_policies(num_policies, num_sub_policies)
+            q_values, best_q_values = ucb_learner.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
+        elif auto_aug_learner == 'Evolutionary Learner':
             learner = Evo.Evolutionary_learner(fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds_name=ds_name, exclude_method=exclude_method)
             learner.run_instance()
-        elif auto_aug_leanrer == 'Random Searcher':
+        elif auto_aug_learner == 'Random Searcher':
             # As opposed to when ucb==True, `ds` and `IsLenet` are processed outside of the agent
             # This system makes more sense for the user who is not using the webapp and is instead
             # using the library within their code
@@ -157,7 +163,7 @@ def response():
                         test_dataset,
                         child_network_architecture=model,
                         iterations=iterations)
-        elif auto_aug_leanrer == 'Genetic Learner':
+        elif auto_aug_learner == 'Genetic Learner':
             pass
 
         plt.figure()
@@ -165,8 +171,8 @@ def response():
 
 
         # if auto_aug_learner == 'UCB':
-        #     policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-        #     q_values, best_q_values = UCB1_JC.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)     
+        #     policies = ucb_learner.generate_policies(num_policies, num_sub_policies)
+        #     q_values, best_q_values = ucb_learner.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)     
         #     # plt.figure()
         #     # plt.plot(q_values)
         #     best_q_values = np.array(best_q_values)

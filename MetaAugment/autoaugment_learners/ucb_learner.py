@@ -20,8 +20,8 @@ from matplotlib import pyplot as plt
 from numpy import save, load
 from tqdm import trange
 
-from .child_networks import *
-from .main import create_toy, train_child_network
+from ..child_networks import *
+from ..main import create_toy, train_child_network
 
 
 # In[6]:

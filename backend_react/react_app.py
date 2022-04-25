@@ -23,9 +23,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-# import agents and its functions
-from ..MetaAugment import UCB1_JC_py as UCB1_JC
-from ..MetaAugment.autoaugment_learners import evo_learner
+# # import agents and its functions
+from MetaAugment.autoaugment_learners import ucb_learner as UCB1_JC
+from MetaAugment.autoaugment_learners import evo_learner
 import MetaAugment.controller_networks as cn
 import MetaAugment.autoaugment_learners as aal
 print('@@@ import successful')
@@ -43,8 +43,8 @@ app = Flask(__name__)
 def get_form_data():
     print('@@@ in Flask Home')
     # form_data = request.get_json() 
-    form_data = request.files['ds_upload'] 
-    print('@@@ form_data', form_data) 
+    # form_data = request.files['ds_upload'] 
+    # print('@@@ form_data', form_data) 
  
     # form_data = request.form.get('test') 
     # print('@@@ this is form data', request.get_data())
@@ -138,43 +138,59 @@ def get_form_data():
 @app.route('/confirm', methods=['POST', 'GET'])
 def confirm():
     print('inside confirm')
+
+    # aa learner
     auto_aug_learner = current_app.config.get('AAL')
+
+    # search space & problem setting
+    ds = current_app.config.get('ds')
+    ds_name = current_app.config.get('DSN')
+    exclude_method = current_app.config.get('exc_meth')
     num_policies = current_app.config.get('NP')
     num_sub_policies = current_app.config.get('NSP')
-    batch_size = current_app.config.get('BS')
-    learning_rate = current_app.config.get('LR')
+    num_funcs = current_app.config.get('NUMFUN')
     toy_size = current_app.config.get('TS')
-    max_epochs = current_app.config.get('ME')
+
+    # child network
+    IsLeNet = current_app.config.get('ISLENET')
+
+    # child network training hyperparameters
+    batch_size = current_app.config.get('BS')
     early_stop_num = current_app.config.get('ESN')
     iterations = current_app.config.get('IT')
-    IsLeNet = current_app.config.get('ISLENET')
-    ds_name = current_app.config.get('DSN')
-    num_funcs = current_app.config.get('NUMFUN')
-    ds = current_app.config.get('ds')
-    exclude_method = current_app.config.get('exc_meth')
+    learning_rate = current_app.config.get('LR')
+    max_epochs = current_app.config.get('ME')
 
     data = {'ds': ds, 'ds_name': ds_name, 'IsLeNet': IsLeNet, 'ds_folder.filename': ds_name,
             'auto_aug_learner':auto_aug_learner, 'batch_size': batch_size, 'learning_rate': learning_rate, 
             'toy_size':toy_size, 'iterations':iterations, }
-    return {'data 1': 'show data'}
+    return {'batch_size': '12'}
 
 # ========================================================================
 @app.route('/training', methods=['POST', 'GET'])
 def training():
+
+    # aa learner
     auto_aug_learner = current_app.config.get('AAL')
+
+    # search space & problem setting
+    ds = current_app.config.get('ds')
+    ds_name = current_app.config.get('DSN')
+    exclude_method = current_app.config.get('exc_meth')
+    num_funcs = current_app.config.get('NUMFUN')
     num_policies = current_app.config.get('NP')
     num_sub_policies = current_app.config.get('NSP')
-    batch_size = current_app.config.get('BS')
-    learning_rate = current_app.config.get('LR')
     toy_size = current_app.config.get('TS')
-    max_epochs = current_app.config.get('ME')
+    
+    # child network
+    IsLeNet = current_app.config.get('ISLENET')
+
+    # child network training hyperparameters
+    batch_size = current_app.config.get('BS')
     early_stop_num = current_app.config.get('ESN')
     iterations = current_app.config.get('IT')
-    IsLeNet = current_app.config.get('ISLENET')
-    ds_name = current_app.config.get('DSN')
-    num_funcs = current_app.config.get('NUMFUN')
-    ds = current_app.config.get('ds')
-    exclude_method = current_app.config.get('exc_meth')
+    learning_rate = current_app.config.get('LR')
+    max_epochs = current_app.config.get('ME')
 
 
     if auto_aug_learner == 'UCB':
