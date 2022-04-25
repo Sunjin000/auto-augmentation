@@ -1,4 +1,3 @@
-from cgi import test
 import torch
 torch.manual_seed(0)
 import torch.nn as nn
@@ -7,19 +6,18 @@ import pygad.torchga as torchga
 import copy
 import torch
 
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation_space
-import MetaAugment.child_networks as cn
+from MetaAugment.autoaugment_learners.aa_learner import aa_learner
 
 
 class evo_learner(aa_learner):
 
     def __init__(self, 
                 # search space settings
-                discrete_p_m=False,
-                exclude_method=[],
                 sp_num=5,
                 p_bins=10, 
                 m_bins=10, 
+                discrete_p_m=False,
+                exclude_method=[],
                 # child network settings
                 learning_rate=1e-1, 
                 max_epochs=float('inf'),
@@ -32,16 +30,18 @@ class evo_learner(aa_learner):
                 controller=None
                 ):
 
-        super().__init__(sp_num=sp_num, 
-            p_bins=p_bins, 
-            m_bins=m_bins, 
-            discrete_p_m=discrete_p_m, 
-            batch_size=batch_size, 
-            toy_size=toy_size, 
-            learning_rate=learning_rate,
-            max_epochs=max_epochs,
-            early_stop_num=early_stop_num,
-            exclude_method=exclude_method)
+        super().__init__(
+                    sp_num=sp_num, 
+                    p_bins=p_bins, 
+                    m_bins=m_bins, 
+                    discrete_p_m=discrete_p_m, 
+                    batch_size=batch_size, 
+                    toy_size=toy_size, 
+                    learning_rate=learning_rate,
+                    max_epochs=max_epochs,
+                    early_stop_num=early_stop_num,
+                    exclude_method=exclude_method
+                    )
 
         self.num_solutions = num_solutions
         self.controller = controller

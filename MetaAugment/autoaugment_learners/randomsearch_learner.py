@@ -10,25 +10,7 @@ import pickle
 
 
 
-# We will use this augmentation_space temporarily. Later on we will need to 
-# make sure we are able to add other image functions if the users want.
-augmentation_space = [
-            # (function_name, do_we_need_to_specify_magnitude)
-            ("ShearX", True),
-            ("ShearY", True),
-            ("TranslateX", True),
-            ("TranslateY", True),
-            ("Rotate", True),
-            ("Brightness", True),
-            ("Color", True),
-            ("Contrast", True),
-            ("Sharpness", True),
-            ("Posterize", True),
-            ("Solarize", True),
-            ("AutoContrast", False),
-            ("Equalize", False),
-            ("Invert", False),
-        ]
+
 
 class randomsearch_learner(aa_learner):
     """
@@ -41,6 +23,7 @@ class randomsearch_learner(aa_learner):
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
+                exclude_method=[],
                 # hyperparameters for when training the child_network
                 batch_size=8,
                 toy_size=1,
@@ -49,15 +32,18 @@ class randomsearch_learner(aa_learner):
                 early_stop_num=30,
                 ):
         
-        super().__init__(sp_num=sp_num, 
-                p_bins=p_bins, 
-                m_bins=m_bins, 
-                discrete_p_m=discrete_p_m,
-                batch_size=batch_size,
-                toy_size=toy_size,
-                learning_rate=learning_rate,
-                max_epochs=max_epochs,
-                early_stop_num=early_stop_num,)
+        super().__init__(
+                    sp_num=sp_num, 
+                    p_bins=p_bins, 
+                    m_bins=m_bins, 
+                    discrete_p_m=discrete_p_m,
+                    batch_size=batch_size,
+                    toy_size=toy_size,
+                    learning_rate=learning_rate,
+                    max_epochs=max_epochs,
+                    early_stop_num=early_stop_num,
+                    exclude_method=exclude_method
+                    )
         
 
     def generate_new_discrete_operation(self):

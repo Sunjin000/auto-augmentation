@@ -1,15 +1,9 @@
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision
 
 from tqdm import trange
 
 from ..child_networks import *
-from ..main import train_child_network
 from .randomsearch_learner import randomsearch_learner
-from .aa_learner import augmentation_space
 
 
 class ucb_learner(randomsearch_learner):
@@ -23,6 +17,7 @@ class ucb_learner(randomsearch_learner):
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
+                exclude_method=[],
                 # hyperparameters for when training the child_network
                 batch_size=8,
                 toy_size=1,
@@ -33,7 +28,8 @@ class ucb_learner(randomsearch_learner):
                 num_policies=100
                 ):
         
-        super().__init__(sp_num=sp_num, 
+        super().__init__(
+                        sp_num=sp_num, 
                         p_bins=p_bins, 
                         m_bins=m_bins, 
                         discrete_p_m=discrete_p_m,
@@ -41,7 +37,9 @@ class ucb_learner(randomsearch_learner):
                         toy_size=toy_size,
                         learning_rate=learning_rate,
                         max_epochs=max_epochs,
-                        early_stop_num=early_stop_num,)
+                        early_stop_num=early_stop_num,
+                        exclude_method=exclude_method,
+                        )
         
 
         

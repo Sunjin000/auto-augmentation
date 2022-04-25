@@ -1,4 +1,3 @@
-from numpy import isin
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,31 +6,10 @@ from MetaAugment.autoaugment_learners.autoaugment import AutoAugment
 
 import torchvision.transforms as transforms
 
-from pprint import pprint
-import matplotlib.pyplot as plt
 import copy
 import types
 
 
-# We will use this augmentation_space temporarily. Later on we will need to 
-# make sure we are able to add other image functions if the users want.
-augmentation_space = [
-            # (function_name, do_we_need_to_specify_magnitude)
-            ("ShearX", True),
-            ("ShearY", True),
-            ("TranslateX", True),
-            ("TranslateY", True),
-            ("Rotate", True),
-            ("Brightness", True),
-            ("Color", True),
-            ("Contrast", True),
-            ("Sharpness", True),
-            ("Posterize", True),
-            ("Solarize", True),
-            ("AutoContrast", False),
-            ("Equalize", False),
-            ("Invert", False),
-        ]
 
 
 class aa_learner:
@@ -96,8 +74,30 @@ class aa_learner:
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
-        self.augmentation_space = [x for x in augmentation_space if x not in exclude_method]
-        self.fun_num = len(augmentation_space)
+
+        # this is the full augmentation space. We take out some image functions
+        # if the user specifies so in the exclude_method parameter
+        augmentation_space = [
+            # (function_name, do_we_need_to_specify_magnitude)
+            ("ShearX", True),
+            ("ShearY", True),
+            ("TranslateX", True),
+            ("TranslateY", True),
+            ("Rotate", True),
+            ("Brightness", True),
+            ("Color", True),
+            ("Contrast", True),
+            ("Sharpness", True),
+            ("Posterize", True),
+            ("Solarize", True),
+            ("AutoContrast", False),
+            ("Equalize", False),
+            ("Invert", False),
+        ]
+        self.exclude_method = exclude_method
+        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
+
+        self.fun_num = len(self.augmentation_space)
         self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
 
 
@@ -174,7 +174,7 @@ class aa_learner:
                 prob_idx = torch.multinomial(prob_t, 1).item() # 0 <= p <= 10
                 mag = torch.multinomial(mag_t, 1).item() # 0 <= m <= 9
 
-            function = augmentation_space[fun_idx][0]
+            function = self.augmentation_space[fun_idx][0]
             prob = prob_idx/(self.p_bins-1)
 
             indices = (fun_idx, prob_idx, mag)
@@ -203,13 +203,13 @@ class aa_learner:
             prob = round(prob, 1) # round to nearest first decimal digit
             mag = round(mag) # round to nearest integer
             
-        function = augmentation_space[fun_idx][0]
+        function = self.augmentation_space[fun_idx][0]
 
         assert 0 <= prob <= 1, prob
         assert 0 <= mag <= self.m_bins-1, (mag, self.m_bins)
         
         # if the image function does not require a magnitude, we set the magnitude to None
-        if augmentation_space[fun_idx][1] == True: # if the image function has a magnitude
+        if self.augmentation_space[fun_idx][1] == True: # if the image function has a magnitude
             operation = (function, prob, mag)
         else:
             operation =  (function, prob, None)
