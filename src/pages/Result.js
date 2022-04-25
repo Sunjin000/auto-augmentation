@@ -2,9 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Grid, List, ListItem, Avatar, ListItemAvatar, ListItemText, Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
 import output from './pytest.png'
 import {useNavigate, Route} from "react-router-dom";
+import axios from 'axios'
+import fileDownload from 'js-file-download'
 
 export default function Result() {
 
+    const handleClick = () => {
+        axios.get('/result', {
+            responseType: 'blob',
+          })
+        .then((res) => {
+          fileDownload(res.data, 'policy.txt');
+          console.log(res.data)
+        })
+      }
     
     return (
         <div className="App" style={{padding:"60px"}}>
@@ -35,6 +46,7 @@ export default function Result() {
                             variant="contained"
                             color='primary'
                             size='large'
+                            onClick={() => handleClick('https://avatars.githubusercontent.com/u/9919?s=280&v=4', 'sample')}
                         >
                             Download
                     </Button>
