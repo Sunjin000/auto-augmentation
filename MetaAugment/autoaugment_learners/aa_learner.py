@@ -101,7 +101,7 @@ class aa_learner:
         self.history = []
         self.augmentation_space = [x for x in augmentation_space if x not in exclude_method]
         self.fun_num = len(augmentation_space)
-        self.op_tensor_length = self.fun_num +p_bins+m_bins if discrete_p_m else self.fun_num +2
+        self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
 
 
     def translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
