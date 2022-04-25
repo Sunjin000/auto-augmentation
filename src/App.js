@@ -37,7 +37,8 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Home/>}/>
           <Route exact path="/confirm" element={<Confirm/>}/>
-          {/* <Route exact path="/Progress" element={<Training/>}/> */}
+          <Route exact path="/progress" element={<Progress/>}/>
+          <Route exact path="/result" element={<Result/>}/>
         </Routes>
       </BrowserRouter>
     </div>

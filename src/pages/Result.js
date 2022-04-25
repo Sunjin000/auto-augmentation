@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Grid, List, ListItem, Avatar, ListItemAvatar, ListItemText, Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
 import output from './pytest.png'
+import {useNavigate, Route} from "react-router-dom";
 
 export default function Result() {
 
+    
     return (
         <div className="App" style={{padding:"60px"}}>
             <Typography gutterBottom variant="h3" align="center" >
