@@ -1,0 +1,9 @@
+[(('Brightness', 0.8, 9), ('Brightness', 0.1, 8)),
+ (('Sharpness', 0.6, 9), ('ShearY', 0.4, 8)),
+ (('Brightness', 0.6, 1), ('Solarize', 1.0, 4)),
+ (('Brightness', 0.7, 0), ('Solarize', 0.6, 6)),
+ (('ShearX', 0.6, 2), ('Brightness', 0.3, 5)),
+ (('TranslateX', 0.6, 4), ('Posterize', 0.3, 0)),
+ (('TranslateX', 0.6, 2), ('ShearX', 0.6, 8)),
+ (('Sharpness', 0.8, 2), ('Solarize', 0.1, 8)),
+ (('Rotate', 0.9, 5), ('Invert', 0.4, None))][0.6085000038146973, 0.6218000054359436, 0.6029999852180481, 0.6187999844551086, 0.6155999898910522]original small policys accuracies: [0.614300012588501, 0.6122999787330627, 0.6114000082015991]
