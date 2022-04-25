@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -26,7 +20,6 @@ class ucb_learner(randomsearch_learner):
     def __init__(self,
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
@@ -42,7 +35,6 @@ class ucb_learner(randomsearch_learner):
                 ):
         
         super().__init__(sp_num=sp_num, 
-                        fun_num=14,
                         p_bins=p_bins, 
                         m_bins=m_bins, 
                         discrete_p_m=discrete_p_m,
@@ -53,20 +45,21 @@ class ucb_learner(randomsearch_learner):
                         max_epochs=max_epochs,
                         early_stop_num=early_stop_num,)
         
-        self.num_policies = num_policies
 
-        # When this learner is initialized we generate `num_policies` number
-        # of random policies. 
-        # generate_new_policy is inherited from the randomsearch_learner class
-        self.policies = []
-        self.make_more_policies()
+        
 
         # attributes used in the UCB1 algorithm
-        self.q_values = [0]*self.num_policies
-        self.best_q_values = []
+        self.num_policies = num_policies
+
+        self.policies = [self.generate_new_policy() for _ in range(num_policies)]
+
+        self.avg_accs = [None]*self.num_policies
+        self.best_avg_accs = []
+
         self.cnts = [0]*self.num_policies
         self.q_plus_cnt = [0]*self.num_policies
         self.total_count = 0
+
 
 
 
@@ -78,50 +71,71 @@ class ucb_learner(randomsearch_learner):
                     and add to our list of policies
         """
 
-        self.policies.append([self.generate_new_policy() for _ in n])
+        self.policies += [self.generate_new_policy() for _ in range(n)]
+
+        # all the below need to be lengthened to store information for the 
+        # new policies
+        self.avg_accs += [None for _ in range(n)]
+        self.cnts += [0 for _ in range(n)]
+        self.q_plus_cnt += [None for _ in range(n)]
+        self.num_policies += n
+
 
 
     def learn(self, 
             train_dataset, 
             test_dataset, 
             child_network_architecture, 
-            iterations=15):
+            iterations=15,
+            print_every_epoch=False):
+        """continue the UCB algorithm for `iterations` number of turns
 
+        """
 
         for this_iter in trange(iterations):
 
-            # get the action to try (either initially in order or using best q_plus_cnt value)
-            # TODO: change this if statemetn
-            if this_iter >= self.num_policies:
-                this_policy_idx = np.argmax(self.q_plus_cnt)
+            # choose which policy we want to test
+            if None in self.avg_accs:
+                # if there is a policy we haven't tested yet, we 
+                # test that one
+                this_policy_idx = self.avg_accs.index(None)
                 this_policy = self.policies[this_policy_idx]
-            else:
-                this_policy = this_iter
-
-
-            best_acc = self.test_autoaugment_policy(
+                acc = self.test_autoaugment_policy(
                                 this_policy,
                                 child_network_architecture,
                                 train_dataset,
                                 test_dataset,
-                                logging=False
+                                logging=False,
+                                print_every_epoch=print_every_epoch
                                 )
-
-            # update q_values
-            # TODO: change this if statemetn
-            if this_iter < self.num_policies:
-                self.q_values[this_policy_idx] += best_acc
+                # update q_values (average accuracy)
+                self.avg_accs[this_policy_idx] = acc
             else:
-                self.q_values[this_policy_idx] = (self.q_values[this_policy_idx]*self.cnts[this_policy_idx] + best_acc) / (self.cnts[this_policy_idx] + 1)
+                # if we have tested all policies before, we test the
+                # one with the best q_plus_cnt value
+                this_policy_idx = np.argmax(self.q_plus_cnt)
+                this_policy = self.policies[this_policy_idx]
+                acc = self.test_autoaugment_policy(
+                                this_policy,
+                                child_network_architecture,
+                                train_dataset,
+                                test_dataset,
+                                logging=False,
+                                print_every_epoch=print_every_epoch
+                                )
+                # update q_values (average accuracy)
+                self.avg_accs[this_policy_idx] = (self.avg_accs[this_policy_idx]*self.cnts[this_policy_idx] + acc) / (self.cnts[this_policy_idx] + 1)
+    
+            # logging the best avg acc up to now
+            best_avg_acc = max([x for x in self.avg_accs if x is not None])
+            self.best_avg_accs.append(best_avg_acc)
 
-            best_q_value = max(self.q_values)
-            self.best_q_values.append(best_q_value)
-
+            # print progress for user
             if (this_iter+1) % 5 == 0:
                 print("Iteration: {},\tQ-Values: {}, Best this_iter: {}".format(
                                 this_iter+1, 
-                                list(np.around(np.array(self.q_values),2)), 
-                                max(list(np.around(np.array(self.q_values),2)))
+                                list(np.around(np.array(self.avg_accs),2)), 
+                                max(list(np.around(np.array(self.avg_accs),2)))
                                 )
                     )
 
@@ -130,10 +144,11 @@ class ucb_learner(randomsearch_learner):
             self.total_count += 1
 
             # update q_plus_cnt values every turn after the initial sweep through
-            # TODO: change this if statemetn
-            if this_iter >= self.num_policies - 1:
-                for i in range(self.num_policies):
-                    self.q_plus_cnt[i] = self.q_values[i] + np.sqrt(2*np.log(self.total_count)/self.cnts[i])
+            for i in range(self.num_policies):
+                if self.avg_accs[i] is not None:
+                    self.q_plus_cnt[i] = self.avg_accs[i] + np.sqrt(2*np.log(self.total_count)/self.cnts[i])
+            
+            print(self.cnts)
 
             
 

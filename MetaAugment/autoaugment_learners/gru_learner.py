@@ -47,7 +47,6 @@ class gru_learner(aa_learner):
     def __init__(self,
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=False,
@@ -78,10 +77,10 @@ class gru_learner(aa_learner):
             print('Warning: Incompatible discrete_p_m=True input into gru_learner. \
                 discrete_p_m=False will be used')
         
-        super().__init__(sp_num, 
-                fun_num, 
-                p_bins, 
-                m_bins, 
+        super().__init__(
+                sp_num=sp_num, 
+                p_bins=p_bins, 
+                m_bins=m_bins, 
                 discrete_p_m=True, 
                 batch_size=batch_size, 
                 toy_flag=toy_flag, 

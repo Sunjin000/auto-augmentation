@@ -46,7 +46,6 @@ class aa_learner:
     def __init__(self, 
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=False,
@@ -57,6 +56,7 @@ class aa_learner:
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=20,
+                exclude_method = [],
                 ):
         """
         Args:
@@ -84,11 +84,9 @@ class aa_learner:
         """
         # related to defining the search space
         self.sp_num = sp_num
-        self.fun_num = fun_num
         self.p_bins = p_bins
         self.m_bins = m_bins
         self.discrete_p_m = discrete_p_m
-        self.op_tensor_length = fun_num+p_bins+m_bins if discrete_p_m else fun_num+2
 
         # related to training of the child_network
         self.batch_size = batch_size
@@ -101,6 +99,9 @@ class aa_learner:
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
+        self.augmentation_space = [x for x in augmentation_space if x not in exclude_method]
+        self.fun_num = len(augmentation_space)
+        self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
 
 
     def translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
@@ -309,7 +310,8 @@ class aa_learner:
                                 child_network_architecture,
                                 train_dataset,
                                 test_dataset,
-                                logging=False):
+                                logging=False,
+                                print_every_epoch=True):
         """
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
@@ -384,7 +386,7 @@ class aa_learner:
                                     max_epochs = self.max_epochs, 
                                     early_stop_num = self.early_stop_num, 
                                     logging = logging,
-                                    print_every_epoch=True)
+                                    print_every_epoch=print_every_epoch)
         
         # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
         return accuracy
