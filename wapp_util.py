@@ -12,7 +12,9 @@ import torchvision.datasets as datasets
 import MetaAugment.autoaugment_learners as aal
 import MetaAugment.controller_networks as cont_n
 import MetaAugment.child_networks as cn
-print('@@@ import successful')
+from MetaAugment.main import create_toy
+
+import pickle
 
 def parse_users_learner_spec(
             auto_aug_learner, 
@@ -30,6 +32,11 @@ def parse_users_learner_spec(
             learning_rate, 
             max_epochs
             ):
+    """
+    The website receives user inputs on what they want the aa_learner
+    to be. We take those hyperparameters and return an aa_learner
+
+    """
     if auto_aug_learner == 'UCB':
         policies = aal.ucb_learner.generate_policies(num_policies, num_sub_policies)
         q_values, best_q_values = aal.ucb_learner.run_UCB1(
