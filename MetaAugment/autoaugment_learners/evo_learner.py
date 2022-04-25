@@ -27,13 +27,11 @@ class evo_learner(aa_learner):
                 batch_size=8,
                 toy_flag=False,
                 toy_size=0.1,
-                fun_num = 14,
                 exclude_method=[],
                 controller = None
                 ):
 
         super().__init__(sp_num, 
-            fun_num, 
             p_bins, 
             m_bins, 
             discrete_p_m=discrete_p_m, 
@@ -42,7 +40,8 @@ class evo_learner(aa_learner):
             toy_size=toy_size, 
             learning_rate=learning_rate,
             max_epochs=max_epochs,
-            early_stop_num=early_stop_num,)
+            early_stop_num=early_stop_num,
+            exclude_method=exclude_method)
 
         self.num_solutions = num_solutions
         self.controller = controller
@@ -52,8 +51,6 @@ class evo_learner(aa_learner):
         self.p_bins = p_bins 
         self.sub_num_pol = sp_num
         self.m_bins = m_bins
-        self.fun_num = fun_num
-        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
         self.policy_dict = {}
         self.policy_result = []
 
