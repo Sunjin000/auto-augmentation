@@ -12,12 +12,8 @@ torch.manual_seed(0)
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-import wapp_util
 
-
-# import agents and its functions
-from MetaAugment import UCB1_JC_py as UCB1_JC
-from MetaAugment import Evo_learner as Evo
+import temp_util.wapp_util as wapp_util
 print('@@@ import successful')
 
 app = Flask(__name__)

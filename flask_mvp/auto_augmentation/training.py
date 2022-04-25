@@ -5,7 +5,7 @@ import torch
 torch.manual_seed(0)
 
 
-import wapp_util
+import temp_util.wapp_util as wapp_util
 
 bp = Blueprint("training", __name__)
 
