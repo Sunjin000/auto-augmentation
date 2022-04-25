@@ -24,10 +24,9 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # # import agents and its functions
-from MetaAugment.autoaugment_learners import ucb_learner as UCB1_JC
-from MetaAugment.autoaugment_learners import evo_learner
-import MetaAugment.controller_networks as cn
 import MetaAugment.autoaugment_learners as aal
+import MetaAugment.controller_networks as cont_n
+import MetaAugment.child_networks as cn
 print('@@@ import successful')
 
 # import agents and its functions
@@ -194,8 +193,8 @@ def training():
 
 
     if auto_aug_learner == 'UCB':
-        policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-        q_values, best_q_values = UCB1_JC.run_UCB1(
+        policies = aal.ucb_learner.generate_policies(num_policies, num_sub_policies)
+        q_values, best_q_values = aal.ucb_learner.run_UCB1(
                                                 policies,
                                                 batch_size, 
                                                 learning_rate, 
@@ -210,21 +209,19 @@ def training():
         best_q_values = np.array(best_q_values)
 
     elif auto_aug_learner == 'Evolutionary Learner':
-
-        network = cn.evo_controller.evo_controller(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
-        child_network = aal.evo.LeNet()
-        learner = aal.evo.evo_learner(
-                                    network=network, 
-                                    fun_num=num_funcs, 
-                                    p_bins=1, 
-                                    mag_bins=1, 
-                                    sub_num_pol=1, 
-                                    ds = ds, 
-                                    ds_name=ds_name, 
-                                    exclude_method=exclude_method, 
-                                    child_network=child_network
-                                    )
-
+        network = cont_n.evo_controller(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
+        child_network = cn.LeNet()
+        learner = aal.evo_learner(
+                                network=network, 
+                                fun_num=num_funcs, 
+                                p_bins=1, 
+                                mag_bins=1, 
+                                sub_num_pol=1, 
+                                ds = ds, 
+                                ds_name=ds_name, 
+                                exclude_method=exclude_method, 
+                                child_network=child_network
+                                )
         learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
         pass 

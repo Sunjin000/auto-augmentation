@@ -94,9 +94,28 @@ def response():
 
         if auto_aug_learner == 'UCB':
             policies = ucb_learner.generate_policies(num_policies, num_sub_policies)
-            q_values, best_q_values = ucb_learner.run_UCB1(policies, batch_size, learning_rate, ds, toy_size, max_epochs, early_stop_num, iterations, IsLeNet, ds_name)
+            q_values, best_q_values = ucb_learner.run_UCB1(
+                                                        policies, 
+                                                        batch_size, 
+                                                        learning_rate, 
+                                                        ds, 
+                                                        toy_size, 
+                                                        max_epochs, 
+                                                        early_stop_num, 
+                                                        iterations, 
+                                                        IsLeNet, 
+                                                        ds_name
+                                                        )    
+            best_q_values = np.array(best_q_values)
         elif auto_aug_learner == 'Evolutionary Learner':
-            learner = Evo.Evolutionary_learner(fun_num=num_funcs, p_bins=1, mag_bins=1, sub_num_pol=1, ds_name=ds_name, exclude_method=exclude_method)
+            learner = Evo.Evolutionary_learner(
+                                            fun_num=num_funcs, 
+                                            p_bins=1, 
+                                            mag_bins=1, 
+                                            sub_num_pol=1, 
+                                            ds_name=ds_name, 
+                                            exclude_method=exclude_method
+                                            )
             learner.run_instance()
         elif auto_aug_learner == 'Random Searcher':
             # As opposed to when ucb==True, `ds` and `IsLenet` are processed outside of the agent

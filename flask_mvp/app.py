@@ -3,7 +3,8 @@
 #     app.run(host='0.0.0.0',port=port)
 
 from numpy import broadcast
-from auto_augmentation import home, progress,result, training
+from auto_augmentation import home, progress,result
+from flask_mvp.auto_augmentation import training
 from flask_socketio import SocketIO,  send
 
 from flask import Flask, flash, request, redirect, url_for
