@@ -103,6 +103,16 @@ def get_form_data():
     current_app.config['data'] = data
     
     print('@@@ all data sent', current_app.config['data'])
+
+    # try this if you want it might work, it might not
+    # wapp_util.parse_users_learner_spec(
+    #                         num_policies,
+    #                         num_sub_policies,
+    #                         early_stop_num,
+    #                         max_epochs,
+    #                         **data,
+    #                         )
+
     return {'data': 'all stored'}
 
 
