@@ -1,19 +1,19 @@
 from dataclasses import dataclass
-from flask import Flask, request, current_app, render_template
+from flask import Flask, request, current_app, send_file
 # from flask_cors import CORS
 import os
 import zipfile
 
 import torch
-
 from numpy import save, load
-torch.manual_seed(0)
+import temp_util.wapp_util as wapp_util
+import time
 
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
+torch.manual_seed(0)
 
-import temp_util.wapp_util as wapp_util
 print('@@@ import successful')
 
 app = Flask(__name__)
@@ -122,28 +122,6 @@ def confirm():
 @app.route('/training', methods=['POST', 'GET'])
 def training():
 
-    # # aa learner
-    # auto_aug_learner = current_app.config.get('AAL')
-
-    # # search space & problem setting
-    # ds = current_app.config.get('ds')
-    # ds_name = current_app.config.get('DSN')
-    # exclude_method = current_app.config.get('exc_meth')
-    # num_funcs = current_app.config.get('NUMFUN')
-    # num_policies = current_app.config.get('NP')
-    # num_sub_policies = current_app.config.get('NSP')
-    # toy_size = current_app.config.get('TS')
-    
-    # # child network
-    # IsLeNet = current_app.config.get('ISLENET')
-
-    # # child network training hyperparameters
-    # batch_size = current_app.config.get('BS')
-    # early_stop_num = current_app.config.get('ESN')
-    # iterations = current_app.config.get('IT')
-    # learning_rate = current_app.config.get('LR')
-    # max_epochs = current_app.config.get('ME')
-
     # default values 
     max_epochs = 10      # max number of epochs that is run if early stopping is not hit
     early_stop_num = 10   # max number of worse validation scores before early stopping is triggered
@@ -151,16 +129,27 @@ def training():
     num_sub_policies = 5  # fix number of sub-policies in a policy
     data = current_app.config.get('data')
 
-    return {'status': 'training done!'}
+    # fake training
+    print('pretend it is training')
+    time.sleep(3)
+    print('epoch: 1')
+    time.sleep(3)
+    print('epoch: 2')
+    time.sleep(3) 
+    print('epoch: 3')
+    print('it has finished training')
 
-
-
+    return {'status': 'Training is done!'}
 
 
 # ========================================================================
-@app.route('/results')
+@app.route('/result')
 def show_result():
-    return {'status': 'results'}
+    file_path = "./policy.txt"
+    f = open(file_path, "r")
+    return send_file(file_path, as_attachment=True)
+
+
 
 @app.route('/api')
 def index():
@@ -168,4 +157,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, use_reloader=False)
