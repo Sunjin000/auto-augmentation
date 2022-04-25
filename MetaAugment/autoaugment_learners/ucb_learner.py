@@ -20,7 +20,6 @@ class ucb_learner(randomsearch_learner):
     def __init__(self,
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
@@ -36,7 +35,6 @@ class ucb_learner(randomsearch_learner):
                 ):
         
         super().__init__(sp_num=sp_num, 
-                        fun_num=14,
                         p_bins=p_bins, 
                         m_bins=m_bins, 
                         discrete_p_m=discrete_p_m,

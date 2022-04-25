@@ -14,13 +14,11 @@ def test_generate_new_policy():
     """
     for _ in range(40):
         sp_num = random.randint(1,20)
-        fun_num = random.randint(1, 14)
         p_bins = random.randint(2, 15)
         m_bins = random.randint(2, 15)
 
         agent = aal.gru_learner(
             sp_num=sp_num,
-            fun_num=fun_num,
             p_bins=p_bins,
             m_bins=m_bins,
             cont_mb_size=2
