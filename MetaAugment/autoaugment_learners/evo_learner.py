@@ -7,12 +7,11 @@ import pygad.torchga as torchga
 import copy
 import torch
 from MetaAugment.controller_networks.evo_controller import evo_controller
-
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation_space
 import MetaAugment.child_networks as cn
+from .aa_learner import aa_learner, augmentation_space
 
 
-class evo_learner():
+class evo_learner(aa_learner):
 
     def __init__(self, 
                 sp_num=1,

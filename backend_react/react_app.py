@@ -1,39 +1,24 @@
 from dataclasses import dataclass
 from flask import Flask, request, current_app, render_template
 # from flask_cors import CORS
-import subprocess
 import os
 import zipfile
 
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import torch.utils.data as data_utils
-import torchvision
-import torchvision.datasets as datasets
 
-from matplotlib import pyplot as plt
 from numpy import save, load
-from tqdm import trange
 torch.manual_seed(0)
 
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
+import wapp_util
 
-# # import agents and its functions
-from MetaAugment.autoaugment_learners import ucb_learner as UCB1_JC
-from MetaAugment.autoaugment_learners import evo_learner
-import MetaAugment.controller_networks as cn
-import MetaAugment.autoaugment_learners as aal
-print('@@@ import successful')
 
 # import agents and its functions
-# from ..MetaAugment import UCB1_JC_py as UCB1_JC
-# from ..MetaAugment import Evo_learner as Evo
-# print('@@@ import successful')
+from MetaAugment import UCB1_JC_py as UCB1_JC
+from MetaAugment import Evo_learner as Evo
+print('@@@ import successful')
 
 app = Flask(__name__)
 
@@ -141,27 +126,27 @@ def confirm():
 @app.route('/training', methods=['POST', 'GET'])
 def training():
 
-    # aa learner
-    auto_aug_learner = current_app.config.get('AAL')
+    # # aa learner
+    # auto_aug_learner = current_app.config.get('AAL')
 
-    # search space & problem setting
-    ds = current_app.config.get('ds')
-    ds_name = current_app.config.get('DSN')
-    exclude_method = current_app.config.get('exc_meth')
-    num_funcs = current_app.config.get('NUMFUN')
-    num_policies = current_app.config.get('NP')
-    num_sub_policies = current_app.config.get('NSP')
-    toy_size = current_app.config.get('TS')
+    # # search space & problem setting
+    # ds = current_app.config.get('ds')
+    # ds_name = current_app.config.get('DSN')
+    # exclude_method = current_app.config.get('exc_meth')
+    # num_funcs = current_app.config.get('NUMFUN')
+    # num_policies = current_app.config.get('NP')
+    # num_sub_policies = current_app.config.get('NSP')
+    # toy_size = current_app.config.get('TS')
     
-    # child network
-    IsLeNet = current_app.config.get('ISLENET')
+    # # child network
+    # IsLeNet = current_app.config.get('ISLENET')
 
-    # child network training hyperparameters
-    batch_size = current_app.config.get('BS')
-    early_stop_num = current_app.config.get('ESN')
-    iterations = current_app.config.get('IT')
-    learning_rate = current_app.config.get('LR')
-    max_epochs = current_app.config.get('ME')
+    # # child network training hyperparameters
+    # batch_size = current_app.config.get('BS')
+    # early_stop_num = current_app.config.get('ESN')
+    # iterations = current_app.config.get('IT')
+    # learning_rate = current_app.config.get('LR')
+    # max_epochs = current_app.config.get('ME')
 
     # default values 
     max_epochs = 10      # max number of epochs that is run if early stopping is not hit
@@ -170,46 +155,9 @@ def training():
     num_sub_policies = 5  # fix number of sub-policies in a policy
     data = current_app.config.get('data')
 
-
-    if data.auto_aug_learner == 'UCB':
-        policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-        q_values, best_q_values = UCB1_JC.run_UCB1(
-                                                policies,
-                                                data.batch_size, 
-                                                data.learning_rate, 
-                                                data.ds, 
-                                                data.toy_size, 
-                                                max_epochs, 
-                                                early_stop_num, 
-                                                data.iterations, 
-                                                data.IsLeNet, 
-                                                data.ds_name
-                                                )     
-        best_q_values = np.array(best_q_values)
-
-    elif data.auto_aug_learner == 'Evolutionary Learner':
-
-        network = cn.evo_controller.evo_controller(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
-        child_network = aal.evo.LeNet()
-        learner = aal.evo.evo_learner(
-                                    network=network, 
-                                    fun_num=num_funcs, 
-                                    p_bins=1, 
-                                    mag_bins=1, 
-                                    sub_num_pol=1, 
-                                    ds = ds, 
-                                    ds_name=ds_name, 
-                                    exclude_method=exclude_method, 
-                                    child_network=child_network
-                                    )
-
-        learner.run_instance()
-    elif data.auto_aug_learner == 'Random Searcher':
-        pass 
-    elif data.auto_aug_learner == 'Genetic Learner':
-        pass
-
     return {'status': 'training done!'}
+
+
 
 
 
