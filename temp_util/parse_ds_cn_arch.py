@@ -1,10 +1,10 @@
-from ..child_networks import *
-from ..main import create_toy, train_child_network
+from ..MetaAugment.child_networks import *
+from ..MetaAugment.main import create_toy, train_child_network
 import torch
 import torchvision.datasets as datasets
 import pickle
 
-def parse_ds_cn_arch(self, ds, ds_name, IsLeNet, transform):
+def parse_ds_cn_arch(ds, ds_name, IsLeNet, transform):
     # open data and apply these transformations
     if ds == "MNIST":
         train_dataset = datasets.MNIST(root='./datasets/mnist/train', train=True, download=True, transform=transform)
@@ -41,19 +41,14 @@ def parse_ds_cn_arch(self, ds, ds_name, IsLeNet, transform):
         num_labels = (max(train_dataset.targets) - min(train_dataset.targets) + 1).item()
 
 
-        # create model
-    if torch.cuda.is_available():
-        device='cuda'
-    else:
-        device='cpu'
         
     if IsLeNet == "LeNet":
-        model = LeNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
+        model = LeNet(img_height, img_width, num_labels, img_channels)
     elif IsLeNet == "EasyNet":
-        model = EasyNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
+        model = EasyNet(img_height, img_width, num_labels, img_channels)
     elif IsLeNet == 'SimpleNet':
-        model = SimpleNet(img_height, img_width, num_labels, img_channels).to(device) # added .to(device)
+        model = SimpleNet(img_height, img_width, num_labels, img_channels)
     else:
         model = pickle.load(open(f'datasets/childnetwork', "rb"))
 
-    return train_dataset, test_dataset, model
+    return train_dataset, test_dataset, model 

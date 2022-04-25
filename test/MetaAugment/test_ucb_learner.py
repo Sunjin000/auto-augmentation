@@ -1,25 +1,24 @@
 import MetaAugment.autoaugment_learners as aal
-import MetaAugment.child_networks as cn
-import torch
-import torchvision
-import torchvision.datasets as datasets
-
-import random
 
 
 def test_ucb_learner():
-    policies = UCB1_JC.generate_policies(num_policies, num_sub_policies)
-        q_values, best_q_values = UCB1_JC.run_UCB1(
-                                                policies,
-                                                batch_size, 
-                                                learning_rate, 
-                                                ds, 
-                                                toy_size, 
-                                                max_epochs, 
-                                                early_stop_num, 
-                                                iterations, 
-                                                IsLeNet, 
-                                                ds_name
-                                                )     
-        best_q_values = np.array(best_q_values)
-    pass
+    learner = aal.ucb_learner(
+        # parameters that define the search space
+                sp_num=5,
+                p_bins=11,
+                m_bins=10,
+                discrete_p_m=True,
+                # hyperparameters for when training the child_network
+                batch_size=8,
+                toy_flag=False,
+                toy_size=0.1,
+                learning_rate=1e-1,
+                max_epochs=float('inf'),
+                early_stop_num=30,
+                # ucb_learner specific hyperparameter
+                num_policies=100
+    )
+    print(learner.policies)
+
+if __name__=="__main__":
+    test_ucb_learner()
