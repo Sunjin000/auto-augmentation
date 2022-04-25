@@ -125,7 +125,6 @@ def parse_users_learner_spec(
 
             # use an aa_learner. in this case, a rs learner
         agent = aal.randomsearch_learner(batch_size=batch_size,
-                                            toy_flag=True,
                                             learning_rate=learning_rate,
                                             toy_size=toy_size,
                                             max_epochs=max_epochs,

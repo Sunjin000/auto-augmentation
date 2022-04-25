@@ -52,8 +52,7 @@ class gru_learner(aa_learner):
                 discrete_p_m=False,
                 # hyperparameters for when training the child_network
                 batch_size=8,
-                toy_flag=False,
-                toy_size=0.1,
+                toy_size=1,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=20,
@@ -83,7 +82,6 @@ class gru_learner(aa_learner):
                 m_bins=m_bins, 
                 discrete_p_m=True, 
                 batch_size=batch_size, 
-                toy_flag=toy_flag, 
                 toy_size=toy_size, 
                 learning_rate=learning_rate,
                 max_epochs=max_epochs,
@@ -244,7 +242,6 @@ if __name__=='__main__':
 
     agent = gru_learner(
                         sp_num=7,
-                        toy_flag=True,
                         toy_size=0.01,
                         batch_size=32,
                         learning_rate=0.1,

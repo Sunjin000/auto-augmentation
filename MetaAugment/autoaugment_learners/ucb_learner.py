@@ -25,8 +25,7 @@ class ucb_learner(randomsearch_learner):
                 discrete_p_m=True,
                 # hyperparameters for when training the child_network
                 batch_size=8,
-                toy_flag=False,
-                toy_size=0.1,
+                toy_size=1,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=30,
@@ -39,7 +38,6 @@ class ucb_learner(randomsearch_learner):
                         m_bins=m_bins, 
                         discrete_p_m=discrete_p_m,
                         batch_size=batch_size,
-                        toy_flag=toy_flag,
                         toy_size=toy_size,
                         learning_rate=learning_rate,
                         max_epochs=max_epochs,

@@ -11,6 +11,12 @@ import torchvision.datasets as datasets
 
 
 def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
+    if n_samples==1:
+        # push into DataLoader
+        train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
+        test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
+        return train_loader, test_loader
+
     # shuffle and take first n_samples %age of training dataset
     shuffle_order_train = np.random.RandomState(seed=seed).permutation(len(train_dataset))
     shuffled_train_dataset = torch.utils.data.Subset(train_dataset, shuffle_order_train)

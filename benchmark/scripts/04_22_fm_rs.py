@@ -12,8 +12,6 @@ from .util_04_22 import *
 config = {
         'sp_num' : 3,
         'learning_rate' : 1e-1,
-        'toy_flag' : False,
-#         'toy_flag' : True,
 #         'toy_size' : 0.001,
         'batch_size' : 32,
         'max_epochs' : 100,

@@ -51,7 +51,6 @@ def test_learn():
 
     agent = aal.randomsearch_learner(
                         sp_num=7,
-                        toy_flag=True,
                         toy_size=0.001,
                         batch_size=32,
                         learning_rate=0.05,

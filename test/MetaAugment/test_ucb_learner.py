@@ -21,7 +21,6 @@ def test_ucb_learner():
                 discrete_p_m=True,
                 # hyperparameters for when training the child_network
                 batch_size=8,
-                toy_flag=True,
                 toy_size=0.001,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),

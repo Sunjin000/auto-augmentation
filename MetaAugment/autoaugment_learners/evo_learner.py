@@ -14,28 +14,29 @@ import MetaAugment.child_networks as cn
 class evo_learner(aa_learner):
 
     def __init__(self, 
-                sp_num=1,
-                num_solutions = 5, 
-                num_parents_mating = 3,
-                learning_rate = 1e-1, 
+                # search space settings
+                discrete_p_m=False,
+                exclude_method=[],
+                sp_num=5,
+                p_bins=10, 
+                m_bins=10, 
+                # child network settings
+                learning_rate=1e-1, 
                 max_epochs=float('inf'),
                 early_stop_num=20,
-                p_bins = 1, 
-                m_bins = 1, 
-                discrete_p_m=False,
                 batch_size=8,
-                toy_flag=False,
-                toy_size=0.1,
-                exclude_method=[],
-                controller = None
+                toy_size=1,
+                # evolutionary learner specific settings
+                num_solutions=5,
+                num_parents_mating=3,
+                controller=None
                 ):
 
-        super().__init__(sp_num, 
-            p_bins, 
-            m_bins, 
+        super().__init__(sp_num=sp_num, 
+            p_bins=p_bins, 
+            m_bins=m_bins, 
             discrete_p_m=discrete_p_m, 
             batch_size=batch_size, 
-            toy_flag=toy_flag, 
             toy_size=toy_size, 
             learning_rate=learning_rate,
             max_epochs=max_epochs,

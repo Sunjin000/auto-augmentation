@@ -51,8 +51,7 @@ class aa_learner:
                 discrete_p_m=False,
                 # hyperparameters for when training the child_network
                 batch_size=32,
-                toy_flag=False,
-                toy_size=0.1,
+                toy_size=1,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=20,
@@ -74,7 +73,6 @@ class aa_learner:
                             algorithm, etc.). Defaults to False
             
             batch_size (int, optional): child_network training parameter. Defaults to 32.
-            toy_flag (bool, optional): child_network training parameter. Defaults to False.
             toy_size (int, optional): child_network training parameter. ratio of original
                                 dataset used in toy dataset. Defaults to 0.1.
             learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
@@ -90,7 +88,6 @@ class aa_learner:
 
         # related to training of the child_network
         self.batch_size = batch_size
-        self.toy_flag = toy_flag
         self.toy_size = toy_size
         self.learning_rate = learning_rate
 
@@ -299,7 +296,7 @@ class aa_learner:
                 reward = self.test_autoaugment_policy(policy,
                                         child_network_architecture,
                                         train_dataset,
-                                        test_dataset, toy_flag)
+                                        test_dataset)
 
                 self.history.append((policy, reward))
         """
@@ -326,8 +323,6 @@ class aa_learner:
                                 of it.
             train_dataset (torchvision.dataset.vision.VisionDataset)
             test_dataset (torchvision.dataset.vision.VisionDataset)
-            toy_flag (boolean): Whether we want to obtain a toy version of 
-                            train_dataset and test_dataset and use those.
             logging (boolean): Whether we want to save logs
         
         Returns:
@@ -361,17 +356,11 @@ class aa_learner:
         train_dataset.transform = train_transform
 
         # create Dataloader objects out of the Dataset objects
-        if self.toy_flag:
-            train_loader, test_loader = create_toy(train_dataset,
-                                                test_dataset,
-                                                batch_size=self.batch_size,
-                                                n_samples=self.toy_size,
-                                                seed=100)
-        else:
-            train_loader = torch.utils.data.DataLoader(train_dataset, 
-                                                batch_size=self.batch_size)
-            test_loader = torch.utils.data.DataLoader(test_dataset, 
-                                                batch_size=self.batch_size)
+        train_loader, test_loader = create_toy(train_dataset,
+                                            test_dataset,
+                                            batch_size=self.batch_size,
+                                            n_samples=self.toy_size,
+                                            seed=100)
         
         # train the child network with the dataloaders equipped with our specific policy
         accuracy = train_child_network(child_network, 
@@ -392,39 +381,38 @@ class aa_learner:
         return accuracy
     
 
-    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
-        """
-        I made this to plot a couple of accuracy graphs to help manually tune my gradient 
-        optimizer hyperparameters.
+    # def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
+    #     """
+    #     I made this to plot a couple of accuracy graphs to help manually tune my gradient 
+    #     optimizer hyperparameters.
 
-        Saves a plot of `n` training accuracy graphs overlapped.
-        """
+    #     Saves a plot of `n` training accuracy graphs overlapped.
+    #     """
         
-        acc_lists = []
+    #     acc_lists = []
 
-        # This is dummy code
-        # test out `n` random policies
-        for _ in range(n):
-            policy = self.generate_new_policy()
+    #     # This is dummy code
+    #     # test out `n` random policies
+    #     for _ in range(n):
+    #         policy = self.generate_new_policy()
 
-            pprint(policy)
-            reward, acc_list = self.test_autoaugment_policy(policy,
-                                                child_network_architecture,
-                                                train_dataset,
-                                                test_dataset,
-                                                toy_flag=self.toy_flag,
-                                                logging=True)
+    #         pprint(policy)
+    #         reward, acc_list = self.test_autoaugment_policy(policy,
+    #                                             child_network_architecture,
+    #                                             train_dataset,
+    #                                             test_dataset,
+    #                                             logging=True)
 
-            self.history.append((policy, reward))
-            acc_lists.append(acc_list)
+    #         self.history.append((policy, reward))
+    #         acc_lists.append(acc_list)
 
-        for acc_list in acc_lists:
-            plt.plot(acc_list)
-        plt.title('I ran 5 random policies to see if there is any sign of \
-                    catastrophic failure during training. If there are \
-                    any lines which reach significantly lower (>10%) \
-                    accuracies, you might want to tune the hyperparameters')
-        plt.xlabel('epoch')
-        plt.ylabel('accuracy')
-        plt.show()
-        plt.savefig('training_graphs_without_policies')
+    #     for acc_list in acc_lists:
+    #         plt.plot(acc_list)
+    #     plt.title('I ran 5 random policies to see if there is any sign of \
+    #                 catastrophic failure during training. If there are \
+    #                 any lines which reach significantly lower (>10%) \
+    #                 accuracies, you might want to tune the hyperparameters')
+    #     plt.xlabel('epoch')
+    #     plt.ylabel('accuracy')
+    #     plt.show()
+    #     plt.savefig('training_graphs_without_policies')

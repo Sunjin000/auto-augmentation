@@ -82,7 +82,6 @@ def test_test_autoaugment_policy():
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
-                toy_flag=True,
                 toy_size=0.004,
                 max_epochs=20,
                 early_stop_num=10
