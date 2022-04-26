@@ -14,11 +14,7 @@
    .. autosummary::
    
       ~aa_learner.__init__
-      ~aa_learner.demo_plot
-      ~aa_learner.generate_new_policy
       ~aa_learner.learn
-      ~aa_learner.test_autoaugment_policy
-      ~aa_learner.translate_operation_tensor
    
    
 

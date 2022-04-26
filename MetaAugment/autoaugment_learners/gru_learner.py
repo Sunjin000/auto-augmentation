@@ -85,7 +85,7 @@ class gru_learner(aa_learner):
         self.softmax = torch.nn.Softmax(dim=0)
 
 
-    def generate_new_policy(self):
+    def _generate_new_policy(self):
         """
         The GRU controller pops out a new policy.
 
@@ -101,7 +101,7 @@ class gru_learner(aa_learner):
         choice of function, prob, and mag seperately, so that the
         resulting tensor's values sums up to 3.
 
-        Then we input each tensor into self.translate_operation_tensor
+        Then we input each tensor into self._translate_operation_tensor
         with parameter (return_log_prob=True), which outputs a tuple
         in the form of ('img_function_name', prob, mag) and a float
         representing the log probability that we chose the chosen 
@@ -150,8 +150,8 @@ class gru_learner(aa_learner):
             op2 = softmaxed_vectors[2*subpolicy_idx+1]
 
             # translate both vectors
-            op1, log_prob1 = self.translate_operation_tensor(op1, return_log_prob=True)
-            op2, log_prob2 = self.translate_operation_tensor(op2, return_log_prob=True)
+            op1, log_prob1 = self._translate_operation_tensor(op1, return_log_prob=True)
+            op2, log_prob2 = self._translate_operation_tensor(op2, return_log_prob=True)
             
             new_policy.append((op1,op2))
             log_prob += (log_prob1+log_prob2)
@@ -177,10 +177,10 @@ class gru_learner(aa_learner):
 
             for k in range(self.cont_mb_size):
                 # log_prob is $\sum_{t=1}^T log(P(a_t|a_{(t-1):1};\theta_c))$, used in PPO
-                policy, log_prob = self.generate_new_policy()
+                policy, log_prob = self._generate_new_policy()
 
                 pprint(policy)
-                reward = self.test_autoaugment_policy(policy,
+                reward = self._test_autoaugment_policy(policy,
                                                     child_network_architecture, 
                                                     train_dataset,
                                                     test_dataset)

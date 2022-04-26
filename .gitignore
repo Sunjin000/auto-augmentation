@@ -200,8 +200,11 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# we don't want dataset directories
 **/test
 **/train
+# but there is a unit test folder in main that we DO want to track
+!test
 
 # user uplaod
 /react_backend/child_networks

@@ -101,7 +101,7 @@ class aa_learner:
         self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
 
 
-    def translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
+    def _translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
         """
         takes in a tensor representing an operation and returns an actual operation which
         is in the form of:
@@ -220,7 +220,7 @@ class aa_learner:
             return operation
         
 
-    def generate_new_policy(self):
+    def _generate_new_policy(self):
         """
         Generate a new policy which can be fed into an AutoAugment object 
         by calling:
@@ -243,7 +243,7 @@ class aa_learner:
                         by calling: AutoAugment.subpolicies = policy
         """
 
-        raise NotImplementedError('generate_new_policy not implemented in aa_learner')
+        raise NotImplementedError('_generate_new_policy not implemented in aa_learner')
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, iterations=15):
@@ -290,10 +290,10 @@ class aa_learner:
                       different policies
             
             for _ in range(15):
-                policy = self.generate_new_policy()
+                policy = self._generate_new_policy()
 
                 pprint(policy)
-                reward = self.test_autoaugment_policy(policy,
+                reward = self._test_autoaugment_policy(policy,
                                         child_network_architecture,
                                         train_dataset,
                                         test_dataset)
@@ -302,7 +302,7 @@ class aa_learner:
         """
     
 
-    def test_autoaugment_policy(self,
+    def _test_autoaugment_policy(self,
                                 policy,
                                 child_network_architecture,
                                 train_dataset,
@@ -329,7 +329,9 @@ class aa_learner:
             accuracy (float): best accuracy reached in any
         """
 
-        
+        # we create an instance of the child network that we're going
+        # to train. The method of creation depends on the type of 
+        # input we got for child_network_architecture
         if isinstance(child_network_architecture, types.FunctionType):
             child_network = child_network_architecture()
         elif isinstance(child_network_architecture, type):
@@ -394,10 +396,10 @@ class aa_learner:
     #     # This is dummy code
     #     # test out `n` random policies
     #     for _ in range(n):
-    #         policy = self.generate_new_policy()
+    #         policy = self._generate_new_policy()
 
     #         pprint(policy)
-    #         reward, acc_list = self.test_autoaugment_policy(policy,
+    #         reward, acc_list = self._test_autoaugment_policy(policy,
     #                                             child_network_architecture,
     #                                             train_dataset,
     #                                             test_dataset,

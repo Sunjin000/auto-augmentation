@@ -7,13 +7,13 @@ import torchvision.datasets as datasets
 import random
 
 
-def test_translate_operation_tensor():
+def test__translate_operation_tensor():
     """
-    See if aa_learner class's translate_operation_tensor works
+    See if aa_learner class's _translate_operation_tensor works
     by feeding many (valid) inputs in it.
 
     We make a lot of (fun_num+p_bins_m_bins,) size tensors, softmax 
-    them, and feed them through the translate_operation_tensor method
+    them, and feed them through the _translate_operation_tensor method
     to see if it doesn't break
     """
 
@@ -44,7 +44,7 @@ def test_translate_operation_tensor():
         mag_t = softmax(mag_t * alpha)
         softmaxed_vector = torch.cat((fun_t, prob_t, mag_t))
 
-        agent.translate_operation_tensor(softmaxed_vector)
+        agent._translate_operation_tensor(softmaxed_vector)
     
 
     # discrete_p_m=False
@@ -73,10 +73,10 @@ def test_translate_operation_tensor():
 
         softmaxed_vector = torch.cat((fun_t, prob_t, mag_t))
 
-        agent.translate_operation_tensor(softmaxed_vector)
+        agent._translate_operation_tensor(softmaxed_vector)
 
 
-def test_test_autoaugment_policy():
+def test__test_autoaugment_policy():
     agent = aal.aa_learner(
                 sp_num=5,
                 p_bins=11,
@@ -107,7 +107,7 @@ def test_test_autoaugment_policy():
                             train=False, download=True,
                             transform=torchvision.transforms.ToTensor())
 
-    acc = agent.test_autoaugment_policy(
+    acc = agent._test_autoaugment_policy(
                                         policy,
                                         child_network_architecture,
                                         train_dataset,
@@ -116,4 +116,41 @@ def test_test_autoaugment_policy():
                                         )
     
     assert isinstance(acc, float)
+
+
+def test_exclude_method():
+    """
+    we want to see if the exclude_methods
+    parameter is working properly in aa_learners 
+    """
+    
+    exclude_method = [
+                    'ShearX', 
+                    'Color', 
+                    'Brightness', 
+                    'Contrast'
+                    ]
+    agent = aal.gru_learner(
+        exclude_method=exclude_method
+    )
+    for _ in range(200):
+        new_pol, _ = agent._generate_new_policy()
+        print(new_pol)
+        for (op1, op2) in new_pol:
+            image_function_1 = op1[0]
+            image_function_2 = op2[0]
+            assert image_function_1 not in exclude_method
+            assert image_function_2 not in exclude_method
+    
+    agent = aal.randomsearch_learner(
+        exclude_method=exclude_method
+    )
+    for _ in range(200):
+        new_pol= agent._generate_new_policy()
+        print(new_pol)
+        for (op1, op2) in new_pol:
+            image_function_1 = op1[0]
+            image_function_2 = op2[0]
+            assert image_function_1 not in exclude_method
+            assert image_function_2 not in exclude_method
     

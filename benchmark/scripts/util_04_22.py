@@ -111,7 +111,7 @@ def rerun_best_policy(
         print(f'{_}/{repeat_num}')
         temp_agent = aal.aa_learner(**config)
         accs.append(
-                temp_agent.test_autoaugment_policy(megapol,
+                temp_agent._test_autoaugment_policy(megapol,
                                     child_network_architecture,
                                     train_dataset,
                                     test_dataset,

@@ -1,12 +1,12 @@
 import torch
-torch.manual_seed(0)
 import torch.nn as nn
 import pygad
 import pygad.torchga as torchga
-import copy
+import torchvision
 import torch
 
 from MetaAugment.autoaugment_learners.aa_learner import aa_learner
+import MetaAugment.controller_networks as cont_n
 
 
 class evo_learner(aa_learner):
@@ -14,7 +14,7 @@ class evo_learner(aa_learner):
     def __init__(self, 
                 # search space settings
                 sp_num=5,
-                p_bins=10, 
+                p_bins=11, 
                 m_bins=10, 
                 discrete_p_m=False,
                 exclude_method=[],
@@ -27,7 +27,7 @@ class evo_learner(aa_learner):
                 # evolutionary learner specific settings
                 num_solutions=5,
                 num_parents_mating=3,
-                controller=None
+                controller=cont_n.evo_controller
                 ):
 
         super().__init__(
@@ -43,19 +43,25 @@ class evo_learner(aa_learner):
                     exclude_method=exclude_method
                     )
 
+        # evolutionary algorithm settings
+        self.controller = controller(
+                        fun_num=self.fun_num, 
+                        p_bins=self.p_bins, 
+                        m_bins=self.m_bins, 
+                        sub_num_pol=self.sp_num
+                        )
         self.num_solutions = num_solutions
-        self.controller = controller
         self.torch_ga = torchga.TorchGA(model=self.controller, num_solutions=num_solutions)
         self.num_parents_mating = num_parents_mating
         self.initial_population = self.torch_ga.population_weights
-        self.p_bins = p_bins 
-        self.sub_num_pol = sp_num
-        self.m_bins = m_bins
+
+        # store our logs
         self.policy_dict = {}
         self.policy_result = []
 
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
+
 
 
     def get_full_policy(self, x):
@@ -77,7 +83,7 @@ class evo_learner(aa_learner):
         section = self.fun_num + self.p_bins + self.m_bins
         y = self.controller.forward(x)
         full_policy = []
-        for pol in range(self.sub_num_pol):
+        for pol in range(self.sp_num):
             int_pol = []
             for _ in range(2):
                 idx_ret = torch.argmax(y[:, (pol * section):(pol*section) + self.fun_num].mean(dim = 0))
@@ -167,10 +173,10 @@ class evo_learner(aa_learner):
                 prob2 += torch.sigmoid(y[idx, section+self.fun_num]).item()
                 if mag1 is not None:
                     # mag1 += min(max(0, (y[idx, self.auto_aug_agent.fun_num+1]).item()), 8)
-                    mag1 += 10 * torch.sigmoid(y[idx, self.fun_num+1]).item()
+                    mag1 += min(9, 10 * torch.sigmoid(y[idx, self.fun_num+1]).item())
                 if mag2 is not None:
                     # mag2 += min(max(0, y[idx, section+self.auto_aug_agent.fun_num+1].item()), 8)
-                    mag2 += 10 * torch.sigmoid(y[idx, self.fun_num+1]).item()
+                    mag2 += min(9, 10 * torch.sigmoid(y[idx, self.fun_num+1]).item())
 
                 counter += 1
 
@@ -240,7 +246,7 @@ class evo_learner(aa_learner):
                 self.policy_dict[trans1][trans2].append(new_set)
                 return False 
             else:
-                self.policy_dict[trans1][trans2] = [new_set]
+                self.policy_dict[trans1] = {trans2: [new_set]}
         if trans2 in self.policy_dict:
             if trans1 in self.policy_dict[trans2]:
                 for test_pol in self.policy_dict[trans2][trans1]:
@@ -249,7 +255,7 @@ class evo_learner(aa_learner):
                 self.policy_dict[trans2][trans1].append(new_set)
                 return False 
             else:
-                self.policy_dict[trans2][trans1] = [new_set]
+                self.policy_dict[trans2] = {trans1: [new_set]}
 
 
     def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
@@ -277,6 +283,7 @@ class evo_learner(aa_learner):
                                                             weights_vector=solution)
 
             self.controller.load_state_dict(model_weights_dict)
+            train_dataset.transform = torchvision.transforms.ToTensor()
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
 
             for idx, (test_x, label_x) in enumerate(self.train_loader):
@@ -298,11 +305,11 @@ class evo_learner(aa_learner):
             if len(self.policy_result) > self.sp_num:
                 self.policy_result = sorted(self.policy_result, key=lambda x: x[1], reverse=True)
                 self.policy_result = self.policy_result[:self.sp_num]
-                print("Appended policy: ", self.policy_result)
+                print("appended policy: ", self.policy_result)
 
 
             if fit_val > self.history_best[self.gen_count]:
-                print("Best policy: ", full_policy)
+                print("best policy: ", full_policy)
                 self.history_best[self.gen_count] = fit_val 
                 self.best_model = model_weights_dict
             
@@ -335,4 +342,3 @@ class evo_learner(aa_learner):
             mutation_percent_genes = 0.1,
             fitness_func=fitness_func,
             on_generation = on_generation)
-

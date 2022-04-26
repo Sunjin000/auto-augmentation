@@ -446,7 +446,7 @@ if __name__=='__main__':
 
 
 
-    def test_autoaugment_policy(subpolicies, train_dataset, test_dataset):
+    def _test_autoaugment_policy(subpolicies, train_dataset, test_dataset):
 
         aa_transform = AutoAugment()
         aa_transform.subpolicies = subpolicies
@@ -470,8 +470,8 @@ if __name__=='__main__':
         return best_acc, acc_log
 
 
-    _, acc_log1 = test_autoaugment_policy(subpolicies1, train_dataset, test_dataset)
-    _, acc_log2 = test_autoaugment_policy(subpolicies2, train_dataset, test_dataset)
+    _, acc_log1 = _test_autoaugment_policy(subpolicies1, train_dataset, test_dataset)
+    _, acc_log2 = _test_autoaugment_policy(subpolicies2, train_dataset, test_dataset)
 
     plt.plot(acc_log1, label='subpolicies1')
     plt.plot(acc_log2, label='subpolicies2')
