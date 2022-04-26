@@ -153,18 +153,27 @@ export default function Home() {
                                     <Alert severity="error">
                                         <AlertTitle>This field is required</AlertTitle>
                                     </Alert>}
-                                <Button
-                                variant="contained"
-                                component="label"
-                                >
-                                Upload File
-                                <input
-                                    {...register('ds_upload')}
-                                    name="ds_upload"
-                                    type="file"
-                                    hidden
-                                />
-                                </Button>
+                                {watchFileds[0]!=='Other' && 
+                                    <input
+                                        {...register('ds_upload')}
+                                        name="ds_upload"
+                                        type="file"
+                                        hidden
+                                    />}
+                                {watchFileds[0]==='Other' &&
+                                    <Button
+                                    variant="contained"
+                                    component="label"
+                                    >
+                                    Upload File
+                                    <input
+                                        {...register('ds_upload')}
+                                        name="ds_upload"
+                                        type="file"
+                                        hidden
+                                    />
+                                    </Button>
+                                }
                                 {dirtyFields.ds_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
                             </FormControl>
                         </CardContent>
@@ -208,18 +217,27 @@ export default function Home() {
                                     The networks provided above are for demonstration purposes. The relative training time is: LeNet {'>'} SimpleNet {'>'} EasyNet. 
                                     We recommend you to choose EasyNet for a quick demonstration of how well our auto-augment agents can perform. 
                                 </Typography>
-                                <Button
-                                variant="contained"
-                                component="label"
-                                >
-                                Upload File
-                                <input
-                                    {...register('network_upload')}
-                                    name="network_upload"
-                                    type="file"
-                                    hidden
-                                />
-                                </Button>
+                                {watchFileds[1]!=='Other' && 
+                                    <input
+                                        {...register('network_upload')}
+                                        name="network_upload"
+                                        type="file"
+                                        hidden
+                                    />}
+                                {watchFileds[1]==='Other' &&
+                                    <Button
+                                    variant="contained"
+                                    component="label"
+                                    >
+                                    Upload File
+                                    <input
+                                        {...register('network_upload')}
+                                        name="network_upload"
+                                        type="file"
+                                        hidden
+                                    />
+                                    </Button>
+                                }
                                 {dirtyFields.network_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
                             </FormControl>
                         </CardContent>
@@ -365,6 +383,7 @@ export default function Home() {
                 {watchFileds[1]==='Other' && !dirtyFields.network_upload && 
                     <Alert severity="error" variant='standard'>Please upload your network 
                     .pkl file or select one of the network we have provided</Alert>}
+                    
                 </form>
                         
             </Grid>
