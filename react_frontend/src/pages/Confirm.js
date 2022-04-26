@@ -9,8 +9,9 @@ export default function Confirm() {
     const [dataset, setDataset] = useState()
     const [network, setNetwork] = useState()
 
+    // console.log('already in confirm react')
   useEffect(() => {
-    const res = fetch('/confirm').then(
+    const res = fetch('/home').then(
       response => response.json()
       ).then(data => {setMyData(data);
         if (data.ds == 'Other'){setDataset(data.ds_name)} else {setDataset(data.ds)};

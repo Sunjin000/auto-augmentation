@@ -60,7 +60,11 @@ export default function Home() {
         method: 'POST',
         body: formData
         }).then((response) => response.json());
-        
+        // {console.log('before calling response'); 
+        //                         response.json();
+        //                         console.log('after calling response')});
+
+        console.log('before navigate to confirm')
         navigate('/confirm', {replace:true});
         // 
         ///////// testing
