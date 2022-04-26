@@ -17,12 +17,12 @@ torch.manual_seed(0)
 
 print('@@@ import successful')
 
-app = Flask(__name__, static_folder='react_frontend/build', static_url_path='')
+app = Flask(__name__, static_folder='react_frontend/build', static_url_path='/')
 CORS(app)
 
 # it is used to collect user input and store them in the app
 @app.route('/home', methods=["GET", "POST"])
-# @cross_origin
+# @cross_origin()
 def get_form_data():
     print('@@@ in Flask Home')
     # form_data = request.get_json() 
@@ -122,7 +122,7 @@ def get_form_data():
 
 # ========================================================================
 @app.route('/confirm', methods=['POST', 'GET'])
-# @cross_origin
+@cross_origin()
 def confirm():
     print('inside confirm page')
     data = current_app.config['data']
@@ -133,7 +133,7 @@ def confirm():
 
 # ========================================================================
 @app.route('/training', methods=['POST', 'GET'])
-# @cross_origin
+@cross_origin()
 def training():
 
     # default values 
@@ -158,7 +158,7 @@ def training():
 
 # ========================================================================
 @app.route('/result')
-# @cross_origin
+@cross_origin()
 def show_result():
     file_path = "./react_backend/policy.txt"
     f = open(file_path, "r")
@@ -167,7 +167,6 @@ def show_result():
 
 
 @app.route('/')
-# @cross_origin
 def serve():
     return send_from_directory(app.static_folder, 'index.html')
 

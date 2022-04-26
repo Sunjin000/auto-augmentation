@@ -15,7 +15,7 @@ class MyTestCase(unittest.TestCase):
         self.app = react_app.app.test_client()
 
     def test_home(self):
-        response = self.app.get('/home')
+        response = self.app.get('/')
 
     def test_training(self):
         response = self.app.get('/training')

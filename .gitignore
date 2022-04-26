@@ -207,4 +207,4 @@ celerybeat.pid
 
 # user uplaod
 /react_backend/child_networks
-/react_backend/policy.txt
+# /react_backend/policy.txt
