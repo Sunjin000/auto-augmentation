@@ -166,10 +166,14 @@ def show_result():
 
 
 
-@app.route('/')
-# @cross_origin
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+# @app.route('/')
+# # @cross_origin
+# def serve():
+#     return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/', methods=['GET'])
+def hello():
+    return {"response":"This is Auto-augment Application"}
 
 
 if __name__ == '__main__':
