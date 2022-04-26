@@ -1,12 +1,12 @@
 import torch
-torch.manual_seed(0)
 import torch.nn as nn
 import pygad
 import pygad.torchga as torchga
-import copy
+import torchvision
 import torch
 
 from MetaAugment.autoaugment_learners.aa_learner import aa_learner
+import MetaAugment.controller_networks as cont_n
 
 
 class evo_learner(aa_learner):
@@ -14,7 +14,7 @@ class evo_learner(aa_learner):
     def __init__(self, 
                 # search space settings
                 sp_num=5,
-                p_bins=10, 
+                p_bins=11, 
                 m_bins=10, 
                 discrete_p_m=False,
                 exclude_method=[],
@@ -27,7 +27,7 @@ class evo_learner(aa_learner):
                 # evolutionary learner specific settings
                 num_solutions=5,
                 num_parents_mating=3,
-                controller=None
+                controller=cont_n.evo_controller
                 ):
 
         super().__init__(
@@ -43,14 +43,19 @@ class evo_learner(aa_learner):
                     exclude_method=exclude_method
                     )
 
+        # evolutionary algorithm settings
+        self.controller = controller(
+                        fun_num=self.fun_num, 
+                        p_bins=self.p_bins, 
+                        m_bins=self.m_bins, 
+                        sub_num_pol=self.sp_num
+                        )
         self.num_solutions = num_solutions
-        self.controller = controller
         self.torch_ga = torchga.TorchGA(model=self.controller, num_solutions=num_solutions)
         self.num_parents_mating = num_parents_mating
         self.initial_population = self.torch_ga.population_weights
-        self.p_bins = p_bins 
-        self.sub_num_pol = sp_num
-        self.m_bins = m_bins
+
+        # store our logs
         self.policy_dict = {}
         self.policy_result = []
 
@@ -77,7 +82,7 @@ class evo_learner(aa_learner):
         section = self.fun_num + self.p_bins + self.m_bins
         y = self.controller.forward(x)
         full_policy = []
-        for pol in range(self.sub_num_pol):
+        for pol in range(self.sp_num):
             int_pol = []
             for _ in range(2):
                 idx_ret = torch.argmax(y[:, (pol * section):(pol*section) + self.fun_num].mean(dim = 0))
@@ -277,6 +282,7 @@ class evo_learner(aa_learner):
                                                             weights_vector=solution)
 
             self.controller.load_state_dict(model_weights_dict)
+            train_dataset.transform = torchvision.transforms.ToTensor()
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
 
             for idx, (test_x, label_x) in enumerate(self.train_loader):

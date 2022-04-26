@@ -54,6 +54,7 @@ def parse_users_learner_spec(
                         p_bins=11,
                         m_bins=10,
                         discrete_p_m=True,
+                        exclude_method=exclude_method,
                         # hyperparameters for when training the child_network
                         batch_size=batch_size,
                         toy_size=toy_size,
@@ -63,52 +64,55 @@ def parse_users_learner_spec(
                         # ucb_learner specific hyperparameter
                         num_policies=num_policies
                         )
-        pprint(learner.policies)
-        
-        learner.learn(
-            train_dataset=train_dataset,
-            test_dataset=test_dataset,
-            child_network_architecture=child_archi,
-            iterations=5
-            )
     elif auto_aug_learner == 'Evolutionary Learner':
-        network = cont_n.evo_controller(fun_num=num_funcs, p_bins=1, m_bins=1, sub_num_pol=1)
-        child_network = cn.LeNet()
         learner = aal.evo_learner(
-                                network=network, 
-                                fun_num=num_funcs, 
-                                p_bins=1, 
-                                mag_bins=1, 
-                                sub_num_pol=1, 
-                                ds = ds, 
-                                ds_name=ds_name, 
-                                exclude_method=exclude_method, 
-                                child_network=child_network
-                                )
+                        # parameters that define the search space
+                        sp_num=num_sub_policies,
+                        p_bins=11,
+                        m_bins=10,
+                        discrete_p_m=True,
+                        exclude_method=exclude_method,
+                        # hyperparameters for when training the child_network
+                        batch_size=batch_size,
+                        toy_size=toy_size,
+                        learning_rate=learning_rate,
+                        max_epochs=max_epochs,
+                        early_stop_num=early_stop_num,
+                        )
         learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
         agent = aal.randomsearch_learner(
-                                        sp_num=num_sub_policies,
-                                        batch_size=batch_size,
-                                        learning_rate=learning_rate,
-                                        toy_size=toy_size,
-                                        max_epochs=max_epochs,
-                                        early_stop_num=early_stop_num,
-                                        )
-        agent.learn(train_dataset,
-                    test_dataset,
-                    child_network_architecture=child_archi,
-                    iterations=iterations)
+                        # parameters that define the search space
+                        sp_num=num_sub_policies,
+                        p_bins=11,
+                        m_bins=10,
+                        discrete_p_m=True,
+                        exclude_method=exclude_method,
+                        # hyperparameters for when training the child_network
+                        batch_size=batch_size,
+                        toy_size=toy_size,
+                        learning_rate=learning_rate,
+                        max_epochs=max_epochs,
+                        early_stop_num=early_stop_num,
+                        )
     elif auto_aug_learner == 'GRU Learner':
         agent = aal.gru_learner(
-                                sp_num=num_sub_policies,
-                                batch_size=batch_size,
-                                learning_rate=learning_rate,
-                                toy_size=toy_size,
-                                max_epochs=max_epochs,
-                                early_stop_num=early_stop_num,
-                                )
-        agent.learn(train_dataset,
-                    test_dataset,
-                    child_network_architecture=child_archi,
-                    iterations=iterations)
+                        # parameters that define the search space
+                        sp_num=num_sub_policies,
+                        p_bins=11,
+                        m_bins=10,
+                        discrete_p_m=True,
+                        exclude_method=exclude_method,
+                        # hyperparameters for when training the child_network
+                        batch_size=batch_size,
+                        toy_size=toy_size,
+                        learning_rate=learning_rate,
+                        max_epochs=max_epochs,
+                        early_stop_num=early_stop_num,
+                        )
+
+
+    agent.learn(train_dataset,
+                test_dataset,
+                child_network_architecture=child_archi,
+                iterations=iterations)
