@@ -160,20 +160,17 @@ def training():
 @app.route('/result')
 # @cross_origin
 def show_result():
-    file_path = "./policy.txt"
+    file_path = "./react_backend/policy.txt"
     f = open(file_path, "r")
     return send_file(file_path, as_attachment=True)
 
 
 
-# @app.route('/')
-# # @cross_origin
-# def serve():
-#     return send_from_directory(app.static_folder, 'index.html')
+@app.route('/')
+# @cross_origin
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/', methods=['GET'])
-def hello():
-    return {"response":"This is Auto-augment Application"}
 
 
 if __name__ == '__main__':
