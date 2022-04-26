@@ -1,4 +1,3 @@
-from cgi import test
 import torch
 import torch.nn as nn
 import pygad
@@ -31,15 +30,18 @@ class evo_learner(aa_learner):
                 controller=cont_n.evo_controller
                 ):
 
-        super().__init__(sp_num, 
-            fun_num, 
-            p_bins, 
-            m_bins, 
-            batch_size=batch_size, 
-            toy_size=toy_size, 
-            learning_rate=learning_rate,
-            max_epochs=max_epochs,
-            early_stop_num=early_stop_num,)
+        super().__init__(
+                    sp_num=sp_num, 
+                    p_bins=p_bins, 
+                    m_bins=m_bins, 
+                    discrete_p_m=discrete_p_m, 
+                    batch_size=batch_size, 
+                    toy_size=toy_size, 
+                    learning_rate=learning_rate,
+                    max_epochs=max_epochs,
+                    early_stop_num=early_stop_num,
+                    exclude_method=exclude_method
+                    )
 
         # evolutionary algorithm settings
         self.controller = controller(
