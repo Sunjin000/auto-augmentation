@@ -8,5 +8,6 @@ gunicorn
 wheel
 pytest
 tqdm
+pygad
 matplotlib
 python-dotenv
