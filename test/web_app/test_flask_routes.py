@@ -1,8 +1,7 @@
 import pytest
 import unittest
-import os
-import sys
 from backend_react import react_app
+import json
 
 
 
@@ -13,5 +12,8 @@ class MyTestCase(unittest.TestCase):
         self.app = react_app.app.test_client()
 
     def test_home(self):
-        result = self.app.get('/')
-        # Make your assertions
+        response = self.app.get('/home')
+
+    def test_training(self):
+        response = self.app.get('/training')
+    

@@ -161,10 +161,6 @@ def show_result():
 
 
 
-@app.route('/api')
-def index():
-    return {'status': 'api test'}
-
 
 if __name__ == '__main__':
     app.run(debug=False, use_reloader=False)
