@@ -116,4 +116,41 @@ def test_test_autoaugment_policy():
                                         )
     
     assert isinstance(acc, float)
+
+
+def test_exclude_method():
+    """
+    we want to see if the exclude_methods
+    parameter is working properly in aa_learners 
+    """
+    
+    exclude_method = [
+                    'ShearX', 
+                    'Color', 
+                    'Brightness', 
+                    'Contrast'
+                    ]
+    agent = aal.gru_learner(
+        exclude_method=exclude_method
+    )
+    for _ in range(200):
+        new_pol, _ = agent.generate_new_policy()
+        print(new_pol)
+        for (op1, op2) in new_pol:
+            image_function_1 = op1[0]
+            image_function_2 = op2[0]
+            assert image_function_1 not in exclude_method
+            assert image_function_2 not in exclude_method
+    
+    agent = aal.randomsearch_learner(
+        exclude_method=exclude_method
+    )
+    for _ in range(200):
+        new_pol, _ = agent.generate_new_policy()
+        print(new_pol)
+        for (op1, op2) in new_pol:
+            image_function_1 = op1[0]
+            image_function_2 = op2[0]
+            assert image_function_1 not in exclude_method
+            assert image_function_2 not in exclude_method
     
