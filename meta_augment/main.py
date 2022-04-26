@@ -11,6 +11,12 @@ import torchvision.datasets as datasets
 
 
 def create_toy(train_dataset, test_dataset, batch_size, n_samples, seed=100):
+    if n_samples==1:
+        # push into DataLoader
+        train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size)
+        test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
+        return train_loader, test_loader
+
     # shuffle and take first n_samples %age of training dataset
     shuffle_order_train = np.random.RandomState(seed=seed).permutation(len(train_dataset))
     shuffled_train_dataset = torch.utils.data.Subset(train_dataset, shuffle_order_train)
@@ -51,8 +57,8 @@ def train_child_network(child_network,
         device = torch.device('cpu')
     child_network = child_network.to(device=device)
     
-    total_val=torch.tensor([0.0])
-    best_acc=torch.tensor([0.0])
+    total_val=torch.tensor([0.0]).to(device=device)
+    best_acc=torch.tensor([0.0]).to(device=device)
     early_stop_cnt = 0
     
     # logging accuracy for plotting
@@ -119,12 +125,12 @@ def train_child_network(child_network,
             best_acc = total_val / (average_validation[1] - average_validation[0] + 1)
             break
         
-        # if print_every_epoch:
-        #     print('main.train_child_network best accuracy: ', best_acc)
+        if print_every_epoch:
+            print('main.train_child_network best accuracy: ', best_acc)
         acc_log.append(acc)
 
         _epoch+=1
-    print("Done training, best acc: ", best_acc.item())
+
     if logging:
         return best_acc.item(), acc_log
     else:

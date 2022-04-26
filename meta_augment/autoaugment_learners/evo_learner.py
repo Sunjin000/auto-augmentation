@@ -6,10 +6,10 @@ import pygad
 import pygad.torchga as torchga
 import copy
 import torch
-from MetaAugment.controller_networks.evo_controller import Evo_learner
+from meta_augment.controller_networks.evo_controller import evo_controller
 
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner, augmentation_space
-import MetaAugment.child_networks as cn
+from meta_augment.autoaugment_learners.aa_learner import aa_learner
+import meta_augment.child_networks as cn
 
 
 class evo_learner(aa_learner):
@@ -23,9 +23,7 @@ class evo_learner(aa_learner):
                 early_stop_num=20,
                 p_bins = 1, 
                 m_bins = 1, 
-                discrete_p_m=False,
                 batch_size=8,
-                toy_flag=False,
                 toy_size=0.1,
                 fun_num = 14,
                 exclude_method=[],
@@ -36,9 +34,7 @@ class evo_learner(aa_learner):
             fun_num, 
             p_bins, 
             m_bins, 
-            discrete_p_m=discrete_p_m, 
             batch_size=batch_size, 
-            toy_flag=toy_flag, 
             toy_size=toy_size, 
             learning_rate=learning_rate,
             max_epochs=max_epochs,
@@ -53,7 +49,7 @@ class evo_learner(aa_learner):
         self.sub_num_pol = sp_num
         self.m_bins = m_bins
         self.fun_num = fun_num
-        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
+        self.augmentation_space = [x for x in self.augmentation_space if x[0] not in exclude_method]
         self.policy_dict = {}
         self.policy_result = []
 

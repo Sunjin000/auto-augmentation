@@ -2,8 +2,8 @@ import torchvision.datasets as datasets
 import torchvision
 import torch
 
-import MetaAugment.child_networks as cn
-import MetaAugment.autoaugment_learners as aal
+import meta_augment.child_networks as cn
+import meta_augment.autoaugment_learners as aal
 
 from pathlib import Path
 
@@ -37,7 +37,7 @@ def run_benchmark(
         # try to load agent
         with open(save_file, 'rb') as f:
             agent = torch.load(f, map_location=device)
-    except FileNotFoundError:
+    except (FileNotFoundError, RuntimeError):
         # if agent hasn't been saved yet, initialize the agent
         agent = agent_arch(**config)
 
@@ -67,64 +67,6 @@ controller = cn.LeNet(img_height=28, img_width=28, num_labels=16*2, img_channels
 
 
 # aa_learner config
-config = {
-        'sp_num' : 5,
-        'learning_rate' : 1e-1,
-        'toy_flag' : False,
-#         'toy_flag' : True,
-#         'toy_size' : 0.001,
-        'batch_size' : 32,
-        'max_epochs' : 100,
-        'early_stop_num' : 10,
-        'controller' : controller,
-        'num_solutions' : 10,
-        }
-total_iter=150
-
-
-# FashionMNIST with SimpleNet
-train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
-                            train=True, download=True, transform=torchvision.transforms.ToTensor())
-test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
-                        train=False, download=True,
-                        transform=torchvision.transforms.ToTensor())
-child_network_architecture = cn.SimpleNet
-
-
-run_benchmark(
-    save_file='/bench_test/04_22_fm_sn_gru.pkl',
-    total_iter=total_iter,
-    train_dataset=train_dataset,
-    test_dataset=test_dataset,
-    child_network_architecture=child_network_architecture,
-    agent_arch=aal.evo_learner,
-    config=config,
-    )
-
-
-
-
-
-
-
-# CIFAR10 with LeNet
-# train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
-#                         train=True, download=True, transform=torchvision.transforms.ToTensor())
-# test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
-#                         train=False, download=True, 
-#                         transform=torchvision.transforms.ToTensor())
-# child_network_architecture = cn.LeNet(img_height = 32, 
-#                                       img_width=32, 
-#                                       num_labels=10, 
-#                                       img_channels=3)
-
-
-
-
-# controller = cn.LeNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
-
-
-# # aa_learner config
 # config = {
 #         'sp_num' : 5,
 #         'learning_rate' : 1e-1,
@@ -135,12 +77,22 @@ run_benchmark(
 #         'max_epochs' : 100,
 #         'early_stop_num' : 10,
 #         'controller' : controller,
+#         'num_solutions' : 10,
 #         }
 # total_iter=150
 
-# # gru
+
+# # FashionMNIST with SimpleNet
+# train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
+#                             train=True, download=True, transform=torchvision.transforms.ToTensor())
+# test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
+#                         train=False, download=True,
+#                         transform=torchvision.transforms.ToTensor())
+# child_network_architecture = cn.SimpleNet
+
+
 # run_benchmark(
-#     save_file='bench_test/04_22_cf_ln_evo',
+#     save_file='/bench_test/04_22_fm_sn_gru.pkl',
 #     total_iter=total_iter,
 #     train_dataset=train_dataset,
 #     test_dataset=test_dataset,
@@ -148,6 +100,50 @@ run_benchmark(
 #     agent_arch=aal.evo_learner,
 #     config=config,
 #     )
+
+
+
+
+
+
+
+# CIFAR10 with LeNet
+train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+                        train=True, download=True, transform=torchvision.transforms.ToTensor())
+test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+                        train=False, download=True, 
+                        transform=torchvision.transforms.ToTensor())
+child_network_architecture = cn.LeNet(img_height = 32, 
+                                      img_width=32, 
+                                      num_labels=10, 
+                                      img_channels=3)
+
+
+
+
+controller = cn.LeNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
+config = {
+        'sp_num' : 5,
+        'learning_rate' : 1e-1,
+#         'toy_flag' : True,
+#         'toy_size' : 0.001,
+        'batch_size' : 32,
+        'max_epochs' : 100,
+        'early_stop_num' : 10,
+        'controller' : controller,
+        }
+total_iter=150
+
+# # gru
+run_benchmark(
+    save_file='bench_test/04_22_cf_ln_evo',
+    total_iter=total_iter,
+    train_dataset=train_dataset,
+    test_dataset=test_dataset,
+    child_network_architecture=child_network_architecture,
+    agent_arch=aal.evo_learner,
+    config=config,
+    )
 
 
 megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
