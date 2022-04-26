@@ -1,0 +1,1 @@
+web: gunicorn react_app:app
