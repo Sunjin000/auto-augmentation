@@ -1,6 +1,9 @@
 import pytest
 import unittest
-from . import react_app
+import sys
+import os
+sys.path.insert(0, os.path.abspath('.'))
+import react_app
 import json
 
 
