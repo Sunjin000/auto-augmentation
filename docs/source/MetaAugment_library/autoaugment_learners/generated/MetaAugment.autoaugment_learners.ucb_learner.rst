@@ -1,9 +1,9 @@
-﻿MetaAugment.autoaugment\_learners.gru\_learner
+﻿MetaAugment.autoaugment\_learners.ucb\_learner
 ==============================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: gru_learner
+.. autoclass:: ucb_learner
 
    
    .. automethod:: __init__
@@ -13,8 +13,9 @@
 
    .. autosummary::
    
-      ~gru_learner.__init__
-      ~gru_learner.learn
+      ~ucb_learner.__init__
+      ~ucb_learner.learn
+      ~ucb_learner.make_more_policies
    
    
 

@@ -11,7 +11,7 @@ we use as a helper class to help us apply AutoAugment policies to datasets.
 This is a tutorial (in the sense describe in https://documentation.divio.com/structure/).
 
 For an example of how the material is used in our library, see the source code of
-:meth:`aa_learner.test_autoaugment_policy <MetaAugment.autoaugment_learners.aa_learner>`.
+:meth:`aa_learner._test_autoaugment_policy <MetaAugment.autoaugment_learners.aa_learner>`.
 
 Let's say we have a policy within the search space specified by the original 
 AutoAugment paper:

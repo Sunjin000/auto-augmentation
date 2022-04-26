@@ -47,7 +47,7 @@ class ucb_learner(randomsearch_learner):
         # attributes used in the UCB1 algorithm
         self.num_policies = num_policies
 
-        self.policies = [self.generate_new_policy() for _ in range(num_policies)]
+        self.policies = [self._generate_new_policy() for _ in range(num_policies)]
 
         self.avg_accs = [None]*self.num_policies
         self.best_avg_accs = []
@@ -67,7 +67,7 @@ class ucb_learner(randomsearch_learner):
                     and add to our list of policies
         """
 
-        self.policies += [self.generate_new_policy() for _ in range(n)]
+        self.policies += [self._generate_new_policy() for _ in range(n)]
 
         # all the below need to be lengthened to store information for the 
         # new policies
@@ -96,7 +96,7 @@ class ucb_learner(randomsearch_learner):
                 # test that one
                 this_policy_idx = self.avg_accs.index(None)
                 this_policy = self.policies[this_policy_idx]
-                acc = self.test_autoaugment_policy(
+                acc = self._test_autoaugment_policy(
                                 this_policy,
                                 child_network_architecture,
                                 train_dataset,
@@ -111,7 +111,7 @@ class ucb_learner(randomsearch_learner):
                 # one with the best q_plus_cnt value
                 this_policy_idx = np.argmax(self.q_plus_cnt)
                 this_policy = self.policies[this_policy_idx]
-                acc = self.test_autoaugment_policy(
+                acc = self._test_autoaugment_policy(
                                 this_policy,
                                 child_network_architecture,
                                 train_dataset,

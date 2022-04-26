@@ -46,7 +46,7 @@ class randomsearch_learner(aa_learner):
                     )
         
 
-    def generate_new_discrete_operation(self):
+    def _generate_new_discrete_operation(self):
         """
         generate a new random operation in the form of a tensor of dimension:
             (fun_num + 11 + 10)
@@ -74,7 +74,7 @@ class randomsearch_learner(aa_learner):
         return torch.cat([fun_t, prob_t, mag_t])
 
 
-    def generate_new_continuous_operation(self):
+    def _generate_new_continuous_operation(self):
         """
         Returns operation_tensor, which is a tensor representation of a random operation with
         dimension:
@@ -101,7 +101,7 @@ class randomsearch_learner(aa_learner):
         return fun_p_m
 
 
-    def generate_new_policy(self):
+    def _generate_new_policy(self):
         """
         Generates a new policy, with the elements chosen at random
         (unifom random distribution).
@@ -115,10 +115,10 @@ class randomsearch_learner(aa_learner):
             for i in range(2):
                 # if our agent uses discrete representations of probability and magnitude
                 if self.discrete_p_m:
-                    new_op = self.generate_new_discrete_operation()
+                    new_op = self._generate_new_discrete_operation()
                 else:
-                    new_op = self.generate_new_continuous_operation()
-                new_op = self.translate_operation_tensor(new_op)
+                    new_op = self._generate_new_continuous_operation()
+                new_op = self._translate_operation_tensor(new_op)
                 ops.append(new_op)
 
             new_subpolicy = tuple(ops)
@@ -135,10 +135,10 @@ class randomsearch_learner(aa_learner):
             iterations=15):
         # test out `iterations` number of  random policies
         for _ in range(iterations):
-            policy = self.generate_new_policy()
+            policy = self._generate_new_policy()
 
             pprint(policy)
-            reward = self.test_autoaugment_policy(policy,
+            reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
                                                 test_dataset)

@@ -6,9 +6,9 @@ import torchvision.datasets as datasets
 
 import random
 
-def test_generate_new_policy():
+def test__generate_new_policy():
     """
-    make sure gru_learner.generate_new_policy() is robust
+    make sure gru_learner._generate_new_policy() is robust
     with respect to different values of sp_num, fun_num, 
     p_bins, and m_bins
     """
@@ -24,7 +24,7 @@ def test_generate_new_policy():
             cont_mb_size=2
             )
         for _ in range(4):
-            new_policy = agent.generate_new_policy()
+            new_policy = agent._generate_new_policy()
             assert isinstance(new_policy[0], list), new_policy
 
 
