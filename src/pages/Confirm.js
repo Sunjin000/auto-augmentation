@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Grid, List, ListItem, Avatar, ListItemAvatar, ListItemText, Card, CardContent, Typography, Button, TextField } from '@mui/material';
+import { Grid, ListItem, ListItemAvatar, ListItemText, Card, CardContent, Typography, Button } from '@mui/material';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
+import {useNavigate, Route} from "react-router-dom";
 
 export default function Confirm() {
-    const [batchSize, setBatchSize] = useState(0)
-//     // const [myData, setMyData] = useState([{}])
+    const [myData, setMyData] = useState([])
+    const [dataset, setDataset] = useState()
+    const [network, setNetwork] = useState()
+
   useEffect(() => {
     const res = fetch('/confirm').then(
       response => response.json()
-      ).then(data => setBatchSize(data.batch_size));
-
-    console.log("batchsize", batchSize)
-    // setBatchSize(res.batch_size)
-
-    // .then(data => {console.log('training', data); 
-    //     })
+      ).then(data => {setMyData(data);
+        if (data.ds == 'Other'){setDataset(data.ds_name)} else {setDataset(data.ds)};
+        if (data.IsLeNet == 'Other'){setNetwork(data.network_name)} else {setNetwork(data.IsLeNet)};
+    });
   }, []);
 
-
-
+  let navigate = useNavigate();
+  const onSubmit = async () => {
+    navigate('/progress', {replace:true});
+  };
 
     return (
         <div className="App" style={{padding:"60px"}}>
@@ -39,7 +41,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <TuneRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Batch size" secondary={batchSize} />
+                                <ListItemText primary="Batch size" secondary={myData.batch_size} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item > 
@@ -47,7 +49,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <CheckCircleOutlineRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Dataset selection" secondary="[Dataset]" />
+                                <ListItemText primary="Dataset selection" secondary={dataset} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item> 
@@ -55,7 +57,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <TuneRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Learning rate" secondary="[Learning rate]" />
+                                <ListItemText primary="Learning rate" secondary={myData.learning_rate} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item> 
@@ -63,7 +65,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <CheckCircleOutlineRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Network selection" secondary="[Network selection]" />
+                                <ListItemText primary="Network selection" secondary={network} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item> 
@@ -71,7 +73,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <TuneRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Dataset Proportion" secondary="[Dataset Proportion]" />
+                                <ListItemText primary="Dataset Proportion" secondary={myData.toy_size} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item> 
@@ -79,7 +81,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <CheckCircleOutlineRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Auto-augment learner selection" secondary="[Auto-augment learner selection]" />
+                                <ListItemText primary="Auto-augment learner selection" secondary={myData.auto_aug_learner} />
                             </ListItem>
                         </Grid>
                         <Grid xs={12} sm={6} item> 
@@ -87,7 +89,7 @@ export default function Confirm() {
                                 <ListItemAvatar>
                                     <TuneRoundedIcon color="primary" fontSize='large'/>
                                 </ListItemAvatar>
-                                <ListItemText primary="Iterations" secondary="[Iterations]" />
+                                <ListItemText primary="Iterations" secondary={myData.iterations} />
                             </ListItem>
                         </Grid>
                         </Grid>
@@ -98,6 +100,7 @@ export default function Confirm() {
                             variant="contained"
                             color='success'
                             size='large'
+                            onClick={onSubmit}
                         >
                             Confirm
                         </Button>

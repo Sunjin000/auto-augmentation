@@ -9,25 +9,6 @@ import pickle
 
 
 
-# We will use this augmentation_space temporarily. Later on we will need to 
-# make sure we are able to add other image functions if the users want.
-augmentation_space = [
-            # (function_name, do_we_need_to_specify_magnitude)
-            ("ShearX", True),
-            ("ShearY", True),
-            ("TranslateX", True),
-            ("TranslateY", True),
-            ("Rotate", True),
-            ("Brightness", True),
-            ("Color", True),
-            ("Contrast", True),
-            ("Sharpness", True),
-            ("Posterize", True),
-            ("Solarize", True),
-            ("AutoContrast", False),
-            ("Equalize", False),
-            ("Invert", False),
-        ]
 
 
 class gru_learner(aa_learner):
@@ -47,14 +28,13 @@ class gru_learner(aa_learner):
     def __init__(self,
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=False,
+                exclude_method=[],
                 # hyperparameters for when training the child_network
                 batch_size=8,
-                toy_flag=False,
-                toy_size=0.1,
+                toy_size=1,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=20,
@@ -78,17 +58,18 @@ class gru_learner(aa_learner):
             print('Warning: Incompatible discrete_p_m=True input into gru_learner. \
                 discrete_p_m=False will be used')
         
-        super().__init__(sp_num, 
-                fun_num, 
-                p_bins, 
-                m_bins, 
+        super().__init__(
+                sp_num=sp_num, 
+                p_bins=p_bins, 
+                m_bins=m_bins, 
                 discrete_p_m=True, 
                 batch_size=batch_size, 
-                toy_flag=toy_flag, 
                 toy_size=toy_size, 
                 learning_rate=learning_rate,
                 max_epochs=max_epochs,
-                early_stop_num=early_stop_num,)
+                early_stop_num=early_stop_num,
+                exclude_method=exclude_method,
+                )
 
         # GRU-specific attributes that aren't in general aa_learner's
         self.alpha = alpha
@@ -245,7 +226,6 @@ if __name__=='__main__':
 
     agent = gru_learner(
                         sp_num=7,
-                        toy_flag=True,
                         toy_size=0.01,
                         batch_size=32,
                         learning_rate=0.1,

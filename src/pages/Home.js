@@ -6,15 +6,10 @@ import SendIcon from '@mui/icons-material/Send';
 import { CardActions, Collapse, IconButton } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from '@mui/material/styles';
-
-// import {
-//     BrowserRouter as Router,
-//     Switch,
-//     Route,
-//     Redirect,
-//   } from "react-router-dom";
-// import Confirm from './pages/Confirm'
 import {useNavigate, Route} from "react-router-dom";
+
+
+
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -47,8 +42,16 @@ export default function Home() {
 
         formData.append("ds_upload", data.ds_upload[0]);
         formData.append("network_upload", data.network_upload[0]);
-        formData.append("test", 'see');
+        formData.append("batch_size", data.batch_size)
+        formData.append("toy_size", data.toy_size)
+        formData.append("iterations", data.iterations)
+        formData.append("learning_rate", data.learning_rate)
+        formData.append("select_action", data.select_action)
+        formData.append("select_dataset", data.select_dataset)
+        formData.append("select_learner", data.select_learner)
+        formData.append("select_network", data.select_network)
 
+        console.log('>>> this is the user input in formData')
         for (var key of formData.entries()) {
             console.log(key[0] + ', ' + key[1])}
         
@@ -57,7 +60,6 @@ export default function Home() {
         method: 'POST',
         body: formData
         }).then((response) => response.json());
-        console.log('check if it is here')
         
         navigate('/confirm', {replace:true});
         // 
@@ -83,21 +85,6 @@ export default function Home() {
     // console.log('errors', errors); 
     // console.log('handleSubmit', handleSubmit)
 
-
-    // handling learner selection
-    const handleLearnerSelect = (value) => {
-        const isPresent = selectLearner.indexOf(value);
-        if (isPresent !== -1) {
-        const remaining = selectLearner.filter((item) => item !== value);
-        setSelectLearner(remaining);
-        } else {
-        setSelectLearner((prevItems) => [...prevItems, value]);
-        }
-    };
-
-    useEffect(() => {
-        setValue('select_learner', selectLearner); 
-      }, [selectLearner]);
     
     // handling action selection
     const handleActionSelect = (value) => {
@@ -250,28 +237,25 @@ export default function Home() {
                                 <FormLabel id="select_learner" align="left" variant="h6">
                                     Please select the auto-augment learners you'd like to use (multiple learners can be selected)
                                 </FormLabel>
-                                <div>
-                                    {['UCB learner', 'Evolutionary learner', 'Random Searcher', 'GRU Learner'].map((option) => {
-                                    return (
-                                        <FormControlLabel
-                                        control={
-                                            <Controller
-                                            name='select_learner'
-                                            render={({}) => {
-                                                return (
-                                                <Checkbox
-                                                    checked={selectLearner.includes(option)}
-                                                    onChange={() => handleLearnerSelect(option)}/> );
-                                            }}
-                                            control={control}
-                                            rules={{ required: true }}
-                                            />}
-                                        label={option}
-                                        key={option}
-                                        />
-                                    );
-                                    })}
-                                </div>
+                                <Controller 
+                                        name='select_learner'
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({field: { onChange, value }}) => (
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="select_learner"
+                                        name="select_learner"
+                                        align="centre"
+                                        value={value ?? ""} 
+                                        onChange={onChange}
+                                        >
+                                        <FormControlLabel value="UCB learner" control={<Radio />} label="UCB learner" />
+                                        <FormControlLabel value="Evolutionary learner" control={<Radio />} label="Evolutionary learner" />
+                                        <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
+                                        <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
+                                    </RadioGroup> )}
+                                />
                                 {errors.select_learner && errors.select_learner.type === "required" && 
                                     <Alert severity="error">
                                         <AlertTitle>This field is required</AlertTitle>
@@ -314,16 +298,16 @@ export default function Home() {
                             </Typography>
                             <Grid container spacing={1} style={{maxWidth:800, padding:"10px 10px"}}>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" {...register("batch_size", {valueAsNumber: true})} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
+                                    <TextField type="number" InputProps={{ inputProps: { min: 0} }} {...register("batch_size")} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" {...register("learning_rate", {valueAsNumber: true})} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
+                                    <TextField type="number" inputProps={{step: "0.000000001",min: 0}} {...register("learning_rate")} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" {...register("iterations", {valueAsNumber: true})} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+                                    <TextField type="number" InputProps={{ inputProps: { min: 0} }} {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" {...register("toy_size", {valueAsNumber: true})} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+                                    <TextField type="number" inputProps={{step: "0.01", min: 0}} {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
                                 </Grid>
                                 <FormLabel variant="h8" align='centre'>
                                     * Dataset Proportion defines the percentage of original dataset our auto-augment learner will use to find the 

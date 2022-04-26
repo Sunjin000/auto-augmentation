@@ -57,7 +57,6 @@ can use any other learner in place of random search learner as well)
     # aa_agent = aal.ac_learner()
     aa_agent = aal.randomsearch_learner(
                                     sp_num=7,
-                                    toy_flag=True,
                                     toy_size=0.01,
                                     batch_size=4,
                                     learning_rate=0.05,

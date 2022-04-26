@@ -2,7 +2,8 @@ import os
 
 from flask import Flask, render_template, request, flash
 
-from auto_augmentation import home, progress,result, training
+from auto_augmentation import home, progress,result
+from flask_mvp.auto_augmentation import training
 
 def create_app(test_config=None):
     # create and configure the app

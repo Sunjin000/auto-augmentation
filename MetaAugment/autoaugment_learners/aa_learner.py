@@ -1,4 +1,3 @@
-from numpy import isin
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,31 +6,10 @@ from MetaAugment.autoaugment_learners.autoaugment import AutoAugment
 
 import torchvision.transforms as transforms
 
-from pprint import pprint
-import matplotlib.pyplot as plt
 import copy
 import types
 
 
-# We will use this augmentation_space temporarily. Later on we will need to 
-# make sure we are able to add other image functions if the users want.
-augmentation_space = [
-            # (function_name, do_we_need_to_specify_magnitude)
-            ("ShearX", True),
-            ("ShearY", True),
-            ("TranslateX", True),
-            ("TranslateY", True),
-            ("Rotate", True),
-            ("Brightness", True),
-            ("Color", True),
-            ("Contrast", True),
-            ("Sharpness", True),
-            ("Posterize", True),
-            ("Solarize", True),
-            ("AutoContrast", False),
-            ("Equalize", False),
-            ("Invert", False),
-        ]
 
 
 class aa_learner:
@@ -46,17 +24,16 @@ class aa_learner:
     def __init__(self, 
                 # parameters that define the search space
                 sp_num=5,
-                fun_num=14,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=False,
                 # hyperparameters for when training the child_network
                 batch_size=32,
-                toy_flag=False,
-                toy_size=0.1,
+                toy_size=1,
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=20,
+                exclude_method = [],
                 ):
         """
         Args:
@@ -74,7 +51,6 @@ class aa_learner:
                             algorithm, etc.). Defaults to False
             
             batch_size (int, optional): child_network training parameter. Defaults to 32.
-            toy_flag (bool, optional): child_network training parameter. Defaults to False.
             toy_size (int, optional): child_network training parameter. ratio of original
                                 dataset used in toy dataset. Defaults to 0.1.
             learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
@@ -84,15 +60,12 @@ class aa_learner:
         """
         # related to defining the search space
         self.sp_num = sp_num
-        self.fun_num = fun_num
         self.p_bins = p_bins
         self.m_bins = m_bins
         self.discrete_p_m = discrete_p_m
-        self.op_tensor_length = fun_num+p_bins+m_bins if discrete_p_m else fun_num+2
 
         # related to training of the child_network
         self.batch_size = batch_size
-        self.toy_flag = toy_flag
         self.toy_size = toy_size
         self.learning_rate = learning_rate
 
@@ -101,6 +74,31 @@ class aa_learner:
 
         # TODO: We should probably use a different way to store results than self.history
         self.history = []
+
+        # this is the full augmentation space. We take out some image functions
+        # if the user specifies so in the exclude_method parameter
+        augmentation_space = [
+            # (function_name, do_we_need_to_specify_magnitude)
+            ("ShearX", True),
+            ("ShearY", True),
+            ("TranslateX", True),
+            ("TranslateY", True),
+            ("Rotate", True),
+            ("Brightness", True),
+            ("Color", True),
+            ("Contrast", True),
+            ("Sharpness", True),
+            ("Posterize", True),
+            ("Solarize", True),
+            ("AutoContrast", False),
+            ("Equalize", False),
+            ("Invert", False),
+        ]
+        self.exclude_method = exclude_method
+        self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
+
+        self.fun_num = len(self.augmentation_space)
+        self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
 
 
     def translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
@@ -176,7 +174,7 @@ class aa_learner:
                 prob_idx = torch.multinomial(prob_t, 1).item() # 0 <= p <= 10
                 mag = torch.multinomial(mag_t, 1).item() # 0 <= m <= 9
 
-            function = augmentation_space[fun_idx][0]
+            function = self.augmentation_space[fun_idx][0]
             prob = prob_idx/(self.p_bins-1)
 
             indices = (fun_idx, prob_idx, mag)
@@ -205,13 +203,13 @@ class aa_learner:
             prob = round(prob, 1) # round to nearest first decimal digit
             mag = round(mag) # round to nearest integer
             
-        function = augmentation_space[fun_idx][0]
+        function = self.augmentation_space[fun_idx][0]
 
         assert 0 <= prob <= 1, prob
         assert 0 <= mag <= self.m_bins-1, (mag, self.m_bins)
         
         # if the image function does not require a magnitude, we set the magnitude to None
-        if augmentation_space[fun_idx][1] == True: # if the image function has a magnitude
+        if self.augmentation_space[fun_idx][1] == True: # if the image function has a magnitude
             operation = (function, prob, mag)
         else:
             operation =  (function, prob, None)
@@ -298,7 +296,7 @@ class aa_learner:
                 reward = self.test_autoaugment_policy(policy,
                                         child_network_architecture,
                                         train_dataset,
-                                        test_dataset, toy_flag)
+                                        test_dataset)
 
                 self.history.append((policy, reward))
         """
@@ -309,7 +307,8 @@ class aa_learner:
                                 child_network_architecture,
                                 train_dataset,
                                 test_dataset,
-                                logging=False):
+                                logging=False,
+                                print_every_epoch=True):
         """
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
@@ -324,8 +323,6 @@ class aa_learner:
                                 of it.
             train_dataset (torchvision.dataset.vision.VisionDataset)
             test_dataset (torchvision.dataset.vision.VisionDataset)
-            toy_flag (boolean): Whether we want to obtain a toy version of 
-                            train_dataset and test_dataset and use those.
             logging (boolean): Whether we want to save logs
         
         Returns:
@@ -359,17 +356,11 @@ class aa_learner:
         train_dataset.transform = train_transform
 
         # create Dataloader objects out of the Dataset objects
-        if self.toy_flag:
-            train_loader, test_loader = create_toy(train_dataset,
-                                                test_dataset,
-                                                batch_size=self.batch_size,
-                                                n_samples=self.toy_size,
-                                                seed=100)
-        else:
-            train_loader = torch.utils.data.DataLoader(train_dataset, 
-                                                batch_size=self.batch_size)
-            test_loader = torch.utils.data.DataLoader(test_dataset, 
-                                                batch_size=self.batch_size)
+        train_loader, test_loader = create_toy(train_dataset,
+                                            test_dataset,
+                                            batch_size=self.batch_size,
+                                            n_samples=self.toy_size,
+                                            seed=100)
         
         # train the child network with the dataloaders equipped with our specific policy
         accuracy = train_child_network(child_network, 
@@ -384,45 +375,44 @@ class aa_learner:
                                     max_epochs = self.max_epochs, 
                                     early_stop_num = self.early_stop_num, 
                                     logging = logging,
-                                    print_every_epoch=True)
+                                    print_every_epoch=print_every_epoch)
         
         # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
         return accuracy
     
 
-    def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
-        """
-        I made this to plot a couple of accuracy graphs to help manually tune my gradient 
-        optimizer hyperparameters.
+    # def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
+    #     """
+    #     I made this to plot a couple of accuracy graphs to help manually tune my gradient 
+    #     optimizer hyperparameters.
 
-        Saves a plot of `n` training accuracy graphs overlapped.
-        """
+    #     Saves a plot of `n` training accuracy graphs overlapped.
+    #     """
         
-        acc_lists = []
+    #     acc_lists = []
 
-        # This is dummy code
-        # test out `n` random policies
-        for _ in range(n):
-            policy = self.generate_new_policy()
+    #     # This is dummy code
+    #     # test out `n` random policies
+    #     for _ in range(n):
+    #         policy = self.generate_new_policy()
 
-            pprint(policy)
-            reward, acc_list = self.test_autoaugment_policy(policy,
-                                                child_network_architecture,
-                                                train_dataset,
-                                                test_dataset,
-                                                toy_flag=self.toy_flag,
-                                                logging=True)
+    #         pprint(policy)
+    #         reward, acc_list = self.test_autoaugment_policy(policy,
+    #                                             child_network_architecture,
+    #                                             train_dataset,
+    #                                             test_dataset,
+    #                                             logging=True)
 
-            self.history.append((policy, reward))
-            acc_lists.append(acc_list)
+    #         self.history.append((policy, reward))
+    #         acc_lists.append(acc_list)
 
-        for acc_list in acc_lists:
-            plt.plot(acc_list)
-        plt.title('I ran 5 random policies to see if there is any sign of \
-                    catastrophic failure during training. If there are \
-                    any lines which reach significantly lower (>10%) \
-                    accuracies, you might want to tune the hyperparameters')
-        plt.xlabel('epoch')
-        plt.ylabel('accuracy')
-        plt.show()
-        plt.savefig('training_graphs_without_policies')
+    #     for acc_list in acc_lists:
+    #         plt.plot(acc_list)
+    #     plt.title('I ran 5 random policies to see if there is any sign of \
+    #                 catastrophic failure during training. If there are \
+    #                 any lines which reach significantly lower (>10%) \
+    #                 accuracies, you might want to tune the hyperparameters')
+    #     plt.xlabel('epoch')
+    #     plt.ylabel('accuracy')
+    #     plt.show()
+    #     plt.savefig('training_graphs_without_policies')
