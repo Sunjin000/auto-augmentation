@@ -1,6 +1,6 @@
 import pytest
 import unittest
-from backend_react import react_app
+from . import react_app
 import json
 
 

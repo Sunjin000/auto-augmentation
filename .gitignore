@@ -177,7 +177,7 @@ cifar-10-python.tar.gz
 /coverage
 
 # production
-/build
+# /build
 
 # misc
 .DS_Store
@@ -204,3 +204,7 @@ celerybeat.pid
 
 **/test
 **/train
+
+# user uplaod
+/react_backend/child_networks
+/react_backend/policy.txt
