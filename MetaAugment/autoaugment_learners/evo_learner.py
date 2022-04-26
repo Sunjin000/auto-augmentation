@@ -171,10 +171,10 @@ class evo_learner(aa_learner):
                 prob2 += torch.sigmoid(y[idx, section+self.fun_num]).item()
                 if mag1 is not None:
                     # mag1 += min(max(0, (y[idx, self.auto_aug_agent.fun_num+1]).item()), 8)
-                    mag1 += 10 * torch.sigmoid(y[idx, self.fun_num+1]).item()
+                    mag1 += min(9, 10 * torch.sigmoid(y[idx, self.fun_num+1]).item())
                 if mag2 is not None:
                     # mag2 += min(max(0, y[idx, section+self.auto_aug_agent.fun_num+1].item()), 8)
-                    mag2 += 10 * torch.sigmoid(y[idx, self.fun_num+1]).item()
+                    mag2 += min(9, 10 * torch.sigmoid(y[idx, self.fun_num+1]).item())
 
                 counter += 1
 
@@ -244,7 +244,7 @@ class evo_learner(aa_learner):
                 self.policy_dict[trans1][trans2].append(new_set)
                 return False 
             else:
-                self.policy_dict[trans1][trans2] = [new_set]
+                self.policy_dict[trans1] = {trans2: [new_set]}
         if trans2 in self.policy_dict:
             if trans1 in self.policy_dict[trans2]:
                 for test_pol in self.policy_dict[trans2][trans1]:
@@ -253,7 +253,7 @@ class evo_learner(aa_learner):
                 self.policy_dict[trans2][trans1].append(new_set)
                 return False 
             else:
-                self.policy_dict[trans2][trans1] = [new_set]
+                self.policy_dict[trans2] = {trans1: [new_set]}
 
 
     def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):

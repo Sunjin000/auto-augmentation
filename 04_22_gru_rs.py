@@ -51,7 +51,7 @@ def run_benchmark(
                     train_dataset=train_dataset,
                     test_dataset=test_dataset,
                     child_network_architecture=child_network_architecture,
-                    iterations=1
+                    iterations=5
                     )
         # save agent every iteration
         with open(save_file, 'wb+') as f:
@@ -77,6 +77,7 @@ config = {
         'max_epochs' : 100,
         'early_stop_num' : 10,
         'controller' : controller,
+        'num_solutions' : 10,
         }
 total_iter=150
 
@@ -90,28 +91,20 @@ test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test',
 child_network_architecture = cn.SimpleNet
 
 
-# gru
 run_benchmark(
     save_file='/bench_test/04_22_fm_sn_gru.pkl',
     total_iter=total_iter,
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
-    # agent_arch=aal.gru_learner,
     agent_arch=aal.evo_learner,
     config=config,
     )
 
-# rs
-# run_benchmark(
-#     save_file='./benchmark/pickles/04_22_fm_sn_rs.pkl',
-#     total_iter=total_iter,
-#     train_dataset=train_dataset,
-#     test_dataset=test_dataset,
-#     child_network_architecture=child_network_architecture,
-#     agent_arch=aal.randomsearch_learner,
-#     config=config,
-#     )
+
+
+
+
 
 
 # CIFAR10 with LeNet
@@ -125,12 +118,15 @@ run_benchmark(
 #                                       num_labels=10, 
 #                                       img_channels=3)
 
+
+
+
 # controller = cn.LeNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
 
 
 # # aa_learner config
 # config = {
-#         'sp_num' : 3,
+#         'sp_num' : 5,
 #         'learning_rate' : 1e-1,
 #         'toy_flag' : False,
 # #         'toy_flag' : True,
@@ -153,13 +149,20 @@ run_benchmark(
 #     config=config,
 #     )
 
-# rs
-# run_benchmark(
-#     save_file='./benchmark/pickles/04_22_cf_ln_rs',
-#     total_iter=total_iter,
-#     train_dataset=train_dataset,
-#     test_dataset=test_dataset,
-#     child_network_architecture=child_network_architecture,
-#     agent_arch=aal.randomsearch_learner,
-#     config=config,
-#     )
+
+megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
+
+
+# accs=[]
+# for _ in range(10):
+#     print(f'{_}/{10}')
+#     temp_agent = aal.evo_learner(**config)
+#     accs.append(
+#             temp_agent.test_autoaugment_policy(megapol,
+#                                 child_network_architecture,
+#                                 train_dataset,
+#                                 test_dataset,
+#                                 logging=False)
+#                 )
+
+# print("FASION MNIST accs: ", accs)
