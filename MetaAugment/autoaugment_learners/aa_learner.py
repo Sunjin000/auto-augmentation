@@ -99,6 +99,10 @@ class aa_learner:
 
         self.fun_num = len(self.augmentation_space)
         self.op_tensor_length = self.fun_num + p_bins + m_bins if discrete_p_m else self.fun_num +2
+        self.num_pols_tested = 0
+        self.policy_record = {}
+
+
 
 
     def _translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
@@ -300,6 +304,7 @@ class aa_learner:
 
                 self.history.append((policy, reward))
         """
+
     
 
     def _test_autoaugment_policy(self,
@@ -328,6 +333,8 @@ class aa_learner:
         Returns:
             accuracy (float): best accuracy reached in any
         """
+
+
 
         # we create an instance of the child network that we're going
         # to train. The method of creation depends on the type of 
@@ -378,8 +385,24 @@ class aa_learner:
                                     early_stop_num = self.early_stop_num, 
                                     logging = logging,
                                     print_every_epoch=print_every_epoch)
+
+        curr_pol = f'pol{self.num_pols_tested}'
+        pol_dict = {}
+        for subpol in policy:
+            subpol = subpol[0]
+            first_trans, first_prob, first_mag = subpol[0]
+            second_trans, second_prob, second_mag = subpol[1]
+            components = (first_prob, first_mag, second_prob, second_mag)
+            if second_trans in pol_dict[first_trans]:
+                pol_dict[first_trans][second_trans].append(components)
+            else:
+                pol_dict[first_trans]= {second_trans: [components]}
+        self.policy_record[curr_pol] = (pol_dict, accuracy)
+
+        self.num_pols_tested += 1
         
         # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
+
         return accuracy
     
 
