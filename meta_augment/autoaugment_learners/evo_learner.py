@@ -27,7 +27,8 @@ class evo_learner(aa_learner):
                 toy_size=0.1,
                 fun_num = 14,
                 exclude_method=[],
-                controller = None
+                controller = None,
+                initial_pop = None
                 ):
 
         super().__init__(sp_num, 
@@ -52,7 +53,7 @@ class evo_learner(aa_learner):
         self.augmentation_space = [x for x in self.augmentation_space if x[0] not in exclude_method]
         self.policy_dict = {}
         self.policy_result = []
-
+        print("num sols: ", self.num_solutions)
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
 
