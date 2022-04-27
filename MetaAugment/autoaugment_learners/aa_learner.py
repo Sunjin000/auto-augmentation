@@ -103,6 +103,8 @@ class aa_learner:
         self.policy_record = {}
 
 
+
+
     def _translate_operation_tensor(self, operation_tensor, return_log_prob=False, argmax=False):
         """
         takes in a tensor representing an operation and returns an actual operation which
@@ -302,6 +304,7 @@ class aa_learner:
 
                 self.history.append((policy, reward))
         """
+
     
 
     def _test_autoaugment_policy(self,
