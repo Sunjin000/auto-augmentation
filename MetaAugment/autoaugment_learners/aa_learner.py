@@ -301,8 +301,6 @@ class aa_learner:
                                         child_network_architecture,
                                         train_dataset,
                                         test_dataset)
-
-                self.history.append((policy, reward))
         """
 
     
@@ -404,41 +402,5 @@ class aa_learner:
         self.policy_record[curr_pol] = (pol_dict, accuracy)
 
         self.num_pols_tested += 1
+        self.history.append((policy,accuracy))
         return accuracy
-    
-
-    # def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
-    #     """
-    #     I made this to plot a couple of accuracy graphs to help manually tune my gradient 
-    #     optimizer hyperparameters.
-
-    #     Saves a plot of `n` training accuracy graphs overlapped.
-    #     """
-        
-    #     acc_lists = []
-
-    #     # This is dummy code
-    #     # test out `n` random policies
-    #     for _ in range(n):
-    #         policy = self._generate_new_policy()
-
-    #         pprint(policy)
-    #         reward, acc_list = self._test_autoaugment_policy(policy,
-    #                                             child_network_architecture,
-    #                                             train_dataset,
-    #                                             test_dataset,
-    #                                             logging=True)
-
-    #         self.history.append((policy, reward))
-    #         acc_lists.append(acc_list)
-
-    #     for acc_list in acc_lists:
-    #         plt.plot(acc_list)
-    #     plt.title('I ran 5 random policies to see if there is any sign of \
-    #                 catastrophic failure during training. If there are \
-    #                 any lines which reach significantly lower (>10%) \
-    #                 accuracies, you might want to tune the hyperparameters')
-    #     plt.xlabel('epoch')
-    #     plt.ylabel('accuracy')
-    #     plt.show()
-    #     plt.savefig('training_graphs_without_policies')

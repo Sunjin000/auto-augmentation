@@ -50,3 +50,20 @@ plt.xlabel('no. of child networks trained')
 plt.ylabel('highest accuracy obtained until now')
 plt.legend()
 plt.show()
+
+
+print('FashionMNIST_GRU')
+print(get_best_acc('benchmark/pickles/04_22_fm_sn_gru.pkl'))
+print()
+print('FashionMNIST_RandomSearch')
+
+print(get_best_acc('benchmark/pickles/04_22_fm_sn_rs.pkl'))
+print()
+
+print('CIFAR_GRU')
+print(get_best_acc('benchmark/pickles/04_22_cf_ln_gru.pkl'))
+print()
+
+print('CIFAR_RandomSearch')
+print(get_best_acc('benchmark/pickles/04_22_cf_ln_rs.pkl'))
+print()

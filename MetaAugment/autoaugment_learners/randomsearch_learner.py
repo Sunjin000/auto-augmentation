@@ -142,8 +142,6 @@ class randomsearch_learner(aa_learner):
                                                 child_network_architecture,
                                                 train_dataset,
                                                 test_dataset)
-
-            self.history.append((policy, reward))
     
 
 

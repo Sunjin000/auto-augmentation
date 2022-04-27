@@ -186,8 +186,6 @@ class gru_learner(aa_learner):
                                                     test_dataset)
                 mb_rewards_sum += reward
 
-                # log
-                self.history.append((policy, reward))
 
                 # gradient accumulation
                 obj += (reward-self.b)*log_prob

@@ -230,7 +230,6 @@ class evo_learner(aa_learner):
 
             fit_val = self._test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset)
 
-            self.history.append((full_policy, fit_val))
             self.running_policy.append((full_policy, fit_val))
 
             if len(self.running_policy) > self.sp_num:
