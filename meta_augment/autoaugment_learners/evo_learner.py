@@ -229,6 +229,7 @@ class evo_learner(aa_learner):
             return solution, solution_fitness, solution_idx
 
 
+
     def in_pol_dict(self, new_policy):
         new_policy = new_policy[0]
         trans1, trans2 = new_policy[0][0], new_policy[1][0]
@@ -239,18 +240,11 @@ class evo_learner(aa_learner):
                     if new_set == test_pol:
                         return True
                 self.policy_dict[trans1][trans2].append(new_set)
-                return False 
             else:
                 self.policy_dict[trans1] = {trans2: [new_set]}
-        if trans2 in self.policy_dict:
-            if trans1 in self.policy_dict[trans2]:
-                for test_pol in self.policy_dict[trans2][trans1]:
-                    if new_set == test_pol:
-                        return True
-                self.policy_dict[trans2][trans1].append(new_set)
-                return False 
-            else:
-                self.policy_dict[trans2] = {trans1: [new_set]}
+        else:
+            self.policy_dict[trans1] = {trans2: [new_set]}
+        return False
 
 
     def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
@@ -279,7 +273,7 @@ class evo_learner(aa_learner):
 
             self.controller.load_state_dict(model_weights_dict)
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
-
+            new = True
             for idx, (test_x, label_x) in enumerate(self.train_loader):
                 # if self.sp_num == 1:
                 full_policy = self.get_single_policy_cov(test_x)
@@ -287,12 +281,13 @@ class evo_learner(aa_learner):
 
                 # else:                      
                 # full_policy = self.get_full_policy(test_x)
-                while self.in_pol_dict(full_policy):
-                    full_policy = self.get_single_policy_cov(test_x)[0]
+                if self.in_pol_dict(full_policy):
+                    fit_val = 0
+                    new = False
 
-
-            fit_val = self.test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset) #) /
-                      #  + self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)) / 2
+            
+            if not new:
+                fit_val = self.test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset)
 
             self.policy_result.append([full_policy, fit_val])
 
