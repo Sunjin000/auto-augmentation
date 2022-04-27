@@ -394,15 +394,16 @@ class aa_learner:
             first_trans, first_prob, first_mag = subpol[0]
             second_trans, second_prob, second_mag = subpol[1]
             components = (first_prob, first_mag, second_prob, second_mag)
-            if second_trans in pol_dict[first_trans]:
-                pol_dict[first_trans][second_trans].append(components)
+            if first_trans in pol_dict:
+                if second_trans in pol_dict[first_trans]:
+                    pol_dict[first_trans][second_trans].append(components)
+                else:
+                    pol_dict[first_trans]= {second_trans: [components]}
             else:
                 pol_dict[first_trans]= {second_trans: [components]}
         self.policy_record[curr_pol] = (pol_dict, accuracy)
 
         self.num_pols_tested += 1
-        
-
         return accuracy
     
 
