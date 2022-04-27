@@ -386,10 +386,11 @@ class aa_learner:
                                     logging = logging,
                                     print_every_epoch=print_every_epoch)
 
+
+        # turn policy into dictionary format and add it into self.policy_record
         curr_pol = f'pol{self.num_pols_tested}'
         pol_dict = {}
         for subpol in policy:
-            subpol = subpol[0]
             first_trans, first_prob, first_mag = subpol[0]
             second_trans, second_prob, second_mag = subpol[1]
             components = (first_prob, first_mag, second_prob, second_mag)
@@ -401,7 +402,6 @@ class aa_learner:
 
         self.num_pols_tested += 1
         
-        # if logging is true, 'accuracy' is actually a tuple: (accuracy, accuracy_log)
 
         return accuracy
     
