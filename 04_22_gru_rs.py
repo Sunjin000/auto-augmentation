@@ -121,7 +121,8 @@ child_network_architecture = cn.LeNet(img_height = 32,
 
 
 
-controller = cn.EasyNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
+controller = cn.EasyNet(img_height=32, img_width=32, num_labels=16*10, img_channels=3)
+
 config = {
         'sp_num' : 5,
         'learning_rate' : 1e-1,

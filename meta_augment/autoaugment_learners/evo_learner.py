@@ -76,6 +76,7 @@ class evo_learner(aa_learner):
             two transformations, with a probability and magnitude float for each
         """
         section = self.fun_num + self.p_bins + self.m_bins
+
         y = self.controller.forward(x)
         full_policy = []
         for pol in range(self.sub_num_pol):
@@ -276,7 +277,8 @@ class evo_learner(aa_learner):
             new = True
             for idx, (test_x, label_x) in enumerate(self.train_loader):
                 # if self.sp_num == 1:
-                full_policy = self.get_single_policy_cov(test_x)
+                # full_policy = self.get_single_policy_cov(test_x)
+                full_policy = self.get_full_policy(test_x)
 
 
                 # else:                      
