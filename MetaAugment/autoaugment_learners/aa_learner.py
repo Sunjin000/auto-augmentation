@@ -404,3 +404,25 @@ class aa_learner:
         self.num_pols_tested += 1
         self.history.append((policy,accuracy))
         return accuracy
+    
+
+    def get_mega_policy(self, number_policies):
+        """
+        Produces a mega policy, based on the n best subpolicies (evo learner)/policies
+        (other learners)
+
+        
+        Args: 
+            number_policies -> int: Number of (sub)policies to be included in the mega
+            policy
+
+        Returns:
+            megapolicy -> [subpolicy, subpolicy, ...]
+        """
+        inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
+
+        megapol = []
+        for pol in inter_pol:
+            megapol += pol[0]
+
+        return megapol
