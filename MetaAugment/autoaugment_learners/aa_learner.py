@@ -305,7 +305,7 @@ class aa_learner:
 
     
 
-    def _test_autoaugment_policy(self,
+    def test_autoaugment_policy(self,
                                 policy,
                                 child_network_architecture,
                                 train_dataset,
