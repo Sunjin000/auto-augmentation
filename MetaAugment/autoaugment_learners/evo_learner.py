@@ -297,7 +297,7 @@ class evo_learner(aa_learner):
                     full_policy = self.get_single_policy_cov(test_x)[0]
 
 
-            fit_val = self.test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset) #) /
+            fit_val = self._test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset) #) /
                       #  + self.test_autoaugment_policy(full_policy, train_dataset, test_dataset)) / 2
 
             self.policy_result.append([full_policy, fit_val])
