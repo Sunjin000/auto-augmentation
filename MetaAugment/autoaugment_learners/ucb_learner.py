@@ -147,7 +147,7 @@ class ucb_learner(randomsearch_learner):
             print(self.cnts)
 
             
-    def get_mega_policy(self, number_policies):
+    def get_mega_policy(self, number_policies=5):
         """
         Produces a mega policy, based on the n best subpolicies (evo learner)/policies
         (other learners)

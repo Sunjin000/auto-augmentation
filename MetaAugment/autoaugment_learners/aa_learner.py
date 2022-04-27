@@ -406,7 +406,7 @@ class aa_learner:
         return accuracy
     
 
-    def get_mega_policy(self, number_policies):
+    def get_mega_policy(self, number_policies=5):
         """
         Produces a mega policy, based on the n best subpolicies (evo learner)/policies
         (other learners)
@@ -419,6 +419,9 @@ class aa_learner:
         Returns:
             megapolicy -> [subpolicy, subpolicy, ...]
         """
+
+        number_policies = max(number_policies, len(self.history))
+
         inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
 
         megapol = []

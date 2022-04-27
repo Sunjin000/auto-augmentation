@@ -82,7 +82,7 @@ def test__test_autoaugment_policy():
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
-                toy_size=0.004,
+                toy_size=0.002,
                 max_epochs=20,
                 early_stop_num=10
                 )
@@ -157,7 +157,15 @@ def test_exclude_method():
 
 def test_get_mega_policy():
 
-    agent = aal.randomsearch_learner()
+    agent = aal.randomsearch_learner(
+                sp_num=5,
+                p_bins=11,
+                m_bins=10,
+                discrete_p_m=True,
+                toy_size=0.002,
+                max_epochs=20,
+                early_stop_num=10
+                )
 
     child_network_architecture = cn.SimpleNet
     train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
@@ -167,7 +175,9 @@ def test_get_mega_policy():
                             transform=torchvision.transforms.ToTensor())
 
     agent.learn(train_dataset, test_dataset, child_network_architecture, 10)
-    mega_pol = agent.get_mega_policy()
+    mega_pol = agent.get_mega_policy(number_policies=30)
+    mega_pol = agent.get_mega_policy(number_policies=3)
+    mega_pol = agent.get_mega_policy(number_policies=1)
     print("megapol: ", mega_pol)
 
 
