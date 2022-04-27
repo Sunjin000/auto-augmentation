@@ -244,18 +244,9 @@ class evo_learner(aa_learner):
                     if new_set == test_pol:
                         return True
                 self.policy_dict[trans1][trans2].append(new_set)
-                return False 
             else:
                 self.policy_dict[trans1] = {trans2: [new_set]}
-        if trans2 in self.policy_dict:
-            if trans1 in self.policy_dict[trans2]:
-                for test_pol in self.policy_dict[trans2][trans1]:
-                    if new_set == test_pol:
-                        return True
-                self.policy_dict[trans2][trans1].append(new_set)
-                return False 
-            else:
-                self.policy_dict[trans2] = {trans1: [new_set]}
+        return False
 
 
     def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
