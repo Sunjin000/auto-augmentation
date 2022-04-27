@@ -1,5 +1,5 @@
-﻿MetaAugment.autoaugment\_learners.ucb\_learner
-==============================================
+﻿MetaAugment.autoaugment\_learners.UcbLearner
+============================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~UcbLearner.__init__
+      ~UcbLearner.get_mega_policy
       ~UcbLearner.learn
       ~UcbLearner.make_more_policies
    

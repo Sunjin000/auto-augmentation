@@ -1,5 +1,5 @@
-﻿MetaAugment.autoaugment\_learners.aa\_learner
-=============================================
+﻿MetaAugment.autoaugment\_learners.AaLearner
+===========================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~AaLearner.__init__
+      ~AaLearner.get_mega_policy
       ~AaLearner.learn
    
    

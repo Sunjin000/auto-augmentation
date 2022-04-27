@@ -1,5 +1,5 @@
-﻿MetaAugment.autoaugment\_learners.evo\_learner
-==============================================
+﻿MetaAugment.autoaugment\_learners.EvoLearner
+============================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
@@ -14,11 +14,8 @@
    .. autosummary::
    
       ~EvoLearner.__init__
-      ~EvoLearner.get_full_policy
-      ~EvoLearner.get_single_policy_cov
-      ~EvoLearner.in_pol_dict
+      ~EvoLearner.get_mega_policy
       ~EvoLearner.learn
-      ~EvoLearner.set_up_instance
    
    
 

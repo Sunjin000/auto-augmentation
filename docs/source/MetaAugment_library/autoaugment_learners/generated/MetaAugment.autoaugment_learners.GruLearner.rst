@@ -1,5 +1,5 @@
-﻿MetaAugment.autoaugment\_learners.gru\_learner
-==============================================
+﻿MetaAugment.autoaugment\_learners.GruLearner
+============================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~GruLearner.__init__
+      ~GruLearner.get_mega_policy
       ~GruLearner.learn
    
    

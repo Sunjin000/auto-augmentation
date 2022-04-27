@@ -1,5 +1,5 @@
-﻿MetaAugment.autoaugment\_learners.randomsearch\_learner
-=======================================================
+﻿MetaAugment.autoaugment\_learners.RsLearner
+===========================================
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~RsLearner.__init__
+      ~RsLearner.get_mega_policy
       ~RsLearner.learn
    
    
