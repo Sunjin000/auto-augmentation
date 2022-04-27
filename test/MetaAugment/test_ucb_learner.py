@@ -52,5 +52,8 @@ def test_ucb_learner():
         iterations=7
         )
 
+    print(learner.get_mega_policy(number_policies=50))
+    print(learner.get_mega_policy(number_policies=3))
+
 if __name__=="__main__":
     test_ucb_learner()

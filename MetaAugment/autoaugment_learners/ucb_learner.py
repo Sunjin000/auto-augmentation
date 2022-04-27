@@ -147,7 +147,33 @@ class ucb_learner(randomsearch_learner):
             print(self.cnts)
 
             
+    def get_mega_policy(self, number_policies):
+        """
+        Produces a mega policy, based on the n best subpolicies (evo learner)/policies
+        (other learners)
 
+        
+        Args: 
+            number_policies -> int: Number of (sub)policies to be included in the mega
+            policy
+
+        Returns:
+            megapolicy -> [subpolicy, subpolicy, ...]
+        """
+
+        temp_avg_accs = [x if x is not None  else 0 for x in self.avg_accs]
+
+        temp_history = list(zip(self.policies, temp_avg_accs))
+
+        number_policies = max(number_policies, len(temp_history))
+
+        inter_pol = sorted(temp_history, key=lambda x: x[1], reverse = True)[:number_policies]
+
+        megapol = []
+        for pol in inter_pol:
+            megapol += pol[0]
+
+        return megapol
 
        
 
