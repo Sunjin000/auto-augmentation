@@ -121,7 +121,7 @@ child_network_architecture = cn.LeNet(img_height = 32,
 
 
 
-controller = cn.LeNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
+controller = cn.EasyNet(img_height=32, img_width=32, num_labels=16*2, img_channels=3)
 config = {
         'sp_num' : 5,
         'learning_rate' : 1e-1,
@@ -131,6 +131,8 @@ config = {
         'max_epochs' : 100,
         'early_stop_num' : 10,
         'controller' : controller,
+        'num_solutions' : 10,
+
         }
 total_iter=150
 
@@ -144,6 +146,7 @@ run_benchmark(
     agent_arch=aal.evo_learner,
     config=config,
     )
+
 
 
 megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
