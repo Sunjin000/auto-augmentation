@@ -64,7 +64,7 @@ class evo_learner(aa_learner):
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
 
     
-    def get_single_policy_cov(self, x, alpha = 0.5):
+    def _get_single_policy_cov(self, x, alpha = 0.5):
         """
         Selects policy using population and covariance matrices. For this method 
         we require p_bins = 1, num_sub_pol = 1, m_bins = 1. 
@@ -164,10 +164,9 @@ class evo_learner(aa_learner):
         self.num_generations = iterations
         self.history_best = []
 
-        self.gen_count = 0
         self.best_model = 0
 
-        self.set_up_instance(train_dataset, test_dataset, child_network_architecture)
+        self._set_up_instance(train_dataset, test_dataset, child_network_architecture)
 
         self.ga_instance.run()
 
@@ -178,7 +177,7 @@ class evo_learner(aa_learner):
             return solution, solution_fitness, solution_idx
 
 
-    def in_pol_dict(self, new_policy):
+    def _in_pol_dict(self, new_policy):
         new_policy = new_policy[0]
         trans1, trans2 = new_policy[0][0], new_policy[1][0]
         new_set = {new_policy[0][1], new_policy[0][2], new_policy[1][1], new_policy[1][2]}
@@ -193,7 +192,7 @@ class evo_learner(aa_learner):
         return False
 
 
-    def set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
+    def _set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
         """
         Initialises GA instance, as well as fitness and on_generation functions
         
@@ -222,11 +221,11 @@ class evo_learner(aa_learner):
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
 
             for idx, (test_x, label_x) in enumerate(self.train_loader):
-                full_policy = self.get_single_policy_cov(test_x)
+                full_policy = self._get_single_policy_cov(test_x)
 
 
-                while self.in_pol_dict(full_policy):
-                    full_policy = self.get_single_policy_cov(test_x)[0]
+                while self._in_pol_dict(full_policy):
+                    full_policy = self._get_single_policy_cov(test_x)[0]
 
 
             fit_val = self._test_autoaugment_policy(full_policy,child_network_architecture,train_dataset,test_dataset)
@@ -267,7 +266,6 @@ class evo_learner(aa_learner):
             None
             """
             print("Generation = {generation}".format(generation=ga_instance.generations_completed))
-            self.gen_count += 1
             print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
             return
 
