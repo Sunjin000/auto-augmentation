@@ -407,38 +407,23 @@ class aa_learner:
         return accuracy
     
 
-    # def demo_plot(self, train_dataset, test_dataset, child_network_architecture, n=5):
-    #     """
-    #     I made this to plot a couple of accuracy graphs to help manually tune my gradient 
-    #     optimizer hyperparameters.
+    def get_mega_policy(self, number_policies):
+        """
+        Produces a mega policy, based on the n best subpolicies (evo learner)/policies
+        (other learners)
 
-    #     Saves a plot of `n` training accuracy graphs overlapped.
-    #     """
         
-    #     acc_lists = []
+        Args: 
+            number_policies -> int: Number of (sub)policies to be included in the mega
+            policy
 
-    #     # This is dummy code
-    #     # test out `n` random policies
-    #     for _ in range(n):
-    #         policy = self._generate_new_policy()
+        Returns:
+            megapolicy -> [subpolicy, subpolicy, ...]
+        """
+        inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-    #         pprint(policy)
-    #         reward, acc_list = self._test_autoaugment_policy(policy,
-    #                                             child_network_architecture,
-    #                                             train_dataset,
-    #                                             test_dataset,
-    #                                             logging=True)
+        megapol = []
+        for pol in inter_pol:
+            megapol += pol[0]
 
-    #         self.history.append((policy, reward))
-    #         acc_lists.append(acc_list)
-
-    #     for acc_list in acc_lists:
-    #         plt.plot(acc_list)
-    #     plt.title('I ran 5 random policies to see if there is any sign of \
-    #                 catastrophic failure during training. If there are \
-    #                 any lines which reach significantly lower (>10%) \
-    #                 accuracies, you might want to tune the hyperparameters')
-    #     plt.xlabel('epoch')
-    #     plt.ylabel('accuracy')
-    #     plt.show()
-    #     plt.savefig('training_graphs_without_policies')
+        return megapol
