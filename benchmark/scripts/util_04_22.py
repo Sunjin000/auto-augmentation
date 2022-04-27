@@ -5,7 +5,7 @@ import MetaAugment.autoaugment_learners as aal
 import pprint
 
 """
-testing gru_learner and randomsearch_learner on
+testing GruLearner and RsLearner on
 
   fashionmnist with simple net
 
@@ -109,7 +109,7 @@ def rerun_best_policy(
     accs=[]
     for _ in range(repeat_num):
         print(f'{_}/{repeat_num}')
-        temp_agent = aal.aa_learner(**config)
+        temp_agent = aal.AaLearner(**config)
         accs.append(
                 temp_agent._test_autoaugment_policy(megapol,
                                     child_network_architecture,

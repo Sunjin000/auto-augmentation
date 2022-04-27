@@ -9,7 +9,7 @@ import random
 
 def test__translate_operation_tensor():
     """
-    See if aa_learner class's _translate_operation_tensor works
+    See if AaLearner class's _translate_operation_tensor works
     by feeding many (valid) inputs in it.
 
     We make a lot of (fun_num+p_bins_m_bins,) size tensors, softmax 
@@ -29,7 +29,7 @@ def test__translate_operation_tensor():
         p_bins = random.randint(2, 15)
         m_bins = random.randint(2, 15)
         
-        agent = aal.aa_learner(
+        agent = aal.AaLearner(
                 sp_num=5,
                 p_bins=p_bins,
                 m_bins=m_bins,
@@ -57,7 +57,7 @@ def test__translate_operation_tensor():
         p_bins = random.randint(1, 15)
         m_bins = random.randint(1, 15)
 
-        agent = aal.aa_learner(
+        agent = aal.AaLearner(
                 sp_num=5,
                 p_bins=p_bins,
                 m_bins=m_bins,
@@ -77,7 +77,7 @@ def test__translate_operation_tensor():
 
 
 def test__test_autoaugment_policy():
-    agent = aal.aa_learner(
+    agent = aal.AaLearner(
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,
@@ -130,7 +130,7 @@ def test_exclude_method():
                     'Brightness', 
                     'Contrast'
                     ]
-    agent = aal.gru_learner(
+    agent = aal.GruLearner(
         exclude_method=exclude_method
     )
     for _ in range(200):
@@ -142,7 +142,7 @@ def test_exclude_method():
             assert image_function_1 not in exclude_method
             assert image_function_2 not in exclude_method
     
-    agent = aal.randomsearch_learner(
+    agent = aal.RsLearner(
         exclude_method=exclude_method
     )
     for _ in range(200):
@@ -157,7 +157,7 @@ def test_exclude_method():
 
 def test_get_mega_policy():
 
-    agent = aal.randomsearch_learner(
+    agent = aal.RsLearner(
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,

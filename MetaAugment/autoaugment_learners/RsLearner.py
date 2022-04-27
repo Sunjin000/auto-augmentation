@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner
+from MetaAugment.autoaugment_learners.AaLearner import AaLearner
 
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -12,10 +12,10 @@ import pickle
 
 
 
-class randomsearch_learner(aa_learner):
+class RsLearner(AaLearner):
     """
     Tests randomly sampled policies from the search space specified by the AutoAugment
-    paper. Acts as a baseline for other aa_learner's.
+    paper. Acts as a baseline for other AaLearner's.
     """
     def __init__(self,
                 # parameters that define the search space
@@ -165,7 +165,7 @@ if __name__=='__main__':
     child_network_architecture = cn.lenet
     # child_network_architecture = cn.lenet()
 
-    agent = randomsearch_learner(
+    agent = RsLearner(
                                 sp_num=7,
                                 toy_size=0.01,
                                 batch_size=4,

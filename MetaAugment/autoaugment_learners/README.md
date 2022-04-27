@@ -1,3 +1,3 @@
 write `import MetaAugment.autoaugment_learners as aa`
-and `aa_learner = aa.randomsearch_learner()`
+and `AaLearner = aa.RsLearner()`
 to use

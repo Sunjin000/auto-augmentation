@@ -13,7 +13,7 @@ def test_ucb_learner():
                             transform=torchvision.transforms.ToTensor())
 
 
-    learner = aal.ucb_learner(
+    learner = aal.UcbLearner(
         # parameters that define the search space
                 sp_num=5,
                 p_bins=11,
@@ -25,7 +25,7 @@ def test_ucb_learner():
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=30,
-                # ucb_learner specific hyperparameter
+                # UcbLearner specific hyperparameter
                 num_policies=3
     )
     pprint(learner.policies)

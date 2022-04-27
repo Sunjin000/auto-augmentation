@@ -5,11 +5,11 @@ import pygad.torchga as torchga
 import torchvision
 import torch
 
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner
+from MetaAugment.autoaugment_learners.AaLearner import AaLearner
 import MetaAugment.controller_networks as cont_n
 
 
-class evo_learner(aa_learner):
+class EvoLearner(AaLearner):
 
     def __init__(self, 
                 # search space settings
@@ -27,7 +27,7 @@ class evo_learner(aa_learner):
                 # evolutionary learner specific settings
                 num_solutions=5,
                 num_parents_mating=3,
-                controller=cont_n.evo_controller
+                controller=cont_n.EvoController
                 ):
 
         super().__init__(
@@ -273,5 +273,5 @@ class evo_learner(aa_learner):
             num_parents_mating=self.num_parents_mating, 
             initial_population=self.initial_population,
             mutation_percent_genes = 0.1,
-            _fitness_func=_fitness_func,
-            _on_generation = _on_generation)
+            fitness_func=_fitness_func,
+            on_generation = _on_generation)

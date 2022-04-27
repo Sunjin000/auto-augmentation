@@ -1,8 +1,8 @@
 import torch 
 import numpy as np
-from MetaAugment.autoaugment_learners.randomsearch_learner import randomsearch_learner
+from MetaAugment.autoaugment_learners.RsLearner import RsLearner
 
-class rand_augment_learner(randomsearch_learner):
+class rand_augment_learner(RsLearner):
 
     def __init__(self):
         pass

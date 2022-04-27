@@ -8,7 +8,7 @@ import random
 
 def test__generate_new_policy():
     """
-    make sure randomsearch_learner._generate_new_policy() is robust
+    make sure RsLearner._generate_new_policy() is robust
     with respect to different values of sp_num, fun_num, 
     p_bins, and m_bins
     """
@@ -20,7 +20,7 @@ def test__generate_new_policy():
             p_bins = random.randint(2, 15)
             m_bins = random.randint(2, 15)
 
-            agent = aal.randomsearch_learner(
+            agent = aal.RsLearner(
                 sp_num=sp_num,
                 p_bins=p_bins,
                 m_bins=m_bins,
@@ -39,7 +39,7 @@ def test__generate_new_policy():
 
 def test_learn():
     """
-    tests the randomsearch_learner.learn() method
+    tests the RsLearner.learn() method
     """
     train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
                             train=True, download=True, transform=None)
@@ -49,7 +49,7 @@ def test_learn():
     child_network_architecture = cn.lenet
     # child_network_architecture = cn.lenet()
 
-    agent = aal.randomsearch_learner(
+    agent = aal.RsLearner(
                         sp_num=7,
                         toy_size=0.001,
                         batch_size=32,

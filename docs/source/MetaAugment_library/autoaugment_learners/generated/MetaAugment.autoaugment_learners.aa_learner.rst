@@ -3,7 +3,7 @@
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: aa_learner
+.. autoclass:: AaLearner
 
    
    .. automethod:: __init__
@@ -13,8 +13,8 @@
 
    .. autosummary::
    
-      ~aa_learner.__init__
-      ~aa_learner.learn
+      ~AaLearner.__init__
+      ~AaLearner.learn
    
    
 

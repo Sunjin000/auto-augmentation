@@ -3,7 +3,7 @@
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: evo_learner
+.. autoclass:: EvoLearner
 
    
    .. automethod:: __init__
@@ -13,12 +13,12 @@
 
    .. autosummary::
    
-      ~evo_learner.__init__
-      ~evo_learner.get_full_policy
-      ~evo_learner.get_single_policy_cov
-      ~evo_learner.in_pol_dict
-      ~evo_learner.learn
-      ~evo_learner.set_up_instance
+      ~EvoLearner.__init__
+      ~EvoLearner.get_full_policy
+      ~EvoLearner.get_single_policy_cov
+      ~EvoLearner.in_pol_dict
+      ~EvoLearner.learn
+      ~EvoLearner.set_up_instance
    
    
 

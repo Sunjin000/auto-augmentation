@@ -3,7 +3,7 @@
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: gru_learner
+.. autoclass:: GruLearner
 
    
    .. automethod:: __init__
@@ -13,8 +13,8 @@
 
    .. autosummary::
    
-      ~gru_learner.__init__
-      ~gru_learner.learn
+      ~GruLearner.__init__
+      ~GruLearner.learn
    
    
 

@@ -3,7 +3,7 @@
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: ucb_learner
+.. autoclass:: UcbLearner
 
    
    .. automethod:: __init__
@@ -13,9 +13,9 @@
 
    .. autosummary::
    
-      ~ucb_learner.__init__
-      ~ucb_learner.learn
-      ~ucb_learner.make_more_policies
+      ~UcbLearner.__init__
+      ~UcbLearner.learn
+      ~UcbLearner.make_more_policies
    
    
 

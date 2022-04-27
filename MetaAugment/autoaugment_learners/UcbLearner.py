@@ -3,13 +3,13 @@ import numpy as np
 from tqdm import trange
 
 from ..child_networks import *
-from .randomsearch_learner import randomsearch_learner
+from .RsLearner import RsLearner
 
 
-class ucb_learner(randomsearch_learner):
+class UcbLearner(RsLearner):
     """
     Tests randomly sampled policies from the search space specified by the AutoAugment
-    paper. Acts as a baseline for other aa_learner's.
+    paper. Acts as a baseline for other AaLearner's.
     """
     def __init__(self,
                 # parameters that define the search space
@@ -24,7 +24,7 @@ class ucb_learner(randomsearch_learner):
                 learning_rate=1e-1,
                 max_epochs=float('inf'),
                 early_stop_num=30,
-                # ucb_learner specific hyperparameter
+                # UcbLearner specific hyperparameter
                 num_policies=100
                 ):
         

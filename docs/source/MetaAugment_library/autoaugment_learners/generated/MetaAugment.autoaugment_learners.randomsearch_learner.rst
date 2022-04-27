@@ -3,7 +3,7 @@
 
 .. currentmodule:: MetaAugment.autoaugment_learners
 
-.. autoclass:: randomsearch_learner
+.. autoclass:: RsLearner
 
    
    .. automethod:: __init__
@@ -13,8 +13,8 @@
 
    .. autosummary::
    
-      ~randomsearch_learner.__init__
-      ~randomsearch_learner.learn
+      ~RsLearner.__init__
+      ~RsLearner.learn
    
    
 

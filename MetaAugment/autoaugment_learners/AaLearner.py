@@ -12,9 +12,9 @@ import types
 
 
 
-class aa_learner:
+class AaLearner:
     """
-    The parent class for all aa_learner's
+    The parent class for all AaLearner's
     
     Attributes:
         op_tensor_length (int): what is the dimension of the tensor that represents
@@ -125,7 +125,7 @@ class aa_learner:
             return_log_prob (boolesn): 
                                 When this is on, we return which indices (of fun, prob, mag) were
                                 chosen (either randomly or deterministically, depending on argmax).
-                                This is used, for example, in the gru_learner to calculate the
+                                This is used, for example, in the GruLearner to calculate the
                                 probability of the actions were chosen, which is then logged, then
                                 differentiated.
 
@@ -139,7 +139,7 @@ class aa_learner:
                                 AutoAugment object.
             log_prob (float):
                             Used in reinforcement learning updates, such as proximal policy update
-                            in the gru_learner.
+                            in the GruLearner.
                             Can only be used when self.discrete_p_m.
                             We add the logged values of the indices of the image_function,
                             probability, and magnitude chosen.
@@ -247,7 +247,7 @@ class aa_learner:
                         by calling: AutoAugment.subpolicies = policy
         """
 
-        raise NotImplementedError('_generate_new_policy not implemented in aa_learner')
+        raise NotImplementedError('_generate_new_policy not implemented in AaLearner')
 
 
     def learn(self, train_dataset, test_dataset, child_network_architecture, iterations=15):

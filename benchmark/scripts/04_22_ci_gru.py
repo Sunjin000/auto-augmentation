@@ -8,7 +8,7 @@ import MetaAugment.autoaugment_learners as aal
 from .util_04_22 import *
 
 
-# aa_learner config
+# AaLearner config
 config = {
         'sp_num' : 3,
         'learning_rate' : 1e-1,
@@ -41,7 +41,7 @@ run_benchmark(
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
-    agent_arch=aal.gru_learner,
+    agent_arch=aal.GruLearner,
     config=config,
     )
 

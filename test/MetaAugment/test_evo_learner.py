@@ -13,7 +13,7 @@ def test_evo_learner():
                             transform=torchvision.transforms.ToTensor())
 
 
-    learner = aal.evo_learner(
+    learner = aal.EvoLearner(
         # parameters that define the search space
                 sp_num=5,
                 p_bins=11,

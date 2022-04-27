@@ -1,8 +1,8 @@
 import torch
 
 import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.aa_learner import aa_learner
-from MetaAugment.controller_networks.rnn_controller import RNNModel
+from MetaAugment.autoaugment_learners.AaLearner import AaLearner
+from MetaAugment.controller_networks.RnnController import RNNModel
 
 from pprint import pprint
 import pickle
@@ -11,7 +11,7 @@ import pickle
 
 
 
-class gru_learner(aa_learner):
+class GruLearner(AaLearner):
     """
     An AutoAugment learner with a GRU controller 
 
@@ -55,7 +55,7 @@ class gru_learner(aa_learner):
                     the controller. Defaults to 
         """
         if discrete_p_m==True:
-            print('Warning: Incompatible discrete_p_m=True input into gru_learner. \
+            print('Warning: Incompatible discrete_p_m=True input into GruLearner. \
                 discrete_p_m=False will be used')
         
         super().__init__(
@@ -71,7 +71,7 @@ class gru_learner(aa_learner):
                 exclude_method=exclude_method,
                 )
 
-        # GRU-specific attributes that aren't in general aa_learner's
+        # GRU-specific attributes that aren't in general AaLearner's
         self.alpha = alpha
         self.cont_mb_size = cont_mb_size
         self.b = 0.5 # b is the running exponential mean of the rewards, used for training stability
@@ -222,7 +222,7 @@ if __name__=='__main__':
     child_network_architecture = cn.lenet
     # child_network_architecture = cn.lenet()
 
-    agent = gru_learner(
+    agent = GruLearner(
                         sp_num=7,
                         toy_size=0.01,
                         batch_size=32,

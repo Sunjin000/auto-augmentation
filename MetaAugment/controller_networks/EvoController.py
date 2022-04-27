@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import math
 
-class evo_controller(nn.Module):
+class EvoController(nn.Module):
     def __init__(self, fun_num=14, p_bins=11, m_bins=10, sub_num_pol=5):
         self.fun_num = fun_num
         self.p_bins = p_bins 

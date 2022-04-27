@@ -5,8 +5,8 @@ AutoAugment learners
 .. autosummary::
    :toctree: generated
 
-   MetaAugment.autoaugment_learners.aa_learner
-   MetaAugment.autoaugment_learners.evo_learner
-   MetaAugment.autoaugment_learners.gru_learner
-   MetaAugment.autoaugment_learners.randomsearch_learner
-   MetaAugment.autoaugment_learners.ucb_learner
+   MetaAugment.autoaugment_learners.AaLearner
+   MetaAugment.autoaugment_learners.EvoLearner
+   MetaAugment.autoaugment_learners.GruLearner
+   MetaAugment.autoaugment_learners.RsLearner
+   MetaAugment.autoaugment_learners.UcbLearner

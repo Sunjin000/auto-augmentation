@@ -1,12 +1,12 @@
-aa_learner object and its children
+AaLearner object and its children
 ------------------------------------------------------------------------------------------------
 
-This is a page dedicated to demonstrating functionalities of :class:`aa_learner`.
+This is a page dedicated to demonstrating functionalities of :class:`AaLearner`.
 
 This is a how-to guide (in the sense describe in https://documentation.divio.com/structure/).
 
 ######################################################################################################
-How to use the ``aa_learner`` class to find an optimal policy for a dataset-child_network pair
+How to use the ``AaLearner`` class to find an optimal policy for a dataset-child_network pair
 ######################################################################################################
 
 This section can also be read as a ``.py`` file in ``./tutorials/how_use_aalearner.py``.
@@ -37,7 +37,7 @@ Defining the problem setting:
     
     In earlier versions, we had to write ``child_network_architecture=cn.LeNet`` 
     and not ``child_network_architecture=cn.LeNet()``. But now we can do both. 
-    Both types of objects can be input into ``aa_learner.learn()``.
+    Both types of objects can be input into ``AaLearner.learn()``.
 
     More precisely, the ``child_network_architecture`` parameter has to be either
     as ``nn.Module``, a ``function`` which returns a ``nn.Module``, or a ``type`` 
@@ -51,11 +51,11 @@ can use any other learner in place of random search learner as well)
 
 .. code-block::
 
-    # aa_agent = aal.gru_learner()
-    # aa_agent = aal.evo_learner()
-    # aa_agent = aal.ucb_learner()
+    # aa_agent = aal.GruLearner()
+    # aa_agent = aal.EvoLearner()
+    # aa_agent = aal.UcbLearner()
     # aa_agent = aal.ac_learner()
-    aa_agent = aal.randomsearch_learner(
+    aa_agent = aal.RsLearner(
                                     sp_num=7,
                                     toy_size=0.01,
                                     batch_size=4,
@@ -68,7 +68,7 @@ can use any other learner in place of random search learner as well)
                 child_network_architecture=child_network_architecture,
                 iterations=15000)
 
-You can set further hyperparameters when defining a aa_learner. 
+You can set further hyperparameters when defining a AaLearner. 
 
 Also, depending on what learner you are using, there might be unique hyperparameters.
 For example, in the GRU learner you can tune the exploration parameter ``alpha``.
