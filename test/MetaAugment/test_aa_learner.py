@@ -154,3 +154,22 @@ def test_exclude_method():
             assert image_function_1 not in exclude_method
             assert image_function_2 not in exclude_method
     
+
+def test_get_mega_policy():
+
+    agent = aal.randomsearch_learner()
+
+    child_network_architecture = cn.SimpleNet
+    train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
+                            train=True, download=True, transform=None)
+    test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
+                            train=False, download=True,
+                            transform=torchvision.transforms.ToTensor())
+
+    agent.learn(train_dataset, test_dataset, child_network_architecture, 10)
+    mega_pol = agent.get_mega_policy()
+    print("megapol: ", mega_pol)
+
+
+if __name__=='__main__':
+    test_get_mega_policy()
