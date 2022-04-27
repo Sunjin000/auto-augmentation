@@ -194,11 +194,11 @@ class evo_learner(aa_learner):
 
     def _set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
         """
-        Initialises GA instance, as well as fitness and on_generation functions
+        Initialises GA instance, as well as fitness and _on_generation functions
         
         """
 
-        def fitness_func(solution, sol_idx):
+        def _fitness_func(solution, sol_idx):
             """
             Defines the fitness function for the parent selection
 
@@ -252,7 +252,7 @@ class evo_learner(aa_learner):
 
             return fit_val
 
-        def on_generation(ga_instance):
+        def _on_generation(ga_instance):
             """
             Prints information of generational fitness
 
@@ -273,5 +273,5 @@ class evo_learner(aa_learner):
             num_parents_mating=self.num_parents_mating, 
             initial_population=self.initial_population,
             mutation_percent_genes = 0.1,
-            fitness_func=fitness_func,
-            on_generation = on_generation)
+            _fitness_func=_fitness_func,
+            _on_generation = _on_generation)
