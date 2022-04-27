@@ -30,4 +30,3 @@ python:
   - requirements: docs/requirements.txt
   # install our root directory
   - method: pip
-    path: .
