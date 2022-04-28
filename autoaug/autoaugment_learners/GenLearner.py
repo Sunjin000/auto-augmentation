@@ -195,6 +195,7 @@ class Genetic_learner(AaLearner):
                 policy = [self.gen_random_subpol()]
             else:
                 policy = self.bin_to_subpol(random.choice(self.generate_children()))
+            print("Policy: ", policy)
             
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,

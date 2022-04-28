@@ -10,28 +10,85 @@ import autoaug.controller_networks as cont_n
 
 
 class EvoLearner(AaLearner):
-    """evo algorithm
+    """Evolutionary Strategy learner
     
-    long explanatino here
+    This learner generates neural networks that predict optimal augmentation
+    policies. Hence, there is no backpropagation or gradient descent. Instead,
+    training is done by randomly changing weights of the 'parent' networks, where
+    parents are determined by their ability to produce policies that 
+    increase the accuracy of the child network.
 
     Args:
-        AaLearner (_type_): _description_
+        AaLearner: 
+            Base class of all-auto augmentation learners.
     
-        
+        sp_num: int, default 5
+            Number of subpolicies to keep in the final policy
+
+        p_bins: int, default 1
+            Number of probability bins for the controller network.
+
+        m_bins: int, default 1
+            Number of magnitude bins for the controller network
+
+        discrete_p_m: bool, default False
+            Boolean value to set if there are discrete or continuous
+            probability and mangitude bins (if False; p_bins, m_bins = 1)
+
+        exclude_method: list, default []
+            List of augmentations to be excluded from the search space
+
+        (Child Network Args)
+
+        learning_rate: float, default 1e-6
+            Learning rate of the child network
+
+        max_epochs: float, default float('inf')
+            Theoretical maximum number of epochs that the child network 
+            can be trained on 
+
+        early_stop_num: int, default 20
+            Criteria for early stopping. I.e. if the network has not improved 
+            after early_stop_num iterations, the training is stopped
+
+        batch_size: int, default 8
+            Batch size for the datasets
+
+        toy_size: float, default 1
+            If a toy dataset is created, it will be of size toy_size compared
+            to the original dataset
+
+        (Evolutionary learner specific settings)
+
+        num_solutions: int, default 5
+            Number of offspring spawned at each generation of the algorithm 
+
+        num_parents_mating: int, default 3
+            Number of networks chosen as parents for the next generation of networks 
+
+        controller: Torch Network, default cont_n.EvoController
+            Controller network for the evolutionary algorithm
+
+
     See Also
     --------
 
 
     Notes
     -----
+    The Evolutionary algorithm runs in generations, and so batches of child networks
+    are trained at specific time intervals.
 
 
     References
     ----------
+
     
 
     Examples
     --------
+    from autoaug.autoaugment_learners.EvlLearner import EvoLearner
+    evo_learner = EvoLearner()
 
 
     """
