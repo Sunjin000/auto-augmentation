@@ -4,9 +4,9 @@
 import torchvision.datasets as datasets
 import torchvision
 
-import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
-from MetaAugment.autoaugment_learners.gen_learner import Genetic_learner
+import autoaug.child_networks as cn
+from autoaug.autoaugment_learners.AaLearner import AaLearner
+from autoaug.autoaugment_learners.gen_learner import Genetic_learner
 
 import random
     
