@@ -171,38 +171,36 @@ class Genetic_learner(AaLearner):
 
     
     def generate_children(self):
-        parent_acc = sorted(self.history, key = lambda x: x[1], reverse=True)[:self.sp_num]
+        parent_acc = sorted(self.history, key = lambda x: x[1], reverse=True)
         parents = [x[0] for x in parent_acc]
         parents_weights = [x[1] for x in parent_acc]
         new_pols = []
         for _ in range(self.num_offspring):
             parent1, parent2 = self.choose_parents(parents, parents_weights)
-            cross_over = random.randrange(1, len(parent2), 1)
+            cross_over = random.randrange(1, int(len(parent2)/2), 1)
+            cross_over2 = random.randrange(int(len(parent2)/2), int(len(parent2)), 1)
             child = parent1[:cross_over]
-            child += parent2[cross_over:]
+            child += parent2[cross_over:int(len(parent2)/2)]
+            child += parent1[int(len(parent2)/2):int(len(parent2)/2)+cross_over2]
+            child += parent2[int(len(parent2)/2)+cross_over2:]
             new_pols.append(child)
         return new_pols
 
     
-    def learn(self, train_dataset, test_dataset, child_network_architecture, iterations = 10):
+    def learn(self, train_dataset, test_dataset, child_network_architecture, iterations = 100):
 
         for idx in range(iterations):
-            print("iteration: ", idx)
-            if len(self.history) < self.sp_num:
+            print("ITERATION: ", idx)
+            if len(self.history) < self.num_offspring:
                 policy = [self.gen_random_subpol()]
             else:
                 policy = self.bin_to_subpol(random.choice(self.generate_children()))
             
-            print("policyu: ", policy)
-
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
                                                 test_dataset)  
-            print("reward: ", reward)          
-
-            print("new len hsitory: ", len(self.history))
-            print("hsitory: ", self.history)
+            print("reward: ", reward)
 
 
 

@@ -6,7 +6,7 @@ import torchvision
 
 import MetaAugment.child_networks as cn
 from MetaAugment.autoaugment_learners.AaLearner import AaLearner
-from MetaAugment.autoaugment_learners.gen_learner import Genetic_learner
+from MetaAugment.autoaugment_learners.GenLearner import Genetic_learner
 
 import random
     
@@ -29,14 +29,15 @@ agent = Genetic_learner(
                             learning_rate=0.05,
                             max_epochs=float('inf'),
                             early_stop_num=10,
+                            num_offspring=10
                             )
 
 
 agent.learn(train_dataset,
             test_dataset,
             child_network_architecture=child_network_architecture,
-            iterations=10)
+            iterations=100)
 
-# with open('randomsearch_logs.pkl', 'wb') as file:
-#                 pickle.dump(self.history, file)
-print(agent.history)
+# with open('genetic_logs.pkl', 'wb') as file:
+#                 pickle.dump(agent.history, file)
+print(sorted(agent.history, key = lambda x: x[1]))
