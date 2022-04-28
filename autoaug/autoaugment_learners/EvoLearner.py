@@ -43,12 +43,13 @@ class EvoLearner(AaLearner):
                     )
 
         # evolutionary algorithm settings
-        self.controller = controller(
-                        fun_num=self.fun_num, 
-                        p_bins=self.p_bins, 
-                        m_bins=self.m_bins, 
-                        sub_num_pol=self.sp_num
-                        )
+        # self.controller = controller(
+        #                 fun_num=self.fun_num, 
+        #                 p_bins=self.p_bins, 
+        #                 m_bins=self.m_bins, 
+        #                 sub_num_pol=self.sp_num
+        #                 )
+        self.controller = controller
         self.num_solutions = num_solutions
         self.torch_ga = torchga.TorchGA(model=self.controller, num_solutions=num_solutions)
         self.num_parents_mating = num_parents_mating
@@ -160,6 +161,7 @@ class EvoLearner(AaLearner):
 
             Solution_idx -> Int
         """
+        print("learn0")
         self.num_generations = iterations
         self.history_best = []
 
@@ -220,6 +222,7 @@ class EvoLearner(AaLearner):
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)
             count = 0
             for idx, (test_x, label_x) in enumerate(self.train_loader):
+                print("here idx: ", idx)
                 count += 1
                 sub_pol = self._get_single_policy_cov(test_x)
 
@@ -230,8 +233,9 @@ class EvoLearner(AaLearner):
                 if idx == 0:
                     break
 
-
+            print("start test")
             fit_val = self._test_autoaugment_policy(sub_pol,child_network_architecture,train_dataset,test_dataset)
+            print("end test")
 
 
             self.running_policy.append((sub_pol, fit_val))

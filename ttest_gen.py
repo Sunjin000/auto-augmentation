@@ -9,6 +9,7 @@ from autoaug.autoaugment_learners.AaLearner import AaLearner
 from autoaug.autoaugment_learners.GenLearner import Genetic_learner
 
 import random
+import pickle
     
 # train_dataset = datasets.MNIST(root='./datasets/mnist/train',
 #                                 train=True, download=True, transform=None)
@@ -38,6 +39,12 @@ agent.learn(train_dataset,
             child_network_architecture=child_network_architecture,
             iterations=100)
 
-# with open('genetic_logs.pkl', 'wb') as file:
-#                 pickle.dump(agent.history, file)
-print(sorted(agent.history, key = lambda x: x[1]))
+with open('genetic_logs.pkl', 'wb') as file:
+                pickle.dump(agent.history, file)
+print(sorted(agent.history, key = lambda x: x[1], reverse = True))
+
+print("ACCURACIES IN TIME: ")
+
+for iter, (pol, acc) in enumerate(agent.history):
+    print("pol: ", pol)
+    print("acc: ", acc)
