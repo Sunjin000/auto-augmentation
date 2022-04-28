@@ -1,5 +1,5 @@
 ﻿autoaug.autoaugment\_learners.GruLearner
-============================================
+========================================
 
 .. currentmodule:: autoaug.autoaugment_learners
 

@@ -1,5 +1,5 @@
 ﻿autoaug.autoaugment\_learners.RsLearner
-===========================================
+=======================================
 
 .. currentmodule:: autoaug.autoaugment_learners
 

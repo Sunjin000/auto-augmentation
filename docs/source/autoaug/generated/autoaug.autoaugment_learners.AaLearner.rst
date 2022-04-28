@@ -1,5 +1,5 @@
 ﻿autoaug.autoaugment\_learners.AaLearner
-===========================================
+=======================================
 
 .. currentmodule:: autoaug.autoaugment_learners
 

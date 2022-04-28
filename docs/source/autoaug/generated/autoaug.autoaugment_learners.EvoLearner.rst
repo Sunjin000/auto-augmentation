@@ -1,5 +1,5 @@
 ﻿autoaug.autoaugment\_learners.EvoLearner
-============================================
+========================================
 
 .. currentmodule:: autoaug.autoaugment_learners
 

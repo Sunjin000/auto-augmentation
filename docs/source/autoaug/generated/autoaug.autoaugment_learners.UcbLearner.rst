@@ -1,5 +1,5 @@
 ﻿autoaug.autoaugment\_learners.UcbLearner
-============================================
+========================================
 
 .. currentmodule:: autoaug.autoaugment_learners
 
