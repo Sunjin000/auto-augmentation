@@ -2,9 +2,9 @@ import torch
 import torchvision
 import torchvision.datasets as datasets
 
-import MetaAugment.autoaugment_learners as aal
-import MetaAugment.child_networks as cn
-import MetaAugment.main as main
+import autoaug.autoaugment_learners as aal
+import autoaug.child_networks as cn
+import autoaug.main as main
 
 def test_create_toy():
     train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',

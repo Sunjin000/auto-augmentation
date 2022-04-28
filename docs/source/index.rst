@@ -1,4 +1,4 @@
-MetaAugment Documentation
+autoaug Documentation
 ==================================
 
 
@@ -16,7 +16,7 @@ MetaAugment Documentation
    :maxdepth: 4
    :caption: Library:
 
-   MetaAugment_library/autoaugment_learners/aa_learners
+   autoaug/auto_augmentation_learners
 
 
 

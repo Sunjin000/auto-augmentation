@@ -2,8 +2,8 @@ import torchvision.datasets as datasets
 import torchvision
 import torch
 
-import MetaAugment.child_networks as cn
-import MetaAugment.autoaugment_learners as aal
+import autoaug.child_networks as cn
+import autoaug.autoaugment_learners as aal
 
 from .util_04_22 import *
 

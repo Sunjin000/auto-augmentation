@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from MetaAugment.main import train_child_network, create_toy
-from MetaAugment.autoaugment_learners.autoaugment import AutoAugment
+from autoaug.main import train_child_network, create_toy
+from autoaug.autoaugment_learners.autoaugment import AutoAugment
 
 import torchvision.transforms as transforms
 

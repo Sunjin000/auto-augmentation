@@ -1,7 +1,7 @@
-﻿MetaAugment.autoaugment\_learners.GruLearner
+﻿autoaug.autoaugment\_learners.GruLearner
 ============================================
 
-.. currentmodule:: MetaAugment.autoaugment_learners
+.. currentmodule:: autoaug.autoaugment_learners
 
 .. autoclass:: GruLearner
 

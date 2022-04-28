@@ -5,8 +5,8 @@ import pygad.torchga as torchga
 import torchvision
 import torch
 
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
-import MetaAugment.controller_networks as cont_n
+from autoaug.autoaugment_learners.AaLearner import AaLearner
+import autoaug.controller_networks as cont_n
 
 
 class EvoLearner(AaLearner):
@@ -29,7 +29,6 @@ class EvoLearner(AaLearner):
                 num_parents_mating=3,
                 controller=cont_n.EvoController
                 ):
-
         super().__init__(
                     sp_num=sp_num, 
                     p_bins=p_bins, 
@@ -218,14 +217,18 @@ class EvoLearner(AaLearner):
 
             self.controller.load_state_dict(model_weights_dict)
             train_dataset.transform = torchvision.transforms.ToTensor()
-            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size)
-
+            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)
+            count = 0
             for idx, (test_x, label_x) in enumerate(self.train_loader):
+                count += 1
                 sub_pol = self._get_single_policy_cov(test_x)
 
 
                 while self._in_pol_dict(sub_pol):
                     sub_pol = self._get_single_policy_cov(test_x)[0]
+
+                if idx == 0:
+                    break
 
 
             fit_val = self._test_autoaugment_policy(sub_pol,child_network_architecture,train_dataset,test_dataset)

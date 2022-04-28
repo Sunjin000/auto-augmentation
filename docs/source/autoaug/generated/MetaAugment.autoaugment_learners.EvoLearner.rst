@@ -1,7 +1,7 @@
-﻿MetaAugment.autoaugment\_learners.EvoLearner
+﻿autoaug.autoaugment\_learners.EvoLearner
 ============================================
 
-.. currentmodule:: MetaAugment.autoaugment_learners
+.. currentmodule:: autoaug.autoaugment_learners
 
 .. autoclass:: EvoLearner
 

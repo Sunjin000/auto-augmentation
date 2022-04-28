@@ -9,10 +9,10 @@ import torchvision
 import torchvision.datasets as datasets
 
 # # import agents and its functions
-import MetaAugment.autoaugment_learners as aal
-import MetaAugment.controller_networks as cont_n
-import MetaAugment.child_networks as cn
-from MetaAugment.main import create_toy
+import autoaug.autoaugment_learners as aal
+import autoaug.controller_networks as cont_n
+import autoaug.child_networks as cn
+from autoaug.main import create_toy
 
 import pickle
 from pprint import pprint

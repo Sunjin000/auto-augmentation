@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
-#import MetaAugment.AutoAugmentDemo.ops as ops # 
+#import autoaug.AutoAugmentDemo.ops as ops # 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
 
@@ -137,7 +137,7 @@ def train_child_network(child_network,
         return best_acc.item()
 
 if __name__=='__main__':
-    import MetaAugment.child_networks as cn
+    import autoaug.child_networks as cn
 
     batch_size = 32
     n_samples = 0.005

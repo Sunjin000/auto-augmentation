@@ -1,7 +1,7 @@
-﻿MetaAugment.autoaugment\_learners.UcbLearner
+﻿autoaug.autoaugment\_learners.UcbLearner
 ============================================
 
-.. currentmodule:: MetaAugment.autoaugment_learners
+.. currentmodule:: autoaug.autoaugment_learners
 
 .. autoclass:: UcbLearner
 
