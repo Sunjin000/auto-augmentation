@@ -367,8 +367,6 @@ class AaLearner:
             accuracy (float): best accuracy reached in any
         """
 
-
-
         # we create an instance of the child network that we're going
         # to train. The method of creation depends on the type of 
         # input we got for child_network_architecture
