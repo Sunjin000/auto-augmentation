@@ -1,5 +1,5 @@
-import MetaAugment.autoaugment_learners as aal
-import MetaAugment.child_networks as cn
+import autoaug.autoaugment_learners as aal
+import autoaug.child_networks as cn
 import torch
 import torchvision
 import torchvision.datasets as datasets

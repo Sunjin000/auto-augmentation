@@ -1,8 +1,8 @@
 import torch
 
-import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
-from MetaAugment.controller_networks.RnnController import RNNModel
+import autoaug.child_networks as cn
+from autoaug.autoaugment_learners.AaLearner import AaLearner
+from autoaug.controller_networks.RnnController import RNNModel
 
 from pprint import pprint
 import pickle

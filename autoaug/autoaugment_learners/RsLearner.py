@@ -1,8 +1,8 @@
 import torch
 import numpy as np
 
-import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
+import autoaug.child_networks as cn
+from autoaug.autoaugment_learners.AaLearner import AaLearner
 
 from pprint import pprint
 import matplotlib.pyplot as plt

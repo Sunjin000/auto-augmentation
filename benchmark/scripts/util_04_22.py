@@ -1,6 +1,6 @@
 import torch
 
-import MetaAugment.autoaugment_learners as aal
+import autoaug.autoaugment_learners as aal
 
 import pprint
 

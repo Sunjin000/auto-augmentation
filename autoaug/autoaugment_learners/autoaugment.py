@@ -412,8 +412,8 @@ class TrivialAugmentWide(torch.nn.Module):
 
 if __name__=='__main__':
     import matplotlib.pyplot as plt
-    from MetaAugment.main import *
-    import MetaAugment.child_networks as cn
+    from autoaug.main import *
+    import autoaug.child_networks as cn
     import torchvision.transforms as transforms
 
 

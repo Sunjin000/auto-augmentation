@@ -1,5 +1,5 @@
-from MetaAugment.child_networks import *
-from MetaAugment.main import create_toy, train_child_network
+from autoaug.child_networks import *
+from autoaug.main import create_toy, train_child_network
 import torch
 import torchvision
 import torchvision.datasets as datasets

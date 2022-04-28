@@ -137,7 +137,7 @@ def train_child_network(child_network,
         return best_acc.item()
 
 if __name__=='__main__':
-    import MetaAugment.child_networks as cn
+    import autoaug.child_networks as cn
 
     batch_size = 32
     n_samples = 0.005

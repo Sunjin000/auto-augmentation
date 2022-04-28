@@ -5,8 +5,8 @@ import pygad.torchga as torchga
 import torchvision
 import torch
 
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
-import MetaAugment.controller_networks as cont_n
+from autoaug.autoaugment_learners.AaLearner import AaLearner
+import autoaug.controller_networks as cont_n
 
 
 class EvoLearner(AaLearner):
