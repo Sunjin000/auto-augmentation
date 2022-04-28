@@ -94,6 +94,25 @@ class AaLearner:
             ("Equalize", False),
             ("Invert", False),
         ]
+
+        self.aug_space_dict = {
+            'ShearX': True,
+            'ShearY' : True, 
+            'TranslateX' : True,
+            'TranslateY' : True,
+            'Rotate' : True,
+            'Brightness' : True,
+            'Color' : True,
+            'Contrast': True,
+            'Sharpness' : True, 
+            'Posterize' : True, 
+            'Solarize' : True, 
+            'AutoContrast' : False, 
+            'Equalize' : False, 
+            'Invert' : False 
+        }
+
+
         self.exclude_method = exclude_method
         self.augmentation_space = [x for x in augmentation_space if x[0] not in exclude_method]
 
@@ -311,7 +330,7 @@ class AaLearner:
                                 train_dataset,
                                 test_dataset,
                                 logging=False,
-                                print_every_epoch=True):
+                                print_every_epoch=False):
         """
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
