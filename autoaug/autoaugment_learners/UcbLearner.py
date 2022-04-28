@@ -15,24 +15,71 @@ class UcbLearner(RsLearner):
 
     - Using a toy dataset or a toy CNN
 
+    Args:
+        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+
+        p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                        probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
+
+        m_bins (int, optional): number of bins we divide the magnitude space.
+                        Defaults to 10.
+
+        discrete_p_m (bool, optional):
+                        Whether or not the agent should represent probability and 
+                        magnitude as discrete variables as the out put of the 
+                        controller (A controller can be a neural network, genetic
+                        algorithm, etc.). Defaults to False
+
+        batch_size (int, optional): child_network training parameter. Defaults to 32.
+
+        toy_size (int, optional): child_network training parameter. ratio of original
+                            dataset used in toy dataset. Defaults to 0.1.
+
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
+
+        max_epochs (Union[int, float], optional): child_network training parameter. 
+                            Defaults to float('inf').
+
+        early_stop_num (int, optional): child_network training parameter. Defaults to 20.
+
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
     
+        num_policies (int, optional): Number of policies we want to serach over. 
+                            Defaults to 100.
         
-    See Also
-    --------
+    Attributes:
+        history (list): list of policies that has been input into 
+                        self._test_autoaugment_policy as well as their respective obtained
+                        accuracies
+
+        augmentation_space (list): list of image functions that the user has chosen to 
+                        include in the search space.
+
+        policies (list): A list of policies which we are currently searching over.
+
+        avg_accs (list): A list where the nth element indicates the average accuracy 
+                        obtained by the nth policy.
+
 
 
     Notes
     -----
-
+    As opposed the the other learners, this searches over a subset of the entire
+    search space (specified in the AutoAugment paper). The size of the subset is 
+    initialized to be ``self.num_policies``. But we can increase it by running 
+    self.make_more_policies(). For example, we initialize the learner with 
+    ``self.num_policies=7``, run ``self.learn(iterations=20)`` to learn about the
+    seven policies we have in our ``self.policies``. Then run 
+    ``self.make_more_policies(n=5)`` to add 5 more policies to ``self.policies``.
+    Then we can run ``self.learn(iterations=20)`` to continue the UCB1 algorithm
+    with the extended search space.
 
     References
     ----------
-    
-
-    Examples
-    --------
-
-
+    Peter Auer, et al.
+        "Finite-time Analysis of the Multiarmed Bandit Problem"
+        https://homes.di.unimi.it/~cesabian/Pubblicazioni/ml-02.pdf
     
     """
     def __init__(self,

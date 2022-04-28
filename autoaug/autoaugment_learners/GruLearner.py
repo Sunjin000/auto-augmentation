@@ -24,21 +24,64 @@ class GruLearner(AaLearner):
     (https://arxiv.org/abs/1412.3555), which is why we substituted
     the LSTM for the GRU.
 
-        
-    See Also
-    --------
+    Args:
+        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
 
+        p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                        probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
 
-    Notes
-    -----
+        m_bins (int, optional): number of bins we divide the magnitude space.
+                        Defaults to 10.
 
+        discrete_p_m (bool, optional):
+                        Whether or not the agent should represent probability and 
+                        magnitude as discrete variables as the out put of the 
+                        controller (A controller can be a neural network, genetic
+                        algorithm, etc.). Defaults to False
+
+        batch_size (int, optional): child_network training parameter. Defaults to 32.
+
+        toy_size (int, optional): child_network training parameter. ratio of original
+                            dataset used in toy dataset. Defaults to 0.1.
+
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
+
+        max_epochs (Union[int, float], optional): child_network training parameter. 
+                            Defaults to float('inf').
+
+        early_stop_num (int, optional): child_network training parameter. Defaults to 20.
+
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
+
+        alpha (float, optional): Exploration parameter. It is multiplied to 
+                                operation tensors before they're softmaxed. 
+                                The lower this value, the more smoothed the output
+                                of the softmaxed will be, hence more exploration.
+                                Defaults to 0.2.
+
+        cont_mb_size (int, optional): Controller Minibatch Size. How many
+                            policies do we test in order to calculate the 
+                            PPO(proximal policy update) gradient to update
+                            the controller. Defaults to 
+    
+    Attributes:
+        history (list): list of policies that has been input into 
+                        self._test_autoaugment_policy as well as their respective obtained
+                        accuracies
+                        
+        augmentation_space (list): list of image functions that the user has chosen to 
+                        include in the search space.
 
     References
     ----------
-    
-
-    Examples
-    --------
+    Ekin D. Cubuk, et al. 
+        "AutoAugment: Learning Augmentation Policies from Data"
+        arXiv:1805.09501
+    Junyoung Chung, et al.
+        "Empirical Evaluation of Gated Recurrent Neural 
+        Networks on Sequence Modeling"
+        https://arxiv.org/abs/1412.3555
 
 
 
@@ -61,18 +104,7 @@ class GruLearner(AaLearner):
                 alpha=0.2,
                 cont_mb_size=4,
                 cont_lr=0.03):
-        """
-        Args:
-            alpha (float, optional): Exploration parameter. It is multiplied to 
-                    operation tensors before they're softmaxed. 
-                    The lower this value, the more smoothed the output
-                    of the softmaxed will be, hence more exploration.
-                    Defaults to 0.2.
-            cont_mb_size (int, optional): Controller Minibatch Size. How many
-                    policies do we test in order to calculate the 
-                    PPO(proximal policy update) gradient to update
-                    the controller. Defaults to 
-        """
+
         if discrete_p_m==True:
             print('Warning: Incompatible discrete_p_m=True input into GruLearner. \
                 discrete_p_m=False will be used')
