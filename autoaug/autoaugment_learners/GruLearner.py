@@ -23,6 +23,25 @@ class GruLearner(AaLearner):
     network as the LSTM whilst training and testing much faster
     (https://arxiv.org/abs/1412.3555), which is why we substituted
     the LSTM for the GRU.
+
+        
+    See Also
+    --------
+
+
+    Notes
+    -----
+
+
+    References
+    ----------
+    
+
+    Examples
+    --------
+
+
+
     """
 
     def __init__(self,

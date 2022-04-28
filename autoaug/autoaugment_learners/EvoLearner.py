@@ -10,7 +10,31 @@ import autoaug.controller_networks as cont_n
 
 
 class EvoLearner(AaLearner):
+    """evo algorithm
+    
+    long explanatino here
 
+    Args:
+        AaLearner (_type_): _description_
+    
+        
+    See Also
+    --------
+
+
+    Notes
+    -----
+
+
+    References
+    ----------
+    
+
+    Examples
+    --------
+
+
+    """
     def __init__(self, 
                 # search space settings
                 sp_num=5,

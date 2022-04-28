@@ -16,6 +16,24 @@ class RsLearner(AaLearner):
     """
     Tests randomly sampled policies from the search space specified by the AutoAugment
     paper. Acts as a baseline for other AaLearner's.
+
+        
+    See Also
+    --------
+
+
+    Notes
+    -----
+
+
+    References
+    ----------
+    
+
+    Examples
+    --------
+
+
     """
     def __init__(self,
                 # parameters that define the search space
