@@ -349,7 +349,7 @@ class AaLearner:
                                 train_dataset,
                                 test_dataset,
                                 logging=False,
-                                print_every_epoch=False):
+                                print_every_epoch=True):
         """
         Given a policy (using AutoAugment paper terminology), we train a child network
         using the policy and return the accuracy (how good the policy is for the dataset and 
