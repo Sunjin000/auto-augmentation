@@ -20,6 +20,24 @@ class AaLearner:
         op_tensor_length (int): what is the dimension of the tensor that represents
                             each 'operation' (which is made up of fun_name, prob,
                             and mag).
+    
+    See Also
+    --------
+
+
+    Notes
+    -----
+
+
+    References
+    ----------
+    
+
+    Examples
+    --------
+
+
+
     """
     def __init__(self, 
                 # parameters that define the search space
@@ -309,8 +327,7 @@ class AaLearner:
         Example code:
 
         .. code-block::
-            :caption: This is an example dummy code which tests out 15 
-                      different policies
+            :caption: This is how a child class might implement this method:
             
             for _ in range(15):
                 policy = self._generate_new_policy()

@@ -8,8 +8,32 @@ from .RsLearner import RsLearner
 
 class UcbLearner(RsLearner):
     """
-    Tests randomly sampled policies from the search space specified by the AutoAugment
-    paper. Acts as a baseline for other AaLearner's.
+    Uses the UCB1 algorithm originally developed for multi-armed bandit problems.
+    Recommended when 
+
+    - Optimal hyperparameters for training the CNN (such as batch size and learning rate) has not been found yet.
+
+    - Using a toy dataset or a toy CNN
+
+    
+        
+    See Also
+    --------
+
+
+    Notes
+    -----
+
+
+    References
+    ----------
+    
+
+    Examples
+    --------
+
+
+    
     """
     def __init__(self,
                 # parameters that define the search space
@@ -84,7 +108,7 @@ class UcbLearner(RsLearner):
             child_network_architecture, 
             iterations=15,
             print_every_epoch=False):
-        """continue the UCB algorithm for `iterations` number of turns
+        """continue the UCB algorithm for ``iterations`` number of turns
 
         """
 

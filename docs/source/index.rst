@@ -1,4 +1,4 @@
-autoaug Documentation
+``autoaug`` official documentation
 ==================================
 
 
@@ -14,11 +14,14 @@ autoaug Documentation
 
 .. toctree::
    :maxdepth: 4
-   :caption: Library:
+   :caption: API Reference:
 
-   autoaug/auto_augmentation_learners
-
-
+   autoaug/autoaugment_learners
+   autoaug/aa_learners/autoaug.autoaugment_learners.AaLearner
+   autoaug/aa_learners/autoaug.autoaugment_learners.EvoLearner
+   autoaug/aa_learners/autoaug.autoaugment_learners.GruLearner
+   autoaug/aa_learners/autoaug.autoaugment_learners.RsLearner
+   autoaug/aa_learners/autoaug.autoaugment_learners.UcbLearner
 
 
 
