@@ -27,8 +27,8 @@ def test_evo_learner():
                 max_epochs=float('inf'),
                 early_stop_num=10,
                 # evolutionary learner specific settings
-                num_solutions=3,
-                num_parents_mating=2,
+                num_solutions=5,
+                num_parents_mating=3,
     )
 
     # learn on the 3 policies we generated
@@ -36,7 +36,7 @@ def test_evo_learner():
         train_dataset=train_dataset,
         test_dataset=test_dataset,
         child_network_architecture=child_network_architecture,
-        iterations=1
+        iterations=3
         )
 
 
