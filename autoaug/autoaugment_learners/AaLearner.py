@@ -291,6 +291,7 @@ class AaLearner:
 
         Does the loop which is seen in Figure 1 in the AutoAugment paper
         which is:
+        
             1. <generate a random policy>
             2. <see how good that policy is>
             3. <save how good the policy is in a list/dictionary and 
@@ -310,15 +311,11 @@ class AaLearner:
 
         Args:
             train_dataset (torchvision.dataset.vision.VisionDataset):
+
             test_dataset (torchvision.dataset.vision.VisionDataset):
+
             child_network_architecture (Union[function, nn.Module]):
-                                    This can be both, for example,
-
-                                    ``LeNet``
-
-                                    and
-
-                                    ``LeNet()``
+                        This can be both, for example, ``LeNet`` or ``LeNet()``
 
             iterations (int): how many different policies do you want to test
 
