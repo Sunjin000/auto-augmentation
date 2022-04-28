@@ -1,7 +1,7 @@
-﻿MetaAugment.autoaugment\_learners.RsLearner
+﻿autoaug.autoaugment\_learners.RsLearner
 ===========================================
 
-.. currentmodule:: MetaAugment.autoaugment_learners
+.. currentmodule:: autoaug.autoaugment_learners
 
 .. autoclass:: RsLearner
 

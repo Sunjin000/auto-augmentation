@@ -1,4 +1,4 @@
 # AutoAugment Library
 
 Documentation:
-https://metaaugment.readthedocs.io/en/latest/
+https://autoaug.readthedocs.io/en/latest/

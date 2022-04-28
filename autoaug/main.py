@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.datasets as datasets
-#import MetaAugment.AutoAugmentDemo.ops as ops # 
+#import autoaug.AutoAugmentDemo.ops as ops # 
 
 # code from https://github.com/ChawDoe/LeNet5-MNIST-PyTorch/blob/master/train.py
 

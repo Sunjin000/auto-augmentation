@@ -14,8 +14,8 @@ This section can also be read as a ``.py`` file in ``./tutorials/how_use_aalearn
 
 .. code-block::
 
-    import MetaAugment.autoaugment_learners as aal
-    import MetaAugment.child_networks as cn
+    import autoaug.autoaugment_learners as aal
+    import autoaug.child_networks as cn
 
     import torchvision.datasets as datasets
     import torchvision
@@ -26,9 +26,9 @@ Defining the problem setting:
 
 .. code-block::
 
-    train_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/train',
+    train_dataset = datasets.MNIST(root='./autoaug/datasets/mnist/train',
                                     train=True, download=True, transform=None)
-    test_dataset = datasets.MNIST(root='./MetaAugment/datasets/mnist/test', 
+    test_dataset = datasets.MNIST(root='./autoaug/datasets/mnist/test', 
                             train=False, download=True, transform=torchvision.transforms.ToTensor())
     child_network_architecture = cn.lenet
 

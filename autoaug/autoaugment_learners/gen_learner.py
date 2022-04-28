@@ -1,7 +1,7 @@
 import torch
 
-import MetaAugment.child_networks as cn
-from MetaAugment.autoaugment_learners.AaLearner import AaLearner
+import autoaug.child_networks as cn
+from autoaug.autoaugment_learners.AaLearner import AaLearner
 import random
 
 

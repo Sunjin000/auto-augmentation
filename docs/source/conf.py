@@ -13,7 +13,7 @@
 import os
 import sys
 
-# this tells sphinx that our MetaAugment folder is two folder levels
+# this tells sphinx that our autoaug folder is two folder levels
 # outside the /docs folder
 sys.path.insert(0, os.path.abspath('../..'))
 

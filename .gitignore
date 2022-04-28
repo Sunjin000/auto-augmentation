@@ -157,7 +157,7 @@ cython_debug/
 #.idea/
 
 # our project specific stuff
-MetaAugment/__pycache__/main.cpython-38.pyc
+autoaug/__pycache__/main.cpython-38.pyc
 
 **/mnist/
 
