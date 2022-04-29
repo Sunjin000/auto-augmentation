@@ -26,8 +26,8 @@ const ExpandMore = styled((props) => {
 
 
 export default function Home() {
-    const [selectLearner, setSelectLearner] = useState([]);
     const [selectAction, setSelectAction] = useState([]);
+    const [validation, setValidation] = useState([]);
 
     // for form submission  
     const {register, control, handleSubmit, setValue, watch, formState: { errors, dirtyFields}} = useForm();
@@ -60,12 +60,14 @@ export default function Home() {
         method: 'POST',
         body: formData
         }).then((response) => response.json());
-        // {console.log('before calling response'); 
-        //                         response.json();
-        //                         console.log('after calling response')});
-
-        console.log('before navigate to confirm')
-        navigate('/confirm', {replace:true});
+        console.log('sent data')
+        
+        const check = fetch('/home').then(
+            response => response.json()
+            ).then(data => {
+                if ('error' in data){navigate('/error', data)} else {navigate('/confirm', {replace:true})}
+            });
+        
         // 
         ///////// testing
         // .then((response)=> {
@@ -178,7 +180,7 @@ export default function Home() {
                                     />
                                     </Button>
                                 }
-                                {dirtyFields.ds_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
+                                {watchFileds[0]==='Other' && dirtyFields.ds_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
                             </FormControl>
                         </CardContent>
                     </Card>
@@ -242,7 +244,7 @@ export default function Home() {
                                     />
                                     </Button>
                                 }
-                                {dirtyFields.network_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
+                                {watchFileds[1]==='Other' && dirtyFields.network_upload && <Alert severity="success" variant='outlined'>File Submitted</Alert>}
                             </FormControl>
                         </CardContent>
                     </Card>
@@ -320,16 +322,16 @@ export default function Home() {
                             </Typography>
                             <Grid container spacing={1} style={{maxWidth:800, padding:"10px 10px"}}>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" InputProps={{ inputProps: { min: 0} }} {...register("batch_size")} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
+                                    <TextField type="number" InputProps={{step:"1", inputProps: { min: 0} }} {...register("batch_size")} name="batch_size" placeholder="Batch Size" label="Batch Size" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
                                     <TextField type="number" inputProps={{step: "0.000000001",min: 0}} {...register("learning_rate")} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" InputProps={{ inputProps: { min: 0} }} {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+                                    <TextField type="number" InputProps={{step:"1", inputProps: { min: 0, max: 1} }} {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" inputProps={{step: "0.01", min: 0}} {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+                                    <TextField type="number" inputProps={{step: "0.01", min: 0, max: 1}} {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
                                 </Grid>
                                 <FormLabel variant="h8" align='centre'>
                                     * Dataset Proportion defines the percentage of original dataset our auto-augment learner will use to find the 
