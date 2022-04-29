@@ -462,3 +462,22 @@ class AaLearner:
             megapol += pol[0]
 
         return megapol
+    
+
+    def get_n_best_policies(self, number_policies=5):
+        """
+        returns the n best policies
+
+        
+        Args: 
+            number_policies (int): Number of (sub)policies to return
+
+        Returns:
+            list of best n policies
+        """
+
+        number_policies = max(number_policies, len(self.history))
+
+        inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
+
+        return inter_pol[n]

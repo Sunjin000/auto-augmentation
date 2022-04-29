@@ -36,12 +36,15 @@ def parse_ds_cn_arch(ds, ds_name, IsLeNet):
         len_train = int(0.8*len(dataset))
         train_dataset, test_dataset = torch.utils.data.random_split(dataset, [len_train, len(dataset)-len_train])
 
-        # check sizes of images
-    img_height = len(train_dataset[0][0][0])
-    img_width = len(train_dataset[0][0][0][0])
-    img_channels = len(train_dataset[0][0])
+    my_image = train_dataset[0][0]
+    my_transform = torchvision.transforms.ToTensor()
+    my_image = my_transform(my_image)
+    # check sizes of images
+    img_height = len(my_image[0])
+    img_width = len(my_image[0][0])
+    img_channels = len(my_image)
 
-
+ 
         # check output labels
     if ds == 'Other':
         num_labels = len(dataset.class_to_idx)

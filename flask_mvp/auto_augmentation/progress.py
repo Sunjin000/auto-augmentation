@@ -6,7 +6,7 @@ import torch
 torch.manual_seed(0)
 
 
-import temp_util.wapp_util as wapp_util
+import react_backend.wapp_util as wapp_util
 
 bp = Blueprint("progress", __name__)
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid, List, ListItem, Avatar, ListItemAvatar, ListItemText, Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
-import output from './pytest.png'
+import output from './output.png'
 import {useNavigate, Route} from "react-router-dom";
 import axios from 'axios'
 import fileDownload from 'js-file-download'
@@ -28,10 +28,10 @@ export default function Result() {
                         Here are the results from our auto-augment agent:
                     </Typography>
                     <Grid style={{padding:"30px"}} container spacing={4} alignItems="center">
-                        <Grid xs={7} item> 
+                        <Grid xs={6} item> 
                             <img src={output} alt='output' />
                         </Grid>
-                        <Grid xs={5} item> 
+                        <Grid xs={6} item> 
                             <Typography>
                                 write something here to explain the meaning of the graph to the user
                             </Typography>
@@ -41,6 +41,7 @@ export default function Result() {
                     <Typography gutterBottom variant='h6' align='center'>
                         You can download the augentation policy here
                     </Typography>
+
                     <Button
                             type="submit"
                             variant="contained"
@@ -50,9 +51,13 @@ export default function Result() {
                         >
                             Download
                     </Button>
-                    <Typography>
-                        Please follow our documentation to apply this policy to your dataset.
-                    </Typography>
+
+                    <Grid style={{padding:'10px'}}>
+                        <Typography>
+                            Please follow our documentation to apply this policy to your dataset.
+                        </Typography>
+                    </Grid>
+                    
                 </CardContent>
             </Card>
 

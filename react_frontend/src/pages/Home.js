@@ -27,7 +27,6 @@ const ExpandMore = styled((props) => {
 
 export default function Home() {
     const [selectAction, setSelectAction] = useState([]);
-    const [validation, setValidation] = useState([]);
 
     // for form submission  
     const {register, control, handleSubmit, setValue, watch, formState: { errors, dirtyFields}} = useForm();
@@ -66,31 +65,8 @@ export default function Home() {
             response => response.json()
             ).then(data => {
                 if ('error' in data){navigate('/error', data)} else {navigate('/confirm', {replace:true})}
-            });
-        
-        // 
-        ///////// testing
-        // .then((response)=> {
-        //     responseClone = response.clone(); // 2
-        //     return response.json();
-        // })
-        // .then(function (data) {
-        //     console.log('data from flask', data)
-        // }, function (rejectionReason) { // 3
-        //     console.log('Error parsing JSON from response:', rejectionReason, responseClone); // 4
-        //     responseClone.text() // 5
-        //     .then(function (bodyText) {
-        //         console.log('Received the following instead of valid JSON:', bodyText); // 6
-        //     });
-        // });
-        
+            });     
     };
-
-    
-    // body: JSON.stringify(data)
-    // console.log('errors', errors); 
-    // console.log('handleSubmit', handleSubmit)
-
     
     // handling action selection
     const handleActionSelect = (value) => {
@@ -328,10 +304,10 @@ export default function Home() {
                                     <TextField type="number" inputProps={{step: "0.000000001",min: 0}} {...register("learning_rate")} name="learning_rate" placeholder="Learning Rate" label="Learning Rate" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" InputProps={{step:"1", inputProps: { min: 0, max: 1} }} {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
+                                    <TextField type="number" InputProps={{step:"1", inputProps: { min: 0} }} {...register("iterations")} name="iterations" placeholder="Number of Iterations" label="Iterations" variant="outlined" fullWidth />
                                 </Grid>
                                 <Grid xs={12} sm={6} item>
-                                    <TextField type="number" inputProps={{step: "0.01", min: 0, max: 1}} {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
+                                    <TextField type="number" inputProps={{step: "0.0001", min: 0, max: 1}} {...register("toy_size")} name="toy_size" placeholder="Dataset Proportion" label="Dataset Proportion" variant="outlined" fullWidth />
                                 </Grid>
                                 <FormLabel variant="h8" align='centre'>
                                     * Dataset Proportion defines the percentage of original dataset our auto-augment learner will use to find the 

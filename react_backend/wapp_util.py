@@ -26,7 +26,6 @@ def parse_users_learner_spec(
             auto_aug_learner, 
             # search space settings
             exclude_method, 
-            num_funcs, 
             num_policies, 
             num_sub_policies, 
             # child network settings
@@ -35,7 +34,9 @@ def parse_users_learner_spec(
             early_stop_num, 
             iterations, 
             learning_rate, 
-            max_epochs
+            max_epochs,
+            # dummy variable which does nothing
+            network_name,
             ):
     train_dataset, test_dataset, child_archi = parse_ds_cn_arch(
                                                     ds, 
@@ -111,8 +112,4 @@ def parse_users_learner_spec(
                         early_stop_num=early_stop_num,
                         )
 
-
-    agent.learn(train_dataset,
-                test_dataset,
-                child_network_architecture=child_archi,
-                iterations=iterations)
+    return train_dataset, test_dataset, child_archi, agent

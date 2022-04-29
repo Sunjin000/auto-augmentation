@@ -153,8 +153,7 @@ class UcbLearner(RsLearner):
             train_dataset, 
             test_dataset, 
             child_network_architecture, 
-            iterations=15,
-            print_every_epoch=False):
+            iterations=15,):
         """continue the UCB algorithm for ``iterations`` number of turns
 
         """
@@ -173,7 +172,6 @@ class UcbLearner(RsLearner):
                                 train_dataset,
                                 test_dataset,
                                 logging=False,
-                                print_every_epoch=print_every_epoch
                                 )
                 # update q_values (average accuracy)
                 self.avg_accs[this_policy_idx] = acc
@@ -188,7 +186,6 @@ class UcbLearner(RsLearner):
                                 train_dataset,
                                 test_dataset,
                                 logging=False,
-                                print_every_epoch=print_every_epoch
                                 )
                 # update q_values (average accuracy)
                 self.avg_accs[this_policy_idx] = (self.avg_accs[this_policy_idx]*self.cnts[this_policy_idx] + acc) / (self.cnts[this_policy_idx] + 1)
@@ -245,6 +242,30 @@ class UcbLearner(RsLearner):
             megapol += pol[0]
 
         return megapol
+
+
+    def get_n_best_policies(self, number_policies=5):
+        """
+        returns the n best policies
+
+        
+        Args: 
+            number_policies (int): Number of (sub)policies to return
+
+        Returns:
+            list of best n policies
+        """
+
+        temp_avg_accs = [x if x is not None  else 0 for x in self.avg_accs]
+
+        temp_history = list(zip(self.policies, temp_avg_accs))
+
+        number_policies = max(number_policies, len(temp_history))
+
+        inter_pol = sorted(temp_history, key=lambda x: x[1], reverse = True)[:number_policies]
+
+        return inter_pol[n]
+
 
        
 

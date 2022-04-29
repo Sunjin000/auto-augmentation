@@ -8,16 +8,20 @@ export default function Confirm() {
     const [myData, setMyData] = useState([])
     const [dataset, setDataset] = useState()
     const [network, setNetwork] = useState()
+    const [yes, setYes] = useState()
 
-    // console.log('already in confirm react')
+    console.log('already in confirm react')
   useEffect(() => {
     const res = fetch('/home').then(
       response => response.json()
       ).then(data => {setMyData(data);
         if (data.ds == 'Other'){setDataset(data.ds_name)} else {setDataset(data.ds)};
         if (data.IsLeNet == 'Other'){setNetwork(data.network_name)} else {setNetwork(data.IsLeNet)};
+        setYes('hey');
+        console.log('setYes', yes);
     });
   }, []);
+
 
   let navigate = useNavigate();
   const onSubmit = async () => {
@@ -27,7 +31,7 @@ export default function Confirm() {
     return (
         <div className="App" style={{padding:"60px"}}>
             <Typography gutterBottom variant="h3" align="center" >
-            Data Auto-Augmentation
+            Data Auto-Augmentation {yes}
             </Typography>
             <Grid>
                 <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>
