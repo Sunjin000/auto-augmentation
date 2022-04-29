@@ -76,7 +76,7 @@ def run_benchmark(
                     train_dataset=train_dataset,
                     test_dataset=test_dataset,
                     child_network_architecture=child_network_architecture,
-                    iterations=1
+                    iterations=5
                     )
         # save agent every iteration
         with open(save_file, 'wb+') as f:
