@@ -17,7 +17,8 @@ torch.manual_seed(0)
 
 print('@@@ import successful')
 
-app = Flask(__name__, static_folder='react_frontend/build', static_url_path='/')
+# app = Flask(__name__, static_folder='react_frontend/build', static_url_path='/')
+app = Flask(__name__)
 CORS(app)
 
 # it is used to collect user input and store them in the app
@@ -68,33 +69,56 @@ def get_form_data():
         # if user upload datasets and networks, save them in the database
         if ds == 'Other':
             ds_folder = request.files['ds_upload'] 
-            print('!!!ds_folder', ds_folder)
             ds_name_zip = ds_folder.filename
+            # check dataset zip file format
+            if ds_name_zip.split('.')[1] != 'zip':
+                data = {'error_type': 'not a zip file', 'error': "We found that your uplaoded dataset is not a zip file..."}
+                current_app.config['data'] = data
+                return data
             ds_name = ds_name_zip.split('.')[0]
-            ds_folder.save('./datasets/'+ ds_name_zip)
-            with zipfile.ZipFile('./datasets/'+ ds_name_zip, 'r') as zip_ref:
-                zip_ref.extractall('./datasets/upload_dataset/')
+            ds_folder.save('./react_backend/datasets/'+ ds_name_zip)
+            with zipfile.ZipFile('./react_backend/datasets/'+ ds_name_zip, 'r') as zip_ref:
+                zip_ref.extractall('./react_backend/datasets/upload_dataset/')
             if not current_app.debug:
-                os.remove(f'./datasets/{ds_name_zip}')
+                os.remove(f'./react_backend/datasets/{ds_name_zip}')
         else: 
             ds_name_zip = None
             ds_name = None
 
         # test if uploaded dataset meets the criteria 
-        for (dirpath, dirnames, filenames) in os.walk(f'./datasets/upload_dataset/{ds_name}/'):
-            for dirname in dirnames:
-                if dirname[0:6] != 'class_':
-                    return None # neet to change render to a 'failed dataset webpage'
-
+        i = -1
+        folder = 0
+        for (dirpath, dirnames, filenames) in os.walk(f'./react_backend/datasets/upload_dataset/{ds_name}/'):
+            i += 1
+            if i==0:
+                folders = dirnames
+            has_child_folder = dirnames!=[] # check if there are child folders
+            if not has_child_folder and i==0: 
+                data = {'error_type': 'incorret dataset', 
+                        'error': "We found that your uplaoded dataset doesn't have the correct format that we are looking for."}
+                current_app.config['data'] = data
+                return data
+        if  folder!=0 and len(folders)!=i:
+            data = {'error_type': 'incorret dataset', 
+                    'error': "We found that your uplaoded dataset doesn't have the correct format that we are looking for."}
+            current_app.config['data'] = data
+            return data
+        print('@@@ correct dataset folder!')
+        
         # save the user uploaded network
         if IsLeNet == 'Other':
             childnetwork = request.files['network_upload']
-            childnetwork.save('./child_networks/'+childnetwork.filename)
             network_name = childnetwork.filename
+            if network_name.split('.')[1] != 'pkl':
+                data = {'error_type': 'incorrect network', 
+                        'error': "We found that your uploaded network is not a pickle file"}
+                current_app.config['data'] = data
+                return data
+            else: 
+                childnetwork.save('./child_networks/'+childnetwork.filename)
         else: 
             network_name = None
 
-        
         print("@@@ user input has all stored in the app")
 
         data = {'ds': ds, 'ds_name': ds_name_zip, 'IsLeNet': IsLeNet, 'network_name': network_name,
@@ -105,34 +129,18 @@ def get_form_data():
         
         print('@@@ all data sent', current_app.config['data'])
 
-    # try this if you want it might work, it might not
-    # wapp_util.parse_users_learner_spec(
-    #                         num_policies,
-    #                         num_sub_policies,
-    #                         early_stop_num,
-    #                         max_epochs,
-    #                         **data,
-    #                         )
-    else: 
+
+    elif request.method == 'GET':
         print('it is GET method')
-    data = current_app.config['data']
+    
+        if 'data' in current_app.config.keys():
+            data = current_app.config['data']
+        else: 
+            data = {'error': "We didn't received any data from you submission form. Please go back to the home page", 
+            'error_type': 'no data'}
+
     return data
     # return redirect(url_for('confirm', data=data))
-
-
-
-
-# ========================================================================
-@app.route('/confirm', methods=['POST', 'GET'])
-@cross_origin()
-def confirm():  
-    print('inside confirm page')
-    data = current_app.config['data']
-    print("current_app.config['data']", current_app.config['data'])
-    # print("session.get('data')", session.get('data'))
-    # data = request.args.get('data')
-    return data
-
 
 
 
@@ -171,9 +179,9 @@ def show_result():
 
 
 
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+# @app.route('/')
+# def serve():
+#     return send_from_directory(app.static_folder, 'index.html')
 
 
 

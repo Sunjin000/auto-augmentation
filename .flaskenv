@@ -1,2 +1,2 @@
 FLASK_APP=react_app.py
-FLASK_ENV=production
+FLASK_ENV=development

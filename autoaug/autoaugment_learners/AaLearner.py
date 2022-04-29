@@ -13,32 +13,51 @@ import types
 
 
 class AaLearner:
-    """
-    The parent class for all AaLearner's
+    """The parent class for all AaLearner's
+
+    Contains utility methods that child AaLearner's use. 
+
+    Args:
+        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+
+        p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                        probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
+
+        m_bins (int, optional): number of bins we divide the magnitude space.
+                        Defaults to 10.
+
+        discrete_p_m (bool, optional):
+                        Whether or not the agent should represent probability and 
+                        magnitude as discrete variables as the out put of the 
+                        controller (A controller can be a neural network, genetic
+                        algorithm, etc.). Defaults to False
+
+        batch_size (int, optional): child_network training parameter. Defaults to 32.
+
+        toy_size (int, optional): child_network training parameter. ratio of original
+                            dataset used in toy dataset. Defaults to 0.1.
+
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
+
+        max_epochs (Union[int, float], optional): child_network training parameter. 
+                            Defaults to float('inf').
+
+        early_stop_num (int, optional): child_network training parameter. Defaults to 20.
+
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
+
     
     Attributes:
-        op_tensor_length (int): what is the dimension of the tensor that represents
-                            each 'operation' (which is made up of fun_name, prob,
-                            and mag).
-    
-    See Also
-    --------
-
-
-    Notes
-    -----
-
-
-    References
-    ----------
-    
-
-    Examples
-    --------
-
-
+        history (list): list of policies that has been input into 
+                        self._test_autoaugment_policy as well as their respective obtained
+                        accuracies
+                        
+        augmentation_space (list): list of image functions that the user has chosen to 
+                        include in the search space.
 
     """
+
     def __init__(self, 
                 # parameters that define the search space
                 sp_num=5,
@@ -53,29 +72,7 @@ class AaLearner:
                 early_stop_num=20,
                 exclude_method = [],
                 ):
-        """
-        Args:
-            sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
-            fun_num (int, optional): number of image functions in our search space.
-                            Defaults to 14.
-            p_bins (int, optional): number of bins we divide the interval [0,1] for 
-                            probabilities. Defaults to 11.
-            m_bins (int, optional): number of bins we divide the magnitude space.
-                            Defaults to 10.
-            discrete_p_m (bool, optional):
-                            Whether or not the agent should represent probability and 
-                            magnitude as discrete variables as the out put of the 
-                            controller (A controller can be a neural network, genetic
-                            algorithm, etc.). Defaults to False
-            
-            batch_size (int, optional): child_network training parameter. Defaults to 32.
-            toy_size (int, optional): child_network training parameter. ratio of original
-                                dataset used in toy dataset. Defaults to 0.1.
-            learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
-            max_epochs (Union[int, float], optional): child_network training parameter. 
-                                Defaults to float('inf').
-            early_stop_num (int, optional): child_network training parameter. Defaults to 20.
-        """
+        
         # related to defining the search space
         self.sp_num = sp_num
         self.p_bins = p_bins
@@ -294,35 +291,37 @@ class AaLearner:
 
         Does the loop which is seen in Figure 1 in the AutoAugment paper
         which is:
+        
             1. <generate a random policy>
             2. <see how good that policy is>
             3. <save how good the policy is in a list/dictionary and 
                 (if applicable,) update the controller (e.g. RL agent)>
-        
-        Args:
-            train_dataset (torchvision.dataset.vision.VisionDataset)
-            test_dataset (torchvision.dataset.vision.VisionDataset)
-            child_network_architecture (Union[function, nn.Module]):
-                                NOTE This can be both, for example,
-                                    MyNetworkArchitecture
-                                    and
-                                    MyNetworkArchitecture()
-            iterations (int): how many different policies do you want to test
-        Returns:
-            none
-        
-        
-        If child_network_architecture is a <function>, then we make an 
-        instance of it. If this is a <nn.Module>, we make a copy.deepcopy
+
+        If ``child_network_architecture`` is a ``<function>``, then we make an 
+        instance of it. If this is a ``<nn.Module>``, we make a ``copy.deepcopy``
         of it. We make a copy of it because we we want to keep an untrained 
         (initialized but not trained) version of the child network
         architecture, because we need to train it multiple times
-        for each policy. Keeping child_network_architecture as a `function` is
-        potentially better than keeping it as a nn.Module because every
+        for each policy. Keeping ``child_network_architecture`` as a ``<function>`` is
+        potentially better than keeping it as a ``<nn.Module>`` because every
         time we make a new instance, the weights are differently initialized
         which means that our results will be less biased
         (https://en.wikipedia.org/wiki/Bias_(statistics)).
-        
+
+
+        Args:
+            train_dataset (torchvision.dataset.vision.VisionDataset):
+
+            test_dataset (torchvision.dataset.vision.VisionDataset):
+
+            child_network_architecture (Union[function, nn.Module]):
+                        This can be both, for example, ``LeNet`` or ``LeNet()``
+
+            iterations (int): how many different policies do you want to test
+
+        Returns:
+            none
+
 
         Example code:
 
@@ -332,7 +331,7 @@ class AaLearner:
             for _ in range(15):
                 policy = self._generate_new_policy()
 
-                pprint(policy)
+                print(policy)
                 reward = self._test_autoaugment_policy(policy,
                                         child_network_architecture,
                                         train_dataset,
@@ -367,8 +366,6 @@ class AaLearner:
         Returns:
             accuracy (float): best accuracy reached in any
         """
-
-
 
         # we create an instance of the child network that we're going
         # to train. The method of creation depends on the type of 
@@ -449,11 +446,11 @@ class AaLearner:
 
         
         Args: 
-            number_policies -> int: Number of (sub)policies to be included in the mega
+            number_policies (int): Number of (sub)policies to be included in the mega
             policy
 
         Returns:
-            megapolicy -> [subpolicy, subpolicy, ...]
+            megapolicy ([subpolicy, subpolicy, ...])
         """
 
         number_policies = max(number_policies, len(self.history))
