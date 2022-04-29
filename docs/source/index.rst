@@ -1,33 +1,18 @@
-MetaAugment Documentation
+``autoaug`` official documentation
 ==================================
 
 
 
 .. toctree::
    :maxdepth: 4
-   :caption: Usage (developers might find this useful):
+   :caption: How-to Guides:
 
-   usage/tutorial_for_team
-   usage/autoaugment_helperclass
+   howto/howto_main
 
 
 
 .. toctree::
    :maxdepth: 4
-   :caption: Library:
+   :caption: Explanations:
 
-   MetaAugment_library/autoaugment_learners/aa_learners
-
-
-
-
-
-.. 
-   I've commented this out for now
-
-   Indices and tables
-   ==================
-
-   * :ref:`genindex`
-   * :ref:`modindex`
-   * :ref:`search`
+   explanations/autoaugment_learners

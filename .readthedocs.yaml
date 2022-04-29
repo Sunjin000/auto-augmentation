@@ -29,5 +29,5 @@ python:
   # install requirements
   - requirements: docs/requirements.txt
   # install our root directory
-  - method: pip
-    path: .
+  # - method: pip
+  #   path: .

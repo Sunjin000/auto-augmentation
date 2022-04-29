@@ -1,3 +1,26 @@
+import torchvision.datasets as datasets
+import torchvision
+import torch
+
+import autoaug.child_networks as cn
+import autoaug.autoaugment_learners as aal
+
+
+controller = cn.EasyNet(img_height=32, img_width=32, num_labels=16*10, img_channels=3)
+
+config = {
+        'sp_num' : 5,
+        'learning_rate' : 1e-1,
+        'batch_size' : 32,
+        'max_epochs' : 100,
+        'early_stop_num' : 10,
+        'controller' : controller,
+        'num_solutions' : 10,
+        }
+
+
+
+
 import torch
 
 import autoaug.autoaugment_learners as aal
@@ -20,6 +43,10 @@ else:
     device = torch.device('cpu')
 
 
+
+
+
+
 def run_benchmark(
     save_file,
     train_dataset,
@@ -40,6 +67,8 @@ def run_benchmark(
 
     # if history is not length total_iter yet(if total_iter
     # different policies haven't been tested yet), keep running
+    
+    print("agent history: ", agent.history)
     while len(agent.history)<total_iter:
         print(f'{len(agent.history)} / {total_iter}')
         # run 1 iteration (test one new policy and update the GRU)
@@ -121,3 +150,60 @@ def rerun_best_policy(
             f.write(pprint.pformat(megapol))
             f.write(str(accs))
             f.write(f'original small policys accuracies: {orig_accs}')
+
+
+
+
+# # CIFAR10 with LeNet
+train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+                        train=True, download=True, transform=None)
+test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+                        train=False, download=True, 
+                        transform=torchvision.transforms.ToTensor())
+child_network_architecture = cn.LeNet(
+                                    img_height=32,
+                                    img_width=32,
+                                    num_labels=10,
+                                    img_channels=3
+                                    )
+
+# save_dir='./benchmark/pickles/04_22_cf_ln_rssad'
+
+# # evo
+# run_benchmark(
+#     save_file=save_dir+'.pkl',
+#     train_dataset=train_dataset,
+#     test_dataset=test_dataset,
+#     child_network_architecture=child_network_architecture,
+#     agent_arch=aal.EvoLearner,
+#     config=config,
+#     )
+
+# # rerun_best_policy(
+# #     agent_pickle=save_dir+'.pkl',
+# #     accs_txt=save_dir+'.txt',
+# #     train_dataset=train_dataset,
+# #     test_dataset=test_dataset,
+# #     child_network_architecture=child_network_architecture,
+# #     config=config,
+# #     repeat_num=5
+# #     )
+
+
+
+megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
+
+
+accs=[]
+for _ in range(10):
+    print(f'{_}/{10}')
+    temp_agent = aal.evo_learner(**config)
+    accs.append(
+            temp_agent.test_autoaugment_policy(megapol,
+                                child_network_architecture,
+                                train_dataset,
+                                test_dataset,
+                                logging=False)
+                )
+
+print("CIPHAR10 accs: ", accs)

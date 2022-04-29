@@ -48,17 +48,17 @@ def response():
             ds_folder = request.files['dataset_upload']
             ds_name_zip = ds_folder.filename
             ds_name = ds_name_zip.split('.')[0]
-            ds_folder.save('./MetaAugment/datasets/'+ ds_name_zip)
-            with zipfile.ZipFile('./MetaAugment/datasets/'+ ds_name_zip, 'r') as zip_ref:
-                zip_ref.extractall('./MetaAugment/datasets/upload_dataset/')
+            ds_folder.save('./autoaug/datasets/'+ ds_name_zip)
+            with zipfile.ZipFile('./autoaug/datasets/'+ ds_name_zip, 'r') as zip_ref:
+                zip_ref.extractall('./autoaug/datasets/upload_dataset/')
             if not current_app.debug:
-                os.remove(f'./MetaAugment/datasets/{ds_name_zip}')
+                os.remove(f'./autoaug/datasets/{ds_name_zip}')
 
 
         else: 
             ds_name = None
 
-        for (dirpath, dirnames, filenames) in os.walk(f'./MetaAugment/datasets/upload_dataset/{ds_name}/'):
+        for (dirpath, dirnames, filenames) in os.walk(f'./autoaug/datasets/upload_dataset/{ds_name}/'):
             for dirname in dirnames:
                 if dirname[0:6] != 'class_':
                     return render_template("fail_dataset.html")
@@ -68,7 +68,7 @@ def response():
 
         if IsLeNet == None and nw_up != None:
             childnetwork = request.files['network_upload']
-            childnetwork.save('./MetaAugment/child_networks/'+childnetwork.filename)
+            childnetwork.save('./autoaug/child_networks/'+childnetwork.filename)
         
 
 

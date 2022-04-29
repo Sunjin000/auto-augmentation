@@ -9,10 +9,10 @@ import torchvision
 import torchvision.datasets as datasets
 
 # # import agents and its functions
-import MetaAugment.autoaugment_learners as aal
-import MetaAugment.controller_networks as cont_n
-import MetaAugment.child_networks as cn
-from MetaAugment.main import create_toy
+import autoaug.autoaugment_learners as aal
+import autoaug.controller_networks as cont_n
+import autoaug.child_networks as cn
+from autoaug.main import create_toy
 
 import pickle
 from pprint import pprint
@@ -43,12 +43,12 @@ def parse_users_learner_spec(
                                                     IsLeNet
                                                     )
     """
-    The website receives user inputs on what they want the aa_learner
-    to be. We take those hyperparameters and return an aa_learner
+    The website receives user inputs on what they want the AaLearner
+    to be. We take those hyperparameters and return an AaLearner
 
     """
     if auto_aug_learner == 'UCB':
-        learner = aal.ucb_learner(
+        learner = aal.UcbLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
@@ -61,11 +61,11 @@ def parse_users_learner_spec(
                         learning_rate=learning_rate,
                         max_epochs=max_epochs,
                         early_stop_num=early_stop_num,
-                        # ucb_learner specific hyperparameter
+                        # UcbLearner specific hyperparameter
                         num_policies=num_policies
                         )
     elif auto_aug_learner == 'Evolutionary Learner':
-        learner = aal.evo_learner(
+        learner = aal.EvoLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
@@ -81,7 +81,7 @@ def parse_users_learner_spec(
                         )
         learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
-        agent = aal.randomsearch_learner(
+        agent = aal.RsLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
@@ -96,7 +96,7 @@ def parse_users_learner_spec(
                         early_stop_num=early_stop_num,
                         )
     elif auto_aug_learner == 'GRU Learner':
-        agent = aal.gru_learner(
+        agent = aal.GruLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
