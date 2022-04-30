@@ -48,7 +48,7 @@ def parse_users_learner_spec(
     to be. We take those hyperparameters and return an AaLearner
 
     """
-    if auto_aug_learner == 'UCB':
+    if auto_aug_learner == 'UCB learner':
         learner = aal.UcbLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
@@ -65,7 +65,7 @@ def parse_users_learner_spec(
                         # UcbLearner specific hyperparameter
                         num_policies=num_policies
                         )
-    elif auto_aug_learner == 'Evolutionary Learner':
+    elif auto_aug_learner == 'Evolutionary learner':
         learner = aal.EvoLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
@@ -82,7 +82,7 @@ def parse_users_learner_spec(
                         )
         learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
-        agent = aal.RsLearner(
+        learner = aal.RsLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
@@ -97,7 +97,7 @@ def parse_users_learner_spec(
                         early_stop_num=early_stop_num,
                         )
     elif auto_aug_learner == 'GRU Learner':
-        agent = aal.GruLearner(
+        learner = aal.GruLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
                         p_bins=11,
@@ -112,4 +112,4 @@ def parse_users_learner_spec(
                         early_stop_num=early_stop_num,
                         )
 
-    return train_dataset, test_dataset, child_archi, agent
+    return train_dataset, test_dataset, child_archi, learner

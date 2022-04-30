@@ -5,23 +5,25 @@ import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import {useNavigate, Route} from "react-router-dom";
 
 
-
+let progressN = 0
 export default function Training() {
     let navigate = useNavigate();
 
     const [status, setStatus] = useState("Training");
+
     useEffect(() => {
+        progressN += 1
+        if (progressN===1){
         const res = fetch('/training'
         ).then(response => response.json()
         ).then(data => {setStatus(data.status); console.log(data.status)});
-
-        
-        }, []);
+        }
+    }, []);
 
     const onSubmit = async () => {
         navigate('/result', {replace:true});
     }
-
+ 
     return (
         <div className="App" style={{padding:"60px"}}>
             <Typography gutterBottom variant="h3" align="center" >

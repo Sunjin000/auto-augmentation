@@ -113,7 +113,7 @@ def get_form_data():
                 data = {'error_type': 'incorrect network', 
                         'error': "We found that your uploaded network is not a pickle file"}
                 current_app.config['data'] = data
-                return data
+                return data 
             else: 
                 childnetwork.save('./child_networks/'+childnetwork.filename)
         else: 
@@ -171,7 +171,7 @@ def training():
         test_dataset=test_dataset, 
         child_network_architecture=child_archi,
         iterations=data['iterations']
-        )
+        ) 
     
     print('the history of all the policies the agent has tested:')
     pprint.pprint(agent.history)
@@ -214,7 +214,7 @@ def training():
 def show_result():
     file_path = "./react_backend/policy.txt"
     f = open(file_path, "r")
-    return send_file(file_path, as_attachment=True)
+    return send_file(file_path, as_attachment=True, cache_timeout=0)
 
 
 

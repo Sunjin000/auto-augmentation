@@ -4,34 +4,45 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import {useNavigate, Route} from "react-router-dom";
 
+let confirmN = 0
 export default function Confirm() {
     const [myData, setMyData] = useState([])
     const [dataset, setDataset] = useState()
     const [network, setNetwork] = useState()
-    const [yes, setYes] = useState()
 
     console.log('already in confirm react')
-  useEffect(() => {
-    const res = fetch('/home').then(
-      response => response.json()
-      ).then(data => {setMyData(data);
-        if (data.ds == 'Other'){setDataset(data.ds_name)} else {setDataset(data.ds)};
-        if (data.IsLeNet == 'Other'){setNetwork(data.network_name)} else {setNetwork(data.IsLeNet)};
-        setYes('hey');
-        console.log('setYes', yes);
-    });
-  }, []);
+    useEffect(() => {
+        confirmN += 1
+        if (confirmN===1){
+        const res = fetch('/home').then(
+        response => response.json()
+        ).then(data => {
+            console.log('data real', data)
+            setMyData(data);
+            if (data.ds == 'Other'){setDataset(data.ds_name)} else {setDataset(data.ds)};
+            if (data.IsLeNet == 'Other'){setNetwork(data.network_name)} else {setNetwork(data.IsLeNet)};
+        });
+        }
+    }, []);
+
+    // useEffect(()=>{
+    //     confirmN += 1
+    //     if (confirmN===1){
+    //     console.log('in try')
+    //     fetch('/home').then(response => response.json()).then(data => console.log('show data', data))}
+    // })
+    // console.log('after fetch')
 
 
-  let navigate = useNavigate();
-  const onSubmit = async () => {
-    navigate('/progress', {replace:true});
-  };
+    let navigate = useNavigate();
+    const onSubmit = async () => {
+        navigate('/progress', {replace:true});
+    }; 
 
     return (
         <div className="App" style={{padding:"60px"}}>
             <Typography gutterBottom variant="h3" align="center" >
-            Data Auto-Augmentation {yes}
+            Data Auto-Augmentation
             </Typography>
             <Grid>
                 <Card style={{ maxWidth: 900, padding: "10px 5px", margin: "0 auto" }}>

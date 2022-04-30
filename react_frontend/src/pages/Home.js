@@ -64,7 +64,7 @@ export default function Home() {
         const check = fetch('/home').then(
             response => response.json()
             ).then(data => {
-                if ('error' in data){navigate('/error', data)} else {navigate('/confirm', {replace:true})}
+                if ('error' in data){navigate('/error', data)} else {navigate('/confirm', {replace:true});}
             });     
     };
     

@@ -9,31 +9,8 @@ import axios from "axios";
 import {BrowserRouter, Route, Routes, Switch} from 'react-router-dom';
 
 function App() {
-  // useEffect(() => {
-  //   console.log('print here')
-  //   fetch('/home', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ })
-  //   })
-  //     .then((response) => response.text())
-  //     .then((data) => console.log('data', data));
-  // }, []);
-
-  // useEffect(() => {
-  //   fetch('/api').then(response =>{
-  //     if(response.ok){
-  //       return response.json()
-  //     }
-  //   }).then(data => console.log('api', data))
-  // }, [])
-
   return (
     <div>
-      {/* <Home /> */}
-      {/* <Confirm /> */}
-      {/* <Progress /> */}
-      {/* <Result /> */}
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Home/>}/>
