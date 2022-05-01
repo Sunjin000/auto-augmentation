@@ -6,46 +6,34 @@ import random
 
 
 class GenLearner(AaLearner):
-    """Evolutionary Strategy learner
+    """Genetic Algorithm learner
     
-    This learner generates neural networks that predict optimal augmentation
-    policies. Hence, there is no backpropagation or gradient descent. Instead,
-    training is done by randomly changing weights of the 'parent' networks, where
-    parents are determined by their ability to produce policies that 
-    increase the accuracy of the child network.
 
     Args:
-        sp_num: int, default 5
-            Number of subpolicies to keep in the final policy
+        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
 
-        p_bins: int, default 1
-            Number of probability bins for the controller network.
+        p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                        probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
 
-        m_bins: int, default 1
-            Number of magnitude bins for the controller network
+        m_bins (int, optional): number of bins we divide the magnitude space.
+                        Defaults to 10.
 
-        exclude_method: list, default []
-            List of augmentations to be excluded from the search space
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
 
-        learning_rate: float, default 1e-6
-            Learning rate of the child network
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-1.
 
-        max_epochs: float, default float('inf')
-            Theoretical maximum number of epochs that the child network 
-            can be trained on 
+        max_epochs (Union[int, float], optional): child_network training parameter. 
+                            Defaults to float('inf').
 
-        early_stop_num: int, default 20
-            Criteria for early stopping. I.e. if the network has not improved 
-            after early_stop_num iterations, the training is stopped
+        early_stop_num (int, optional): child_network training parameter. Defaults to 20.
 
-        batch_size: int, default 8
-            Batch size for the datasets
+        batch_size (int, optional): child_network training parameter. Defaults to 32.
 
-        toy_size: float, default 1
-            If a toy dataset is created, it will be of size toy_size compared
-            to the original dataset
+        toy_size (int, optional): child_network training parameter. ratio of original
+                            dataset used in toy dataset. Defaults to 0.1.
 
-        num_offsprings: int, default 1
+        num_offsprings (int, optional): Defaults to 1
     
 
     Examples

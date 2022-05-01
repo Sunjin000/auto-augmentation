@@ -24,6 +24,9 @@ class UcbLearner(RsLearner):
         m_bins (int, optional): number of bins we divide the magnitude space.
                         Defaults to 10.
 
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
+
         batch_size (int, optional): child_network training parameter. Defaults to 32.
 
         toy_size (int, optional): child_network training parameter. ratio of original
@@ -35,9 +38,6 @@ class UcbLearner(RsLearner):
                             Defaults to float('inf').
 
         early_stop_num (int, optional): child_network training parameter. Defaults to 20.
-
-        exclude_method (list, optional): list of names(:type:str) of image operations
-                        the user wants to exclude from the search space. Defaults to [].
     
         num_policies (int, optional): Number of policies we want to serach over. 
                             Defaults to 100.
@@ -96,7 +96,6 @@ class UcbLearner(RsLearner):
                         sp_num=sp_num, 
                         p_bins=p_bins, 
                         m_bins=m_bins, 
-                        discrete_p_m=True,
                         batch_size=batch_size,
                         toy_size=toy_size,
                         learning_rate=learning_rate,
@@ -257,7 +256,7 @@ class UcbLearner(RsLearner):
 
         inter_pol = sorted(temp_history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-        return inter_pol[n]
+        return inter_pol[number_policies]
 
 
        

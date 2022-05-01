@@ -19,44 +19,37 @@ class EvoLearner(AaLearner):
     increase the accuracy of the child network.
 
     Args:
-        sp_num: int, default 5
-            Number of subpolicies to keep in the final policy
+        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
 
-        p_bins: int, default 1
-            Number of probability bins for the controller network.
+        p_bins (int, optional): number of bins we divide the interval [0,1] for 
+                        probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 1.
 
-        m_bins: int, default 1
-            Number of magnitude bins for the controller network
+        m_bins (int, optional): number of bins we divide the magnitude space.
+                        Defaults to 1.
 
-        exclude_method: list, default []
-            List of augmentations to be excluded from the search space
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
 
-        learning_rate: float, default 1e-6
-            Learning rate of the child network
+        batch_size (int, optional): child_network training parameter. Defaults to 32.
 
-        max_epochs: float, default float('inf')
-            Theoretical maximum number of epochs that the child network 
-            can be trained on 
+        toy_size (int, optional): child_network training parameter. ratio of original
+                            dataset used in toy dataset. Defaults to 0.1.
 
-        early_stop_num: int, default 20
-            Criteria for early stopping. I.e. if the network has not improved 
-            after early_stop_num iterations, the training is stopped
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-1.
 
-        batch_size: int, default 8
-            Batch size for the datasets
+        max_epochs (Union[int, float], optional): child_network training parameter. 
+                            Defaults to float('inf').
 
-        toy_size: float, default 1
-            If a toy dataset is created, it will be of size toy_size compared
-            to the original dataset
+        early_stop_num (int, optional): child_network training parameter. Defaults to 20.
 
-        num_solutions: int, default 5
-            Number of offspring spawned at each generation of the algorithm 
+        num_solutions (int, optional): Number of offspring spawned at each generation 
+                            of the algorithm. Default 5
 
-        num_parents_mating: int, default 3
-            Number of networks chosen as parents for the next generation of networks 
+        num_parents_mating (int, optional): Number of networks chosen as parents for 
+                            the next generation of networks Defaults to 3 
 
-        controller: Torch Network, default cont_n.EvoController
-            Controller network for the evolutionary algorithm
+        controller (nn.Module, optional): Controller network for the evolutionary 
+                            algorithm. Defaults to cont_n.EvoController
 
 
     Notes
@@ -64,7 +57,6 @@ class EvoLearner(AaLearner):
     The Evolutionary algorithm runs in generations, and so batches of child networks
     are trained at specific time intervals.
 
-    
 
     Examples
     --------

@@ -33,20 +33,20 @@ class GruLearner(AaLearner):
         m_bins (int, optional): number of bins we divide the magnitude space.
                         Defaults to 10.
 
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
+
         batch_size (int, optional): child_network training parameter. Defaults to 32.
 
         toy_size (int, optional): child_network training parameter. ratio of original
                             dataset used in toy dataset. Defaults to 0.1.
 
-        learning_rate (float, optional): child_network training parameter. Defaults to 1e-2.
+        learning_rate (float, optional): child_network training parameter. Defaults to 1e-1.
 
         max_epochs (Union[int, float], optional): child_network training parameter. 
                             Defaults to float('inf').
 
         early_stop_num (int, optional): child_network training parameter. Defaults to 20.
-
-        exclude_method (list, optional): list of names(:type:str) of image operations
-                        the user wants to exclude from the search space. Defaults to [].
 
         alpha (float, optional): Exploration parameter. It is multiplied to 
                                 operation tensors before they're softmaxed. 
@@ -58,6 +58,9 @@ class GruLearner(AaLearner):
                             policies do we test in order to calculate the 
                             PPO(proximal policy update) gradient to update
                             the controller. Defaults to 
+        
+        cont_lr (float, optional): The learning rate when updating the GRU
+                            controller via proximal policy optimization update
     
     Attributes:
         history (list): list of policies that has been input into 
