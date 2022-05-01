@@ -41,7 +41,11 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinx_rtd_theme',
+    'sphinxcontrib.bibtex',
 ]
+
+# turn on bibliography
+bibtex_bibfiles = ['refs.bib']
 
 # turn on sphinx.ext.autosummary
 autosummary_generate = True

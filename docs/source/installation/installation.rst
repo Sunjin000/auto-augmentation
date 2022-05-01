@@ -1,4 +1,4 @@
-Installing ``autoaug``
+Installation
 ----------------------
 
 As simple as 

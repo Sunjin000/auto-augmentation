@@ -1,13 +1,10 @@
-AaLearner object and its children
-------------------------------------------------------------------------------------------------
+How to use the ``AaLearner`` class to find a good augmentation for an image dataset
+-----------------------------------------------------------------------------------
+
 
 This is a page dedicated to demonstrating functionalities of :class:`AaLearner`.
 
 This is a how-to guide (in the sense describe in https://documentation.divio.com/structure/).
-
-######################################################################################################
-How to use the ``AaLearner`` class to find an optimal policy for a dataset-child_network pair
-######################################################################################################
 
 This section can also be read as a ``.py`` file in ``./tutorials/how_use_aalearner.py``.
 

@@ -1,9 +1,6 @@
-AutoAugment object
-------------------
+How to apply AutoAugment image augmentation policies to a ``torchvision.datasets.VisionDataset`` object
+--------------------------------------------------------------------------------------------------------
 
-######################################################################################################
-How to use a ``AutoAugment`` object to apply AutoAugment policies to ``Datasets`` objects
-######################################################################################################
 
 This is a page dedicated to demonstrating functionalities of :class:`AutoAugment`, which
 we use as a helper class to help us apply AutoAugment policies to datasets.

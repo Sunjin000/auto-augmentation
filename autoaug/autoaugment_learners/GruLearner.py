@@ -81,7 +81,7 @@ class GruLearner(AaLearner):
     Junyoung Chung, et al.
         "Empirical Evaluation of Gated Recurrent Neural 
         Networks on Sequence Modeling"
-        https://arxiv.org/abs/1412.3555
+        arXiv:1412.3555
 
 
 

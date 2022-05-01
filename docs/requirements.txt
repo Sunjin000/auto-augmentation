@@ -1,4 +1,1 @@
-torch
-torchvision
-numpy
-matplotlib
+sphinxcontrib.bibtex

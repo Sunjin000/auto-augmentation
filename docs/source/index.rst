@@ -1,18 +1,48 @@
-``autoaug`` official documentation
+``autoaug`` documentation
 ==================================
 
+This documentation was written using the documentation system described here_.
+
+.. _here: https://www.writethedocs.org/videos/eu/2017/the-four-kinds-of-documentation-and-why-you-need-to-understand-what-they-are-daniele-procida/
 
 
 .. toctree::
    :maxdepth: 4
-   :caption: How-to Guides:
+   :caption: Installation:
 
-   howto/howto_main
+   installation/installation
 
 
 
 .. toctree::
    :maxdepth: 4
-   :caption: Explanations:
+   :caption: Explanations (of the theory behind the learners):
 
-   explanations/autoaugment_learners
+   explanation/problem_setting
+   explanation/learners_theory
+
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: How-to's (for accomplishing common goals):
+
+   howto/AaLearner
+   howto/AutoAugment
+
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: API Reference (Technical specifications):
+
+   reference/autoaugment_learners
+
+
+
+.. 
+   .. toctree::
+      :maxdepth: 4
+      :caption: auto generated api-doc (``sphinx-apidoc``)
+
+      apidoc/modules

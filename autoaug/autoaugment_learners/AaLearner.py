@@ -294,8 +294,7 @@ class AaLearner:
         
             1. <generate a random policy>
             2. <see how good that policy is>
-            3. <save how good the policy is in a list/dictionary and 
-                (if applicable,) update the controller (e.g. RL agent)>
+            3. <save how good the policy is in a list/dictionary and (if applicable,) update the controller (e.g. RL agent)>
 
         If ``child_network_architecture`` is a ``<function>``, then we make an 
         instance of it. If this is a ``<nn.Module>``, we make a ``copy.deepcopy``
@@ -480,4 +479,4 @@ class AaLearner:
 
         inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-        return inter_pol[n]
+        return inter_pol[number_policies]
