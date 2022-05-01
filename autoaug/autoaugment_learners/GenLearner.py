@@ -5,7 +5,7 @@ from autoaug.autoaugment_learners.AaLearner import AaLearner
 import random
 
 
-class Genetic_learner(AaLearner):
+class GenLearner(AaLearner):
     """Evolutionary Strategy learner
     
     This learner generates neural networks that predict optimal augmentation
