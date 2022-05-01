@@ -95,8 +95,8 @@ class EvoLearner(AaLearner):
     def __init__(self, 
                 # search space settings
                 sp_num=5,
-                p_bins=11, 
-                m_bins=10, 
+                p_bins=1, 
+                m_bins=1, 
                 discrete_p_m=False,
                 exclude_method=[],
                 # child network settings
@@ -131,6 +131,7 @@ class EvoLearner(AaLearner):
         #                 sub_num_pol=self.sp_num
         #                 )
         self.controller = controller
+
         self.num_solutions = num_solutions
         self.torch_ga = torchga.TorchGA(model=self.controller, num_solutions=num_solutions)
         self.num_parents_mating = num_parents_mating
@@ -144,6 +145,64 @@ class EvoLearner(AaLearner):
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
 
+
+    def get_full_policy(self, x):
+        """
+        Generates the full policy (self.num_sub_pol subpolicies). Network architecture requires
+        output size 5 * 2 * (self.fun_num + self.p_bins + self.m_bins)
+
+        Parameters 
+        -----------
+        x -> PyTorch tensor
+            Input data for network 
+
+        Returns
+        ----------
+        full_policy -> [((String, float, float), (String, float, float)), ...)
+            Full policy consisting of tuples of subpolicies. Each subpolicy consisting of
+            two transformations, with a probability and magnitude float for each
+        """
+        section = self.fun_num + self.p_bins + self.m_bins
+
+        y = self.controller.forward(x)
+        full_policy = []
+        for pol in range(self.sp_num):
+            int_pol = []
+            for _ in range(2):
+                idx_ret = torch.argmax(y[:, (pol * section):(pol*section) + self.fun_num].mean(dim = 0))
+
+                trans, need_mag = self.augmentation_space[idx_ret]
+
+                if self.p_bins == 1:
+                    # p_ret = min(1, max(0, (y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0).item())))
+                    p_ret = torch.sigmoid(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0)).item()
+                else:
+                    p_ret = torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0)).item() * 0.1
+
+                p_ret = round(p_ret, 1)
+
+
+                if need_mag:
+                    # print("original mag", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0))
+                    if self.m_bins == 1:
+                        # mag = min(9, max(0, (y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())))
+                        mag = torch.sigmoid(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)).item()
+
+                    else:
+                        print("bit: ", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0))
+                        print("full: ", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].shape)
+                        print("mean: ", torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)))
+                        mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)).item()
+                    mag = int(mag)
+                else:
+                    mag = None
+                int_pol.append((trans, p_ret, mag))
+
+            full_policy.append(tuple(int_pol))
+
+        return full_policy
+
+
     
     def _get_single_policy_cov(self, x, alpha = 0.5):
         """
@@ -155,7 +214,7 @@ class EvoLearner(AaLearner):
         x -> PyTorch Tensor
             Input data for the AutoAugment network 
 
-        alpha -> Float
+        alpha -> float
             Proportion for covariance and population matrices 
 
         Returns
@@ -227,20 +286,20 @@ class EvoLearner(AaLearner):
 
         Parameters
         ------------
-        return_weights -> Bool
+        return_weights -> bool
             Determines if the weight of the GA network should be returned 
         
         Returns
         ------------
         If return_weights:
-            Network weights -> Dictionary
+            Network weights -> dict
         
         Else:
             Solution -> Best GA instance solution
 
-            Solution fitness -> Float
+            Solution fitness -> float
 
-            Solution_idx -> Int
+            Solution_idx -> int
         """
         print("learn0")
         self.num_generations = iterations
@@ -260,6 +319,22 @@ class EvoLearner(AaLearner):
 
 
     def _in_pol_dict(self, new_policy):
+        """
+        Checks if a potential subpolicy has already been testing by the agent
+
+        Parameters
+        ------------
+        new_policy -> subpolicy
+
+        Returns
+        ------------
+        if subpolicy has been tested:
+            -> True 
+        else: 
+            -> False
+
+        
+        """
         new_policy = new_policy[0]
         trans1, trans2 = new_policy[0][0], new_policy[1][0]
         new_set = {new_policy[0][1], new_policy[0][2], new_policy[1][1], new_policy[1][2]}
@@ -276,7 +351,7 @@ class EvoLearner(AaLearner):
 
     def _set_up_instance(self, train_dataset, test_dataset, child_network_architecture):
         """
-        Initialises GA instance, as well as fitness and _on_generation functions
+        Initialises GA instance, as well as the fitness and 'on generation' functions
         
         """
 
@@ -302,20 +377,27 @@ class EvoLearner(AaLearner):
             train_dataset.transform = torchvision.transforms.ToTensor()
             self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)
             count = 0
+
+            new_pol = True
             for idx, (test_x, label_x) in enumerate(self.train_loader):
-                print("here idx: ", idx)
                 count += 1
-                sub_pol = self._get_single_policy_cov(test_x)
+                # sub_pol = self._get_single_policy_cov(test_x)
+                sub_pol = self.get_full_policy(test_x)
+                print("subpol: ", sub_pol)
 
 
-                while self._in_pol_dict(sub_pol):
-                    sub_pol = self._get_single_policy_cov(test_x)[0]
+                # if self._in_pol_dict(sub_pol):
+                #     sub_pol = self._get_single_policy_cov(test_x)[0]
+                #     new_pol = False 
+                #     fit_val = 0
 
                 if idx == 0:
                     break
 
             print("start test")
-            fit_val = self._test_autoaugment_policy(sub_pol,child_network_architecture,train_dataset,test_dataset)
+            if new_pol:
+                fit_val = self._test_autoaugment_policy(sub_pol,child_network_architecture,train_dataset,test_dataset)
+            print("fit_val: ", fit_val)
             print("end test")
 
 
@@ -342,7 +424,7 @@ class EvoLearner(AaLearner):
 
         def _on_generation(ga_instance):
             """
-            Prints information of generational fitness
+            Prints information of generation's fitness
 
             Parameters 
             -------------
