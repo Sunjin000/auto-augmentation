@@ -83,7 +83,7 @@ class Genetic_learner(AaLearner):
         self.num_offspring = num_offspring
 
 
-    def gen_random_subpol(self):
+    def _gen_random_subpol(self):
         """
         Generates a random subpolicy using the reduced augmentation_space
 
@@ -111,7 +111,7 @@ class Genetic_learner(AaLearner):
         return subpol
 
 
-    def gen_random_policy(self):
+    def _gen_random_policy(self):
         """
         Generates a random policy, consisting of sp_num subpolicies
 
@@ -125,7 +125,7 @@ class Genetic_learner(AaLearner):
         return pol
 
     
-    def bin_to_subpol(self, subpol_bin):
+    def _bin_to_subpol(self, subpol_bin):
         """
         Converts a binary string representation of a subpolicy to a subpolicy
 
@@ -166,7 +166,7 @@ class Genetic_learner(AaLearner):
         return pol   
 
 
-    def subpol_to_bin(self, subpol):
+    def _subpol_to_bin(self, subpol):
         """
         Converts a subpolicy to its binary representation 
 
@@ -200,7 +200,7 @@ class Genetic_learner(AaLearner):
         return bin_pol
 
 
-    def choose_parents(self, parents, parents_weights):
+    def _choose_parents(self, parents, parents_weights):
         """
         Chooses parents from which the next policy will be generated from
 
@@ -224,7 +224,7 @@ class Genetic_learner(AaLearner):
         return (parent1, parent2)
 
     
-    def generate_children(self):
+    def _generate_children(self):
         """
         Generates children via the random crossover method
 
@@ -265,18 +265,15 @@ class Genetic_learner(AaLearner):
         """
 
         for idx in range(iterations):
-            print("ITERATION: ", idx)
             if len(self.history) < self.num_offspring:
                 policy = [self.gen_random_subpol()]
             else:
                 policy = self.bin_to_subpol(random.choice(self.generate_children()))
-            print("Policy: ", policy)
             
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
                                                 test_dataset)  
-            print("reward: ", reward)
 
 
 
