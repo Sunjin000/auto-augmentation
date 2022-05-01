@@ -18,7 +18,6 @@ def test_ucb_learner():
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,
-                discrete_p_m=True,
                 # hyperparameters for when training the child_network
                 batch_size=8,
                 toy_size=0.001,

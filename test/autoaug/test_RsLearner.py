@@ -13,28 +13,22 @@ def test__generate_new_policy():
     p_bins, and m_bins
     """
 
-    def my_test(discrete_p_m):
-        for _ in range(40):
-            sp_num = random.randint(1,20)
-            
-            p_bins = random.randint(2, 15)
-            m_bins = random.randint(2, 15)
+    for _ in range(40):
+        sp_num = random.randint(1,20)
+        
+        p_bins = random.randint(2, 15)
+        m_bins = random.randint(2, 15)
 
-            agent = aal.RsLearner(
-                sp_num=sp_num,
-                p_bins=p_bins,
-                m_bins=m_bins,
-                discrete_p_m=discrete_p_m
-                )
-            for _ in range(4):
-                new_policy = agent._generate_new_policy()
-                assert isinstance(new_policy, list), new_policy
+        agent = aal.RsLearner(
+            sp_num=sp_num,
+            p_bins=p_bins,
+            m_bins=m_bins,
+            )
+        for _ in range(4):
+            new_policy = agent._generate_new_policy()
+            assert isinstance(new_policy, list), new_policy
     
-    discrete_p_m = True
-    my_test(discrete_p_m)
 
-    discrete_p_m = False
-    my_test(discrete_p_m)
 
 
 def test_learn():

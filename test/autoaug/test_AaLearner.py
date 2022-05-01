@@ -161,7 +161,6 @@ def test_get_mega_policy():
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,
-                discrete_p_m=True,
                 toy_size=0.002,
                 max_epochs=20,
                 early_stop_num=10

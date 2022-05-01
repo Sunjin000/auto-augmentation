@@ -24,10 +24,6 @@ class GenLearner(AaLearner):
         m_bins: int, default 1
             Number of magnitude bins for the controller network
 
-        discrete_p_m: bool, default False
-            Boolean value to set if there are discrete or continuous
-            probability and mangitude bins (if False; p_bins, m_bins = 1)
-
         exclude_method: list, default []
             List of augmentations to be excluded from the search space
 
@@ -63,8 +59,7 @@ class GenLearner(AaLearner):
                 # search space settings
                 sp_num=5,
                 p_bins=11, 
-                m_bins=10, 
-                discrete_p_m=False,
+                m_bins=10,
                 exclude_method=[],
                 # child network settings
                 learning_rate=1e-1, 
@@ -80,7 +75,7 @@ class GenLearner(AaLearner):
                     sp_num=sp_num, 
                     p_bins=p_bins, 
                     m_bins=m_bins, 
-                    discrete_p_m=discrete_p_m, 
+                    discrete_p_m=True, 
                     batch_size=batch_size, 
                     toy_size=toy_size, 
                     learning_rate=learning_rate,

@@ -24,12 +24,6 @@ class UcbLearner(RsLearner):
         m_bins (int, optional): number of bins we divide the magnitude space.
                         Defaults to 10.
 
-        discrete_p_m (bool, optional):
-                        Whether or not the agent should represent probability and 
-                        magnitude as discrete variables as the out put of the 
-                        controller (A controller can be a neural network, genetic
-                        algorithm, etc.). Defaults to False
-
         batch_size (int, optional): child_network training parameter. Defaults to 32.
 
         toy_size (int, optional): child_network training parameter. ratio of original
@@ -87,7 +81,6 @@ class UcbLearner(RsLearner):
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,
-                discrete_p_m=True,
                 exclude_method=[],
                 # hyperparameters for when training the child_network
                 batch_size=8,
@@ -103,7 +96,7 @@ class UcbLearner(RsLearner):
                         sp_num=sp_num, 
                         p_bins=p_bins, 
                         m_bins=m_bins, 
-                        discrete_p_m=discrete_p_m,
+                        discrete_p_m=True,
                         batch_size=batch_size,
                         toy_size=toy_size,
                         learning_rate=learning_rate,

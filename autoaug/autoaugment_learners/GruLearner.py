@@ -33,12 +33,6 @@ class GruLearner(AaLearner):
         m_bins (int, optional): number of bins we divide the magnitude space.
                         Defaults to 10.
 
-        discrete_p_m (bool, optional):
-                        Whether or not the agent should represent probability and 
-                        magnitude as discrete variables as the out put of the 
-                        controller (A controller can be a neural network, genetic
-                        algorithm, etc.). Defaults to False
-
         batch_size (int, optional): child_network training parameter. Defaults to 32.
 
         toy_size (int, optional): child_network training parameter. ratio of original
@@ -92,7 +86,6 @@ class GruLearner(AaLearner):
                 sp_num=5,
                 p_bins=11,
                 m_bins=10,
-                discrete_p_m=False,
                 exclude_method=[],
                 # hyperparameters for when training the child_network
                 batch_size=8,
@@ -104,10 +97,6 @@ class GruLearner(AaLearner):
                 alpha=0.2,
                 cont_mb_size=4,
                 cont_lr=0.03):
-
-        if discrete_p_m==True:
-            print('Warning: Incompatible discrete_p_m=True input into GruLearner. \
-                discrete_p_m=False will be used')
         
         super().__init__(
                 sp_num=sp_num, 
