@@ -187,8 +187,8 @@ Therefore, we recommend something like the following:
         print('run_benchmark closing')
 
 
-Viewing the results:
-^^^^^^^^^^^^^^^^^^^^
+Viewing the results
+^^^^^^^^^^^^^^^^^^^
 
 There are several ways to view the what the learner has found.
 
@@ -198,3 +198,11 @@ There are several ways to view the what the learner has found.
   learner has tested.
 - If you want to create a mega policy containing the top n policies the 
   learner has tested, you can use :meth:`AaLearner.get_mega_policy`.
+
+
+
+Using the results
+^^^^^^^^^^^^^^^^^
+
+In order to apply the obtained policy on an image dataset, see
+:ref:`this How-to<autoaugment howto>`.

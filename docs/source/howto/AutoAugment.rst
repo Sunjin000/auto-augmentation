@@ -1,3 +1,5 @@
+.. _autoaugment howto:
+
 How to apply AutoAugment image augmentation policies to a ``torchvision.datasets.VisionDataset`` object
 --------------------------------------------------------------------------------------------------------
 
