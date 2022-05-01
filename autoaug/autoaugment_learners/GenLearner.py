@@ -20,6 +20,7 @@ class Genetic_learner(AaLearner):
                 early_stop_num=20,
                 batch_size=8,
                 toy_size=1,
+                # GenLearner specific settings
                 num_offspring=1, 
                 ):
 
