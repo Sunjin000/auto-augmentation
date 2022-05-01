@@ -173,7 +173,7 @@ class GenLearner(AaLearner):
         """
         pol = []
         for _ in range(self.sp_num):
-            pol.append(self.gen_random_subpol())
+            pol.append(self._gen_random_subpol())
         return pol
 
     
@@ -271,8 +271,8 @@ class GenLearner(AaLearner):
         parent2 = random.choices(parents, parents_weights, k=1)[0][0]
         while parent2 == parent1:
             parent2 = random.choices(parents, parents_weights, k=1)[0][0]
-        parent1 = self.subpol_to_bin(parent1)
-        parent2 = self.subpol_to_bin(parent2)
+        parent1 = self._subpol_to_bin(parent1)
+        parent2 = self._subpol_to_bin(parent2)
         return (parent1, parent2)
 
     
@@ -289,7 +289,7 @@ class GenLearner(AaLearner):
         parents_weights = [x[1] for x in parent_acc]
         new_pols = []
         for _ in range(self.num_offspring):
-            parent1, parent2 = self.choose_parents(parents, parents_weights)
+            parent1, parent2 = self._choose_parents(parents, parents_weights)
             cross_over = random.randrange(1, int(len(parent2)/2), 1)
             cross_over2 = random.randrange(int(len(parent2)/2), int(len(parent2)), 1)
             child = parent1[:cross_over]
@@ -318,9 +318,9 @@ class GenLearner(AaLearner):
 
         for idx in range(iterations):
             if len(self.history) < self.num_offspring:
-                policy = [self.gen_random_subpol()]
+                policy = [self._gen_random_subpol()]
             else:
-                policy = self.bin_to_subpol(random.choice(self.generate_children()))
+                policy = self._bin_to_subpol(random.choice(self._enerate_children()))
             
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
