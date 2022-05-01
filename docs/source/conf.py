@@ -45,7 +45,7 @@ extensions = [
 ]
 
 # turn on bibliography
-bibtex_bibfiles = ['refs.bib']
+bibtex_bibfiles = ['docs/source/refs.bib']
 
 # turn on sphinx.ext.autosummary
 autosummary_generate = True

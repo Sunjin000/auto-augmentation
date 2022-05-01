@@ -5,7 +5,59 @@ from autoaug.autoaugment_learners.AaLearner import AaLearner
 import random
 
 
-class Genetic_learner(AaLearner):
+class GenLearner(AaLearner):
+    """Evolutionary Strategy learner
+    
+    This learner generates neural networks that predict optimal augmentation
+    policies. Hence, there is no backpropagation or gradient descent. Instead,
+    training is done by randomly changing weights of the 'parent' networks, where
+    parents are determined by their ability to produce policies that 
+    increase the accuracy of the child network.
+
+    Args:
+        sp_num: int, default 5
+            Number of subpolicies to keep in the final policy
+
+        p_bins: int, default 1
+            Number of probability bins for the controller network.
+
+        m_bins: int, default 1
+            Number of magnitude bins for the controller network
+
+        discrete_p_m: bool, default False
+            Boolean value to set if there are discrete or continuous
+            probability and mangitude bins (if False; p_bins, m_bins = 1)
+
+        exclude_method: list, default []
+            List of augmentations to be excluded from the search space
+
+        learning_rate: float, default 1e-6
+            Learning rate of the child network
+
+        max_epochs: float, default float('inf')
+            Theoretical maximum number of epochs that the child network 
+            can be trained on 
+
+        early_stop_num: int, default 20
+            Criteria for early stopping. I.e. if the network has not improved 
+            after early_stop_num iterations, the training is stopped
+
+        batch_size: int, default 8
+            Batch size for the datasets
+
+        toy_size: float, default 1
+            If a toy dataset is created, it will be of size toy_size compared
+            to the original dataset
+
+        num_offsprings: int, default 1
+    
+
+    Examples
+    --------
+    from autoaug.autoaugment_learners.GenLearner import GenLearner
+    evo_learner = GenLearner()
+
+    """
 
     def __init__(self, 
                 # search space settings
@@ -20,6 +72,7 @@ class Genetic_learner(AaLearner):
                 early_stop_num=20,
                 batch_size=8,
                 toy_size=1,
+                # GenLearner specific settings
                 num_offspring=1, 
                 ):
 
@@ -120,7 +173,7 @@ class Genetic_learner(AaLearner):
         """
         pol = []
         for _ in range(self.sp_num):
-            pol.append(self.gen_random_subpol())
+            pol.append(self._gen_random_subpol())
         return pol
 
     
@@ -218,8 +271,8 @@ class Genetic_learner(AaLearner):
         parent2 = random.choices(parents, parents_weights, k=1)[0][0]
         while parent2 == parent1:
             parent2 = random.choices(parents, parents_weights, k=1)[0][0]
-        parent1 = self.subpol_to_bin(parent1)
-        parent2 = self.subpol_to_bin(parent2)
+        parent1 = self._subpol_to_bin(parent1)
+        parent2 = self._subpol_to_bin(parent2)
         return (parent1, parent2)
 
     
@@ -236,7 +289,7 @@ class Genetic_learner(AaLearner):
         parents_weights = [x[1] for x in parent_acc]
         new_pols = []
         for _ in range(self.num_offspring):
-            parent1, parent2 = self.choose_parents(parents, parents_weights)
+            parent1, parent2 = self._choose_parents(parents, parents_weights)
             cross_over = random.randrange(1, int(len(parent2)/2), 1)
             cross_over2 = random.randrange(int(len(parent2)/2), int(len(parent2)), 1)
             child = parent1[:cross_over]
@@ -265,9 +318,9 @@ class Genetic_learner(AaLearner):
 
         for idx in range(iterations):
             if len(self.history) < self.num_offspring:
-                policy = [self.gen_random_subpol()]
+                policy = [self._gen_random_subpol()]
             else:
-                policy = self.bin_to_subpol(random.choice(self.generate_children()))
+                policy = self._bin_to_subpol(random.choice(self._enerate_children()))
             
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
