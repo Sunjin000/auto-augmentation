@@ -13,6 +13,13 @@ This documentation was written using the documentation system described here_.
    installation/installation
 
 
+.. toctree::
+   :maxdepth: 4
+   :caption: Explanations (of the theory behind the learners):
+
+   explanation/problem_setting
+   explanation/learners_theory
+
 
 .. toctree::
    :maxdepth: 4
@@ -28,17 +35,10 @@ This documentation was written using the documentation system described here_.
    howto/AutoAugment
 
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Explanations (of the theory behind the learners):
-
-   explanation/problem_setting
-   explanation/learners_theory
-
 
 .. toctree::
    :maxdepth: 4
-   :caption: API Reference (Technical specifications):
+   :caption: API References (Technical specifications):
 
    reference/autoaugment_learners
 

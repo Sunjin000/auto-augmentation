@@ -32,6 +32,9 @@ class AaLearner:
                         controller (A controller can be a neural network, genetic
                         algorithm, etc.). Defaults to False
 
+        exclude_method (list, optional): list of names(:type:str) of image operations
+                        the user wants to exclude from the search space. Defaults to [].
+
         batch_size (int, optional): child_network training parameter. Defaults to 32.
 
         toy_size (int, optional): child_network training parameter. ratio of original
@@ -43,9 +46,6 @@ class AaLearner:
                             Defaults to float('inf').
 
         early_stop_num (int, optional): child_network training parameter. Defaults to 20.
-
-        exclude_method (list, optional): list of names(:type:str) of image operations
-                        the user wants to exclude from the search space. Defaults to [].
 
     
     Attributes:
