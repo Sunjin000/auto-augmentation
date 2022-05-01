@@ -167,17 +167,17 @@ child_network_architecture = cn.LeNet(
                                     img_channels=3
                                     )
 
-save_dir='./benchmark/pickles/04_22_cf_ln_rssad'
+# save_dir='./benchmark/pickles/04_22_cf_ln_rssad'
 
 # # evo
-run_benchmark(
-    save_file=save_dir+'.pkl',
-    train_dataset=train_dataset,
-    test_dataset=test_dataset,
-    child_network_architecture=child_network_architecture,
-    agent_arch=aal.EvoLearner,
-    config=config,
-    )
+# run_benchmark(
+#     save_file=save_dir+'.pkl',
+#     train_dataset=train_dataset,
+#     test_dataset=test_dataset,
+#     child_network_architecture=child_network_architecture,
+#     agent_arch=aal.EvoLearner,
+#     config=config,
+#     )
 
 # # rerun_best_policy(
 # #     agent_pickle=save_dir+'.pkl',
@@ -191,19 +191,22 @@ run_benchmark(
 
 
 
-megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
+# megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
+
+megapol = [(('Equalize', 0.5, None), ('TranslateX', 0.5, 9)), (('Equalize', 0.5, None), ('TranslateX', 0.5, 8)), (('TranslateY', 0.5, 6), ('Brightness', 0.5, 6)), (('ShearY', 0.9, 5), ('Rotate', 0.5, 5)), (('TranslateX', 0.6, 5), ('Color', 1.0, 5))]
 
 
-# accs=[]
-# for _ in range(10):
-#     print(f'{_}/{10}')
-#     temp_agent = aal.EvoLearner(**config)
-#     accs.append(
-#             temp_agent._test_autoaugment_policy(megapol,
-#                                 child_network_architecture,
-#                                 train_dataset,
-#                                 test_dataset,
-#                                 logging=False)
-#                 )
 
-# print("CIPHAR10 accs: ", accs)
+accs=[]
+for _ in range(10):
+    print(f'{_}/{10}')
+    temp_agent = aal.EvoLearner(**config)
+    accs.append(
+            temp_agent._test_autoaugment_policy(megapol,
+                                child_network_architecture,
+                                train_dataset,
+                                test_dataset,
+                                logging=False)
+                )
+
+print("CIPHAR10 accs: ", accs)
