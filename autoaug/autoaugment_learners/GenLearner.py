@@ -6,6 +6,58 @@ import random
 
 
 class Genetic_learner(AaLearner):
+    """Evolutionary Strategy learner
+    
+    This learner generates neural networks that predict optimal augmentation
+    policies. Hence, there is no backpropagation or gradient descent. Instead,
+    training is done by randomly changing weights of the 'parent' networks, where
+    parents are determined by their ability to produce policies that 
+    increase the accuracy of the child network.
+
+    Args:
+        sp_num: int, default 5
+            Number of subpolicies to keep in the final policy
+
+        p_bins: int, default 1
+            Number of probability bins for the controller network.
+
+        m_bins: int, default 1
+            Number of magnitude bins for the controller network
+
+        discrete_p_m: bool, default False
+            Boolean value to set if there are discrete or continuous
+            probability and mangitude bins (if False; p_bins, m_bins = 1)
+
+        exclude_method: list, default []
+            List of augmentations to be excluded from the search space
+
+        learning_rate: float, default 1e-6
+            Learning rate of the child network
+
+        max_epochs: float, default float('inf')
+            Theoretical maximum number of epochs that the child network 
+            can be trained on 
+
+        early_stop_num: int, default 20
+            Criteria for early stopping. I.e. if the network has not improved 
+            after early_stop_num iterations, the training is stopped
+
+        batch_size: int, default 8
+            Batch size for the datasets
+
+        toy_size: float, default 1
+            If a toy dataset is created, it will be of size toy_size compared
+            to the original dataset
+
+        num_offsprings: int, default 1
+    
+
+    Examples
+    --------
+    from autoaug.autoaugment_learners.GenLearner import GenLearner
+    evo_learner = GenLearner()
+
+    """
 
     def __init__(self, 
                 # search space settings

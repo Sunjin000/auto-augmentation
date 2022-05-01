@@ -6,7 +6,7 @@ import torchvision
 
 import autoaug.child_networks as cn
 from autoaug.autoaugment_learners.AaLearner import AaLearner
-from autoaug.autoaugment_learners.GenLearner import Genetic_learner
+from autoaug.autoaugment_learners.GenLearner import GenLearner
 
 import random
 import pickle
@@ -38,7 +38,7 @@ child_network_architecture = cn.LeNet(
                                     img_channels=3
                                     )
 
-agent = Genetic_learner(
+agent = GenLearner(
                             sp_num=2,
                             toy_size=0.01,
                             batch_size=4,

@@ -5,8 +5,6 @@ How to apply AutoAugment image augmentation policies to a ``torchvision.datasets
 This is a page dedicated to demonstrating functionalities of :class:`AutoAugment`, which
 we use as a helper class to help us apply AutoAugment policies to datasets.
 
-This is a tutorial (in the sense describe in https://documentation.divio.com/structure/).
-
 For an example of how the material is used in our library, see the source code of
 :meth:`AaLearner._test_autoaugment_policy <autoaug.autoaugment_learners.AaLearner>`.
 

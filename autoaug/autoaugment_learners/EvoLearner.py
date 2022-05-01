@@ -19,9 +19,6 @@ class EvoLearner(AaLearner):
     increase the accuracy of the child network.
 
     Args:
-        AaLearner: 
-            Base class of all-auto augmentation learners.
-    
         sp_num: int, default 5
             Number of subpolicies to keep in the final policy
 
@@ -37,8 +34,6 @@ class EvoLearner(AaLearner):
 
         exclude_method: list, default []
             List of augmentations to be excluded from the search space
-
-        (Child Network Args)
 
         learning_rate: float, default 1e-6
             Learning rate of the child network
@@ -58,8 +53,6 @@ class EvoLearner(AaLearner):
             If a toy dataset is created, it will be of size toy_size compared
             to the original dataset
 
-        (Evolutionary learner specific settings)
-
         num_solutions: int, default 5
             Number of offspring spawned at each generation of the algorithm 
 
@@ -70,18 +63,10 @@ class EvoLearner(AaLearner):
             Controller network for the evolutionary algorithm
 
 
-    See Also
-    --------
-
-
     Notes
     -----
     The Evolutionary algorithm runs in generations, and so batches of child networks
     are trained at specific time intervals.
-
-
-    References
-    ----------
 
     
 

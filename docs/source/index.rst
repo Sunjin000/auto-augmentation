@@ -16,20 +16,24 @@ This documentation was written using the documentation system described here_.
 
 .. toctree::
    :maxdepth: 4
-   :caption: Explanations (of the theory behind the learners):
+   :caption: Tutorials (for accomplishing common goals):
 
-   explanation/problem_setting
-   explanation/learners_theory
-
+   tutorial/AaLearner
 
 
 .. toctree::
    :maxdepth: 4
    :caption: How-to's (for accomplishing common goals):
 
-   howto/AaLearner
    howto/AutoAugment
 
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Explanations (of the theory behind the learners):
+
+   explanation/problem_setting
+   explanation/learners_theory
 
 
 .. toctree::
