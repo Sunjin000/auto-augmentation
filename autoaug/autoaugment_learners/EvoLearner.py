@@ -108,13 +108,13 @@ class EvoLearner(AaLearner):
                     exclude_method=exclude_method
                     )
 
-        # evolutionary algorithm settings
         self.controller = controller(
-                        fun_num=self.fun_num, 
+                        # fun_num=self.fun_num, 
                         p_bins=self.p_bins, 
                         m_bins=self.m_bins, 
                         sub_num_pol=self.sp_num
                         )
+
         # self.controller = controller
 
         self.num_solutions = num_solutions
@@ -126,6 +126,9 @@ class EvoLearner(AaLearner):
         self.policy_dict = {}
 
         self.running_policy = []
+
+        self.fun_num = len(self.augmentation_space)
+        # evolutionary algorithm settings
 
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'

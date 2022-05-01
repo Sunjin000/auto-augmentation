@@ -155,11 +155,23 @@ def rerun_best_policy(
 
 
 # # CIFAR10 with LeNet
-train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
-                        train=True, download=True, transform=None)
-test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
-                        train=False, download=True, 
+# train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+#                         train=True, download=True, transform=None)
+# test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
+#                         train=False, download=True, 
+#                         transform=torchvision.transforms.ToTensor())
+
+
+
+train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
+                            train=True, download=True, transform=torchvision.transforms.ToTensor())
+test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
+                        train=False, download=True,
                         transform=torchvision.transforms.ToTensor())
+
+
+
+
 child_network_architecture = cn.LeNet(
                                     img_height=32,
                                     img_width=32,
@@ -193,8 +205,13 @@ child_network_architecture = cn.LeNet(
 
 # megapol = [(('ShearY', 0.5, 5), ('Posterize', 0.6, 5)), (('Color', 1.0, 9), ('Contrast', 1.0, 9)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('TranslateX', 0.5, 5), ('Posterize', 0.5, 5)), (('Color', 0.5, 5), ('Posterize', 0.5, 5))]
 
-megapol = [(('Equalize', 0.5, None), ('TranslateX', 0.5, 9)), (('Equalize', 0.5, None), ('TranslateX', 0.5, 8)), (('TranslateY', 0.5, 6), ('Brightness', 0.5, 6)), (('ShearY', 0.9, 5), ('Rotate', 0.5, 5)), (('TranslateX', 0.6, 5), ('Color', 1.0, 5))]
+# Evo learner CIPHAR:  [0.6046000123023987, 0.6050999760627747, 0.5861999988555908, 0.5936999917030334, 0.5949000120162964, 0.5791000127792358, 0.6000999808311462, 0.6017000079154968, 0.5983999967575073, 0.5885999798774719]
+# megapol = [(('Equalize', 0.5, None), ('TranslateX', 0.5, 9)), (('Equalize', 0.5, None), ('TranslateX', 0.5, 8)), (('TranslateY', 0.5, 6), ('Brightness', 0.5, 6)), (('ShearY', 0.9, 5), ('Rotate', 0.5, 5)), (('TranslateX', 0.6, 5), ('Color', 1.0, 5))]
 
+
+
+# Genetic learner FASHION
+megapol = [(('Brightness', 0.6, 1), ('Color', 0.2, 9)), (('Brightness', 0.6, 7), ('Color', 0.2, 9)), (('AutoContrast', 0.9, None), ('Invert', 0.0, None)), (('Sharpness', 0.9, 3), ('AutoContrast', 0.9, None)), (('Brightness', 0.6, 3), ('Color', 0.2, 9))]
 
 
 accs=[]
