@@ -3,6 +3,7 @@ import torch
 import autoaug.child_networks as cn
 from autoaug.autoaugment_learners.AaLearner import AaLearner
 import random
+from pprint import pprint
 
 
 class GenLearner(AaLearner):
@@ -303,12 +304,15 @@ class GenLearner(AaLearner):
             if len(self.history) < self.num_offspring:
                 policy = [self._gen_random_subpol()]
             else:
-                policy = self._bin_to_subpol(random.choice(self._enerate_children()))
-            
+                policy = self._bin_to_subpol(random.choice(self._generate_children()))
+            print('testing now@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            print('testing now@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            pprint(policy)
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
-                                                test_dataset)  
+                                                test_dataset,
+                                                print_every_epoch=True)  
 
 
 

@@ -25,7 +25,7 @@ def test_GenLearner():
                 max_epochs=float('inf'),
                 early_stop_num=10,
                 # Genetic learner specific settings
-                num_offspring=5
+                num_offspring=1
     )
 
     # learn on the 3 policies we generated
@@ -33,7 +33,7 @@ def test_GenLearner():
         train_dataset=train_dataset,
         test_dataset=test_dataset,
         child_network_architecture=child_network_architecture,
-        iterations=3
+        iterations=3,
         )
 
 

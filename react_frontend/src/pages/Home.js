@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid, RadioGroup, FormControlLabel, FormControl, FormLabel, Radio, Card, CardContent, Typography, AlertTitle } from '@mui/material';
-import {Button, TextField, Checkbox, Alert} from '@mui/material';
+import {Button, TextField, Checkbox, Alert, Box} from '@mui/material';
 import { useForm, Controller} from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send';
 import { CardActions, Collapse, IconButton } from "@mui/material";
@@ -237,6 +237,11 @@ export default function Home() {
                                 <FormLabel id="select_learner" align="left" variant="h6">
                                     Please select the auto-augment learners you'd like to use (multiple learners can be selected)
                                 </FormLabel>
+                                <Box 
+                                    display="flex" 
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
                                 <Controller 
                                         name='select_learner'
                                         control={control}
@@ -254,8 +259,10 @@ export default function Home() {
                                         <FormControlLabel value="Evolutionary learner" control={<Radio />} label="Evolutionary learner" />
                                         <FormControlLabel value="Random Searcher" control={<Radio />} label="Random Searcher" />
                                         <FormControlLabel value="GRU Learner" control={<Radio />} label="GRU Learner" /> 
+                                        <FormControlLabel value="Genetic Learner" control={<Radio />} label="Genetic Learner" />
                                     </RadioGroup> )}
                                 />
+                                </Box>
                                 {errors.select_learner && errors.select_learner.type === "required" && 
                                     <Alert severity="error">
                                         <AlertTitle>This field is required</AlertTitle>
