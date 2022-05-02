@@ -166,12 +166,13 @@ def training():
                                         )
 
     # train the autoaugment learner for number of `iterations`
-    agent.learn(
-        train_dataset=train_dataset, 
-        test_dataset=test_dataset, 
-        child_network_architecture=child_archi,
-        iterations=data['iterations']
-        ) 
+    while len(agent.history)<data['iterations']:
+        agent.learn(
+            train_dataset=train_dataset, 
+            test_dataset=test_dataset, 
+            child_network_architecture=child_archi,
+            iterations=1
+            ) 
     
     print('the history of all the policies the agent has tested:')
     pprint.pprint(agent.history)
@@ -188,8 +189,9 @@ def training():
     # plot both here
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot(acc_list)
-    ax.plot(best_acc_list)
+    ax.plot(acc_list, label="accuracy of the current iteration")
+    ax.plot(best_acc_list, label='best accuracy so far')
+    ax.legend()
     ax.set_xlabel('Number of Iterations')
     ax.set_ylabel('Accuracy')
     ax.set_title('Auto-augmentation Learner Performance Curve')

@@ -311,8 +311,7 @@ class GenLearner(AaLearner):
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
-                                                test_dataset,
-                                                print_every_epoch=True)  
+                                                test_dataset,)  
 
 
 

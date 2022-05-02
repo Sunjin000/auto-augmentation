@@ -163,7 +163,6 @@ class UcbLearner(RsLearner):
                                 child_network_architecture,
                                 train_dataset,
                                 test_dataset,
-                                logging=False,
                                 )
                 # update q_values (average accuracy)
                 self.avg_accs[this_policy_idx] = acc

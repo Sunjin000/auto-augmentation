@@ -74,7 +74,6 @@ def parse_users_learner_spec(
                         max_epochs=max_epochs,
                         early_stop_num=early_stop_num,
                         )
-        learner.run_instance()
     elif auto_aug_learner == 'Random Searcher':
         learner = aal.RsLearner(
                         # parameters that define the search space
