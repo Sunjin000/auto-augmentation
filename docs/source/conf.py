@@ -94,7 +94,7 @@ html_theme_options = {
 }
 
 # logo
-html_logo = "_static/logohd.png"
+html_logo = "_static/newlogo.png"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

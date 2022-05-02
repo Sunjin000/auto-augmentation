@@ -45,6 +45,10 @@ optimal image augmentation policy for.
                             )
 
 
+We have used a dataset provided by the ``torchvision`` package
+above, but you can use whatever ``torchvision.datasets.VisionDataset`` you want.
+
+
 .. code-block::
     :caption: Defining our child network architecture.
 
@@ -53,6 +57,10 @@ optimal image augmentation policy for.
     # child_network_architecture = cn.LeNet()
     # or 
     # child_network_architecture = lambda _ : cn.LeNet()
+
+
+We have used a child network archietcture (LeNet) provided by our package
+above, but you can use whatever architecture of ``nn.Module`` you want.
 
 
 .. Note:: 

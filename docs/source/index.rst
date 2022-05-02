@@ -8,9 +8,19 @@ This documentation was written using the documentation system described here_.
 
 .. toctree::
    :maxdepth: 4
-   :caption: Installation:
+   :caption: Introduction:
 
    installation/installation
+   explanation/problem_setting
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Tutorials (for accomplishing common goals):
+
+   tutorial/AaLearner
+   tutorial/AutoAugment
+
 
 
 .. toctree::
@@ -19,21 +29,6 @@ This documentation was written using the documentation system described here_.
 
    explanation/problem_setting
    explanation/learners_theory
-
-
-.. toctree::
-   :maxdepth: 4
-   :caption: Tutorials (for accomplishing common goals):
-
-   tutorial/AaLearner
-
-
-.. toctree::
-   :maxdepth: 4
-   :caption: How-to's (for accomplishing common goals):
-
-   howto/AutoAugment
-
 
 
 .. toctree::
