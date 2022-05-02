@@ -50,7 +50,7 @@ def train_child_network(child_network,
                         early_stop_flag=True,
                         average_validation=[15,25],
                         logging=False,
-                        print_every_epoch=False):
+                        print_every_epoch=True):
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -125,8 +125,8 @@ def train_child_network(child_network,
             best_acc = total_val / (average_validation[1] - average_validation[0] + 1)
             break
         
-        # if print_every_epoch:
-        #     print('main.train_child_network best accuracy: ', best_acc)
+        if print_every_epoch:
+            print('main.train_child_network best accuracy: ', best_acc)
         acc_log.append(acc)
 
         _epoch+=1

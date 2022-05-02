@@ -380,6 +380,7 @@ class AaLearner:
                             a <function> or a <torch.nn.Module>. Type of : ',
                             child_network_architecture, ': ' ,
                             type(child_network_architecture))
+        
 
         # We need to define an object aa_transform which takes in the image and 
         # transforms it with the policy (specified in its .policies attribute)

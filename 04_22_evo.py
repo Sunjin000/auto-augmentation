@@ -6,7 +6,10 @@ import autoaug.child_networks as cn
 import autoaug.autoaugment_learners as aal
 
 
-controller = cn.EasyNet(img_height=32, img_width=32, num_labels=16*10, img_channels=3)
+controller = cn.EasyNet(img_height=28, img_width=28, num_labels=16*2, img_channels=1)
+
+
+
 
 config = {
         'sp_num' : 5,
@@ -17,9 +20,6 @@ config = {
         'controller' : controller,
         'num_solutions' : 10,
         }
-
-
-
 
 import torch
 
@@ -172,24 +172,34 @@ test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test',
 
 
 
-child_network_architecture = cn.LeNet(
-                                    img_height=32,
-                                    img_width=32,
+# child_network_architecture = cn.LeNet(
+#                                     img_height=32,
+#                                     img_width=32,
+#                                     num_labels=10,
+#                                     img_channels=3
+#                                     )
+
+
+child_network_architecture = cn.EasyNet(
+                                    img_height=28,
+                                    img_width=28,
                                     num_labels=10,
-                                    img_channels=3
+                                    img_channels=1
                                     )
 
-# save_dir='./benchmark/pickles/04_22_cf_ln_rssad'
+
+save_dir='./benchmark/pickles/04_22_cf_ln_rssadasdsad'
 
 # # evo
-# run_benchmark(
-#     save_file=save_dir+'.pkl',
-#     train_dataset=train_dataset,
-#     test_dataset=test_dataset,
-#     child_network_architecture=child_network_architecture,
-#     agent_arch=aal.EvoLearner,
-#     config=config,
-#     )
+run_benchmark(
+    save_file=save_dir+'.pkl',
+    train_dataset=train_dataset,
+    test_dataset=test_dataset,
+    child_network_architecture=child_network_architecture,
+    agent_arch=aal.EvoLearner,
+    # agent_arch=aal.GenLearner,
+    config=config,
+    )
 
 # # rerun_best_policy(
 # #     agent_pickle=save_dir+'.pkl',
@@ -210,20 +220,20 @@ child_network_architecture = cn.LeNet(
 
 
 
-# Genetic learner FASHION
-megapol = [(('Brightness', 0.6, 1), ('Color', 0.2, 9)), (('Brightness', 0.6, 7), ('Color', 0.2, 9)), (('AutoContrast', 0.9, None), ('Invert', 0.0, None)), (('Sharpness', 0.9, 3), ('AutoContrast', 0.9, None)), (('Brightness', 0.6, 3), ('Color', 0.2, 9))]
+# Genetic learner FASHION   [0.8870999813079834, 0.8906000256538391, 0.8853999972343445, 0.8866000175476074, 0.8924000263214111, 0.8889999985694885, 0.8859999775886536, 0.8910999894142151, 0.8871999979019165, 0.8848000168800354]
+# megapol = [(('Brightness', 0.6, 1), ('Color', 0.2, 9)), (('Brightness', 0.6, 7), ('Color', 0.2, 9)), (('AutoContrast', 0.9, None), ('Invert', 0.0, None)), (('Sharpness', 0.9, 3), ('AutoContrast', 0.9, None)), (('Brightness', 0.6, 3), ('Color', 0.2, 9))]
 
 
-accs=[]
-for _ in range(10):
-    print(f'{_}/{10}')
-    temp_agent = aal.EvoLearner(**config)
-    accs.append(
-            temp_agent._test_autoaugment_policy(megapol,
-                                child_network_architecture,
-                                train_dataset,
-                                test_dataset,
-                                logging=False)
-                )
+# accs=[]
+# for _ in range(10):
+#     print(f'{_}/{10}')
+#     temp_agent = aal.EvoLearner(**config)
+#     accs.append(
+#             temp_agent._test_autoaugment_policy(megapol,
+#                                 child_network_architecture,
+#                                 train_dataset,
+#                                 test_dataset,
+#                                 logging=False)
+#                 )
 
-print("CIPHAR10 accs: ", accs)
+# print("CIPHAR10 accs: ", accs)

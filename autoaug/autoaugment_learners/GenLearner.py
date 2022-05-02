@@ -116,6 +116,7 @@ class GenLearner(AaLearner):
         self.aug_to_bin = dict((value, key) for key, value in self.bin_to_aug.items())
 
         self.num_offspring = num_offspring
+        self.pol_dict = {}
 
 
     def _gen_random_subpol(self):
@@ -259,6 +260,25 @@ class GenLearner(AaLearner):
         return (parent1, parent2)
 
     
+
+    def _in_policy_dict(self, policy):
+        
+        for subpol in policy:
+            first_trans, first_prob, first_mag = subpol[0]
+            second_trans, second_prob, second_mag = subpol[1]
+            components = (first_prob, first_mag, second_prob, second_mag)
+            if first_trans in self.pol_dict:
+                if second_trans in self.pol_dict[first_trans]:
+                    if components in self.pol_dict[first_trans][second_trans]:
+                        return True
+                    else:
+                        self.pol_dict[first_trans][second_trans].append(components)
+                        return False
+            else:
+                self.pol_dict[first_trans]= {second_trans: [components]}
+                return False
+
+
     def _generate_children(self):
         """
         Generates children via the random crossover method
@@ -271,7 +291,7 @@ class GenLearner(AaLearner):
         parents = [x[0] for x in parent_acc]
         parents_weights = [x[1] for x in parent_acc]
         new_pols = []
-        for _ in range(self.num_offspring):
+        for _ in range(1):
             parent1, parent2 = self._choose_parents(parents, parents_weights)
             cross_over = random.randrange(1, int(len(parent2)/2), 1)
             cross_over2 = random.randrange(int(len(parent2)/2), int(len(parent2)), 1)
@@ -303,8 +323,12 @@ class GenLearner(AaLearner):
             if len(self.history) < self.num_offspring:
                 policy = [self._gen_random_subpol()]
             else:
-                policy = self._bin_to_subpol(random.choice(self._enerate_children()))
-            
+                policy = self._bin_to_subpol(random.choice(self._generate_children()))
+                while self._in_policy_dict(policy):
+                    policy = [self._gen_random_subpol()]
+            print("policy: ", policy)
+
+
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,
                                                 train_dataset,
