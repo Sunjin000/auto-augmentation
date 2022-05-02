@@ -52,8 +52,6 @@ def parse_users_learner_spec(
         learner = aal.UcbLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
-                        p_bins=11,
-                        m_bins=10,
                         exclude_method=exclude_method,
                         # hyperparameters for when training the child_network
                         batch_size=batch_size,
@@ -68,8 +66,6 @@ def parse_users_learner_spec(
         learner = aal.EvoLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
-                        p_bins=11,
-                        m_bins=10,
                         exclude_method=exclude_method,
                         # hyperparameters for when training the child_network
                         batch_size=batch_size,
@@ -83,8 +79,6 @@ def parse_users_learner_spec(
         learner = aal.RsLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
-                        p_bins=11,
-                        m_bins=10,
                         exclude_method=exclude_method,
                         # hyperparameters for when training the child_network
                         batch_size=batch_size,
@@ -97,8 +91,18 @@ def parse_users_learner_spec(
         learner = aal.GruLearner(
                         # parameters that define the search space
                         sp_num=num_sub_policies,
-                        p_bins=11,
-                        m_bins=10,
+                        exclude_method=exclude_method,
+                        # hyperparameters for when training the child_network
+                        batch_size=batch_size,
+                        toy_size=toy_size,
+                        learning_rate=learning_rate,
+                        max_epochs=max_epochs,
+                        early_stop_num=early_stop_num,
+                        )
+    elif auto_aug_learner == 'Genetic Learner':
+        learner = aal.GenLearner(
+                        # parameters that define the search space
+                        sp_num=num_sub_policies,
                         exclude_method=exclude_method,
                         # hyperparameters for when training the child_network
                         batch_size=batch_size,
