@@ -16,7 +16,7 @@ class UcbLearner(RsLearner):
     - Using a toy dataset or a toy CNN
 
     Args:
-        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+        num_sub_policies (int, optional): number of subpolicies per policy. Defaults to 5.
 
         p_bins (int, optional): number of bins we divide the interval [0,1] for 
                         probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
@@ -78,7 +78,7 @@ class UcbLearner(RsLearner):
     """
     def __init__(self,
                 # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 exclude_method=[],
@@ -93,7 +93,7 @@ class UcbLearner(RsLearner):
                 ):
         
         super().__init__(
-                        sp_num=sp_num, 
+                        num_sub_policies=num_sub_policies, 
                         p_bins=p_bins, 
                         m_bins=m_bins, 
                         batch_size=batch_size,
@@ -273,6 +273,6 @@ if __name__=='__main__':
     early_stop_flag = True        # implement early stopping or not
     average_validation = [15,25]  # if not implementing early stopping, what epochs are we averaging over
     num_policies = 5      # fix number of policies
-    sp_num = 5  # fix number of sub-policies in a policy
+    num_sub_policies = 5  # fix number of sub-policies in a policy
     iterations = 100      # total iterations, should be more than the number of policies
     IsLeNet = "SimpleNet" # using LeNet or EasyNet or SimpleNet

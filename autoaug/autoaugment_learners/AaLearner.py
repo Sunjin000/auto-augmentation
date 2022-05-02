@@ -18,7 +18,7 @@ class AaLearner:
     Contains utility methods that child AaLearner's use. 
 
     Args:
-        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+        num_sub_policies (int, optional): number of subpolicies per policy. Defaults to 5.
 
         p_bins (int, optional): number of bins we divide the interval [0,1] for 
                         probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
@@ -60,7 +60,7 @@ class AaLearner:
 
     def __init__(self, 
                 # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=False,
@@ -74,7 +74,7 @@ class AaLearner:
                 ):
         
         # related to defining the search space
-        self.sp_num = sp_num
+        self.num_sub_policies = num_sub_policies
         self.p_bins = p_bins
         self.m_bins = m_bins
         self.discrete_p_m = discrete_p_m

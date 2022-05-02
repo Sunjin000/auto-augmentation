@@ -48,7 +48,7 @@ child_network_architecture = cn.LeNet(
                                     )
 
 agent = GenLearner(
-                            sp_num=2,
+                            num_sub_policies=2,
                             toy_size=0.01,
                             batch_size=4,
                             learning_rate=0.05,

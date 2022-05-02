@@ -10,7 +10,7 @@ from .util_04_22 import *
 
 # AaLearner config
 config = {
-        'sp_num' : 3,
+        'num_sub_policies' : 3,
         'learning_rate' : 1e-1,
 #         'toy_size' : 0.001,
         'batch_size' : 32,

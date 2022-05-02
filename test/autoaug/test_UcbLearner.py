@@ -15,7 +15,7 @@ def test_ucb_learner():
 
     learner = aal.UcbLearner(
         # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 # hyperparameters for when training the child_network

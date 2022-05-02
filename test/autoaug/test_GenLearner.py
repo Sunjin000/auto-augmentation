@@ -14,7 +14,7 @@ def test_GenLearner():
 
     learner1 = aal.GenLearner(
         # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 exclude_method=['ShearX'],
@@ -40,7 +40,7 @@ def test_GenLearner():
     
     learner2 = aal.GenLearner(
         # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 exclude_method=['ShearX'],

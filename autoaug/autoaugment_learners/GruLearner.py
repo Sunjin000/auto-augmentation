@@ -25,7 +25,7 @@ class GruLearner(AaLearner):
     the LSTM for the GRU.
 
     Args:
-        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+        num_sub_policies (int, optional): number of subpolicies per policy. Defaults to 5.
 
         p_bins (int, optional): number of bins we divide the interval [0,1] for 
                         probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
@@ -86,7 +86,7 @@ class GruLearner(AaLearner):
 
     def __init__(self,
                 # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 exclude_method=[],
@@ -102,7 +102,7 @@ class GruLearner(AaLearner):
                 cont_lr=0.03):
         
         super().__init__(
-                sp_num=sp_num, 
+                num_sub_policies=num_sub_policies, 
                 p_bins=p_bins, 
                 m_bins=m_bins, 
                 discrete_p_m=True, 
@@ -137,7 +137,7 @@ class GruLearner(AaLearner):
         contains information regarding which 'image function' to use,
         which value of 'probability(prob)' and 'magnitude(mag)' to use.
 
-        We run the GRU for 2*self.sp_num timesteps to obtain 2*self.sp_num
+        We run the GRU for 2*self.num_sub_policies timesteps to obtain 2*self.num_sub_policies
         of such tensors.
 
         We then softmax the parts of the tensor which represents the
@@ -170,8 +170,8 @@ class GruLearner(AaLearner):
         # we need a random input to put in
         random_input = torch.zeros(self.op_tensor_length, requires_grad=False)
 
-        # 2*self.sp_num because we need 2 operations for every subpolicy
-        vectors = self.controller(input=random_input, time_steps=2*self.sp_num)
+        # 2*self.num_sub_policies because we need 2 operations for every subpolicy
+        vectors = self.controller(input=random_input, time_steps=2*self.num_sub_policies)
 
         # softmax the funcion vector, probability vector, and magnitude vector
         # of each timestep
@@ -186,7 +186,7 @@ class GruLearner(AaLearner):
             
         new_policy = []
 
-        for subpolicy_idx in range(self.sp_num):
+        for subpolicy_idx in range(self.num_sub_policies):
             # the vector corresponding to the first operation of this subpolicy
             op1 = softmaxed_vectors[2*subpolicy_idx]
             # the vector corresponding to the second operation of this subpolicy
@@ -266,7 +266,7 @@ if __name__=='__main__':
     # child_network_architecture = cn.lenet()
 
     agent = GruLearner(
-                        sp_num=7,
+                        num_sub_policies=7,
                         toy_size=0.01,
                         batch_size=32,
                         learning_rate=0.1,

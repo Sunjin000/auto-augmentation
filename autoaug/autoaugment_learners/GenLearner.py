@@ -11,7 +11,7 @@ class GenLearner(AaLearner):
     
 
     Args:
-        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+        num_sub_policies (int, optional): number of subpolicies per policy. Defaults to 5.
 
         p_bins (int, optional): number of bins we divide the interval [0,1] for 
                         probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 11.
@@ -46,7 +46,7 @@ class GenLearner(AaLearner):
 
     def __init__(self, 
                 # search space settings
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11, 
                 m_bins=10,
                 exclude_method=[],
@@ -61,7 +61,7 @@ class GenLearner(AaLearner):
                 ):
 
         super().__init__(
-                    sp_num=sp_num, 
+                    num_sub_policies=num_sub_policies, 
                     p_bins=p_bins, 
                     m_bins=m_bins, 
                     discrete_p_m=True, 
@@ -150,14 +150,14 @@ class GenLearner(AaLearner):
 
     def _gen_random_policy(self):
         """
-        Generates a random policy, consisting of sp_num subpolicies
+        Generates a random policy, consisting of num_sub_policies subpolicies
 
         Returns
         ------------
         policy -> [subpolicy, subpolicy, ...]
         """
         pol = []
-        for _ in range(self.sp_num):
+        for _ in range(self.num_sub_policies):
             pol.append(self._gen_random_subpol())
         return pol
 

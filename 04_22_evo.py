@@ -12,7 +12,7 @@ controller = cn.EasyNet(img_height=28, img_width=28, num_labels=16*2, img_channe
 
 
 config = {
-        'sp_num' : 5,
+        'num_sub_policies' : 5,
         'learning_rate' : 1e-1,
         'batch_size' : 32,
         'max_epochs' : 100,

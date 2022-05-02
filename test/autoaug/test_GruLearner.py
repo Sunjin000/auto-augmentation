@@ -9,16 +9,16 @@ import random
 def test__generate_new_policy():
     """
     make sure GruLearner._generate_new_policy() is robust
-    with respect to different values of sp_num, fun_num, 
+    with respect to different values of num_sub_policies, fun_num, 
     p_bins, and m_bins
     """
     for _ in range(40):
-        sp_num = random.randint(1,20)
+        num_sub_policies = random.randint(1,20)
         p_bins = random.randint(2, 15)
         m_bins = random.randint(2, 15)
 
         agent = aal.GruLearner(
-            sp_num=sp_num,
+            num_sub_policies=num_sub_policies,
             p_bins=p_bins,
             m_bins=m_bins,
             cont_mb_size=2
@@ -41,7 +41,7 @@ def test_learn():
     # child_network_architecture = cn.lenet()
 
     agent = aal.GruLearner(
-                        sp_num=7,
+                        num_sub_policies=7,
                         toy_size=0.001,
                         batch_size=32,
                         learning_rate=0.05,

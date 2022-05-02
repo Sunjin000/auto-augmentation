@@ -19,7 +19,7 @@ class EvoLearner(AaLearner):
     increase the accuracy of the child network.
 
     Args:
-        sp_num (int, optional): number of subpolicies per policy. Defaults to 5.
+        num_sub_policies (int, optional): number of subpolicies per policy. Defaults to 5.
 
         p_bins (int, optional): number of bins we divide the interval [0,1] for 
                         probabilities. e.g. (0.0, 0.1, ... 1.0) Defaults to 1.
@@ -67,7 +67,7 @@ class EvoLearner(AaLearner):
     """
     def __init__(self, 
                 # search space settings
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=1, 
                 m_bins=1,
                 exclude_method=[],
@@ -83,7 +83,7 @@ class EvoLearner(AaLearner):
                 controller=cont_n.EvoController
                 ):
         super().__init__(
-                    sp_num=sp_num, 
+                    num_sub_policies=num_sub_policies, 
                     p_bins=p_bins, 
                     m_bins=m_bins, 
                     discrete_p_m=False, 
@@ -99,7 +99,7 @@ class EvoLearner(AaLearner):
                         fun_num=self.fun_num, 
                         p_bins=self.p_bins, 
                         m_bins=self.m_bins, 
-                        sub_num_pol=self.sp_num
+                        sub_num_pol=self.num_sub_policies
                         )
 
         # self.controller = controller
@@ -315,9 +315,9 @@ class EvoLearner(AaLearner):
 
             self.running_policy.append((sub_pol, fit_val))
 
-            if len(self.running_policy) > self.sp_num:
+            if len(self.running_policy) > self.num_sub_policies:
                 self.running_policy = sorted(self.running_policy, key=lambda x: x[1], reverse=True)
-                self.running_policy = self.running_policy[:self.sp_num]
+                self.running_policy = self.running_policy[:self.num_sub_policies]
 
 
             if len(self.history_best) == 0:

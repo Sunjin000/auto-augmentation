@@ -15,7 +15,7 @@ def test_evo_learner():
 
     learner = aal.EvoLearner(
         # parameters that define the search space
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 exclude_method=['ShearX'],

@@ -30,7 +30,7 @@ def test__translate_operation_tensor():
         m_bins = random.randint(2, 15)
         
         agent = aal.AaLearner(
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=p_bins,
                 m_bins=m_bins,
                 discrete_p_m=True
@@ -58,7 +58,7 @@ def test__translate_operation_tensor():
         m_bins = random.randint(1, 15)
 
         agent = aal.AaLearner(
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=p_bins,
                 m_bins=m_bins,
                 discrete_p_m=False
@@ -78,7 +78,7 @@ def test__translate_operation_tensor():
 
 def test__test_autoaugment_policy():
     agent = aal.AaLearner(
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 discrete_p_m=True,
@@ -158,7 +158,7 @@ def test_exclude_method():
 def test_get_mega_policy():
 
     agent = aal.RsLearner(
-                sp_num=5,
+                num_sub_policies=5,
                 p_bins=11,
                 m_bins=10,
                 toy_size=0.002,

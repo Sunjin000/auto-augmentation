@@ -95,7 +95,7 @@ shared by all :class:`AaLearner`'s. Let us choose some here:
 
     search_space_hyp = {
             # number of subpolicies per policy
-            sp_num=5, 
+            num_sub_policies=5, 
             # number of bins for probability
             p_bins=10, 
             # number of bins for magnitude
