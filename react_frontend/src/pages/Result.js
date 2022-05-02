@@ -1,30 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Paper, Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
+import { Grid, Paper, Card, CardContent, Typography, Button, CardMedia, Box } from '@mui/material';
 import output from './output.png'
 import {useNavigate, Route} from "react-router-dom";
 import axios from 'axios'
 import fileDownload from 'js-file-download'
-import policy from './policy.txt'
 
-function readTextFile(file)
-{
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                alert(allText);
-            }
-        }
-    }
-    rawFile.send(null);
-}
-const policy_txt = readTextFile("./policy.txt");
-console.log('policy_txt',policy_txt)
 
 export default function Result() {
 
@@ -50,26 +30,21 @@ export default function Result() {
                     <Typography gutterBottom variant="h5" align="left">
                         Here are the results from our auto-augment agent:
                     </Typography>
-                    <Grid style={{padding:"30px"}} container spacing={4} alignItems="center">
-                        <Grid xs={7} item> 
-                            <CardMedia
-                            style={{width: "auto", maxHeight: "300px"}}
+                    <Box 
+                                    display="flex" 
+                                    justifyContent="center"
+                                    style={{padding:"30px"}}
+                                >
+                    <Grid style={{width:"400px"}}>
+                    <Paper elevation={3}>
+                    <CardMedia
+                            style={{width: "auto", maxHeight: "300px", }}
                             component="img"
                             image={output}
                             />
-                        </Grid>
-                        <Grid xs={5} item> 
-                            <Paper elevation={3}>
-                                {policy}
-                                {/* <Typography>
-                                write something here to explain the meaning of the graph to the user
-                                </Typography>    */}
-                            </Paper>
-                            {/* <Typography>
-                                write something here to explain the meaning of the graph to the user
-                            </Typography> */}
-                        </Grid>
+                    </Paper>
                     </Grid>
+                    </Box>
 
                     <Typography  variant='subtitle1' align='center'>
                         You can download the augentation policy here

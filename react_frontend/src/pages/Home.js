@@ -90,6 +90,8 @@ export default function Home() {
         setExpanded(!expanded);
     };
 
+    const ds_link = <a href="https://pytorch.org/vision/main/generated/torchvision.datasets.ImageFolder.html" >link</a>;
+
         return (
         <div className="App" style={{padding:"60px"}}> 
             <Typography gutterBottom variant="h3" align="center" >
@@ -135,6 +137,10 @@ export default function Home() {
                                     <Alert severity="error">
                                         <AlertTitle>This field is required</AlertTitle>
                                     </Alert>}
+                                <Typography style={{ maxWidth: 750}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
+                                    If you would like to upload your own dataset, please choose 'Other'. 
+                                    The dataset folder has to follow a specific strcuture, please follow this {ds_link} for more details
+                                </Typography>
                                 {watchFileds[0]!=='Other' && 
                                     <input
                                         {...register('ds_upload')}
@@ -235,7 +241,7 @@ export default function Home() {
 
                             <FormControl style={{ maxWidth: 800, padding:"20px"}} error={Boolean(errors.select_learner)}>
                                 <FormLabel id="select_learner" align="left" variant="h6">
-                                    Please select the auto-augment learners you'd like to use (multiple learners can be selected)
+                                    Please select the auto-augment learners you'd like to use
                                 </FormLabel>
                                 <Box 
                                     display="flex" 
@@ -268,7 +274,10 @@ export default function Home() {
                                         <AlertTitle>This field is required</AlertTitle>
                                     </Alert>}
                                 <Typography style={{ maxWidth: 800}} variant="body2" color="textSecondary" component="p" gutterBottom align="left">
-                                    (give user some recommendation here...)
+                                We would recommend choosing the agent based on your requirements. 
+                                If you are uncertain of your child network hyperparameters (such as learning rate, batch size), we would recommend the UCB1 learner; 
+                                if you are more familiar with your network and have more time to train, we would recommend the GRU learner; 
+                                if you have a lot of time available we would recommend the Random Searcher or Evolutionary learner. 
                                 </Typography>
                             </FormControl>
                         </CardContent>

@@ -57,7 +57,7 @@ class GenLearner(AaLearner):
                 batch_size=8,
                 toy_size=1,
                 # GenLearner specific settings
-                num_offspring=1, 
+                num_offspring=2, 
                 ):
 
         super().__init__(
@@ -325,8 +325,6 @@ class GenLearner(AaLearner):
                 policy = [self._gen_random_subpol()]
             else:
                 policy = self._bin_to_subpol(random.choice(self._generate_children()))
-            print('testing now@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-            print('testing now@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             pprint(policy)
             reward = self._test_autoaugment_policy(policy,
                                                 child_network_architecture,

@@ -22,6 +22,7 @@ def parse_users_learner_spec(
             ds, 
             ds_name, 
             IsLeNet, 
+            network_name,
             # aalearner type
             auto_aug_learner, 
             # search space settings
@@ -35,13 +36,12 @@ def parse_users_learner_spec(
             iterations, 
             learning_rate, 
             max_epochs,
-            # dummy variable which does nothing
-            network_name,
             ):
     train_dataset, test_dataset, child_archi = parse_ds_cn_arch(
                                                     ds, 
                                                     ds_name, 
-                                                    IsLeNet
+                                                    IsLeNet,
+                                                    network_name
                                                     )
     """
     The website receives user inputs on what they want the AaLearner

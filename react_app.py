@@ -54,7 +54,7 @@ def get_form_data():
         if form_data['iterations'] not in ['undefined', ""]: 
             iterations = int(form_data['iterations'])      # total iterations, should be more than the number of policies
         else: 
-            iterations = 2
+            iterations = 10
         exclude_method = form_data['select_action']
         print('@@@ advanced search: batch_size:', batch_size, 'learning_rate:', learning_rate, 'toy_size:', toy_size, 'iterations:', iterations, 'exclude_method', exclude_method)
         
@@ -115,7 +115,7 @@ def get_form_data():
                 current_app.config['data'] = data
                 return data 
             else: 
-                childnetwork.save('./child_networks/'+childnetwork.filename)
+                childnetwork.save('./react_backend/child_networks/'+network_name)
         else: 
             network_name = None
 
@@ -189,8 +189,8 @@ def training():
     # plot both here
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.plot(acc_list, label="accuracy of the current iteration")
-    ax.plot(best_acc_list, label='best accuracy so far')
+    ax.plot(range(1, len(acc_list)+1), acc_list, label="accuracy of the current iteration")
+    ax.plot(range(1, len(best_acc_list)+1), best_acc_list, label='best accuracy so far')
     ax.legend()
     ax.set_xlabel('Number of Iterations')
     ax.set_ylabel('Accuracy')

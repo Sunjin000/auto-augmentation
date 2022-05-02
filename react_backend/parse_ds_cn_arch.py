@@ -5,7 +5,7 @@ import torchvision
 import torchvision.datasets as datasets
 import pickle
 
-def parse_ds_cn_arch(ds, ds_name, IsLeNet):
+def parse_ds_cn_arch(ds, ds_name, IsLeNet, network_name): 
     if ds == "MNIST":
         train_dataset = datasets.MNIST(root='./datasets/mnist/train', 
                         train=True, download=True, transform=None)
@@ -32,7 +32,7 @@ def parse_ds_cn_arch(ds, ds_name, IsLeNet):
         test_dataset = datasets.CIFAR100(root='./datasets/cifar100/test', train=False, 
                         download=True, transform=torchvision.transforms.ToTensor())
     elif ds == 'Other':
-        dataset = datasets.ImageFolder('./datasets/upload_dataset/'+ ds_name, transform=None)
+        dataset = datasets.ImageFolder('./react_backend/datasets/upload_dataset/'+ ds_name, transform=None)
         len_train = int(0.8*len(dataset))
         train_dataset, test_dataset = torch.utils.data.random_split(dataset, [len_train, len(dataset)-len_train])
 
@@ -62,6 +62,6 @@ def parse_ds_cn_arch(ds, ds_name, IsLeNet):
     elif IsLeNet == 'SimpleNet':
         child_architecture = SimpleNet(img_height, img_width, num_labels, img_channels)
     else:
-        child_architecture = pickle.load(open(f'datasets/childnetwork', "rb"))
+        child_architecture = pickle.load(open(f'./react_backend/child_networks/{network_name}', "rb"))
 
     return train_dataset, test_dataset, child_architecture 
