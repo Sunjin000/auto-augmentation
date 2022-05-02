@@ -319,7 +319,9 @@ class GenLearner(AaLearner):
         iterations -> int
             number of iterations to run the instance for
         """
-
+        if self.num_offspring == 1:
+            self.num_offspring = 2
+            
         for idx in range(iterations):
             if len(self.history) < self.num_offspring:
                 policy = [self._gen_random_subpol()]
