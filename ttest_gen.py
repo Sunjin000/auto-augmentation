@@ -15,6 +15,8 @@ import pickle
 #                                 train=True, download=True, transform=None)
 # test_dataset = datasets.MNIST(root='./datasets/mnist/test', 
 #                         train=False, download=True, transform=torchvision.transforms.ToTensor())
+
+
 # train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
 #                         train=True, download=True, transform=None)
 # test_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/test', 
@@ -28,8 +30,15 @@ test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
                         train=False, download=True, 
                         transform=torchvision.transforms.ToTensor())
 
-child_network_architecture = cn.lenet
+# child_network_architecture = cn.lenet
 # child_network_architecture = cn.lenet()
+
+# child_network_architecture = cn.EasyNet(
+#                                     img_height=28,
+#                                     img_width=28,
+#                                     num_labels=10,
+#                                     img_channels=1
+#                                     )
 
 child_network_architecture = cn.LeNet(
                                     img_height=32,
@@ -45,7 +54,7 @@ agent = GenLearner(
                             learning_rate=0.05,
                             max_epochs=float('inf'),
                             early_stop_num=10,
-                            num_offspring=10
+                            num_offspring=50
                             )
 
 

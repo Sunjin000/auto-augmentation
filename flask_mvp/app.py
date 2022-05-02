@@ -15,21 +15,6 @@ import os
 app = create_app()
 
 
-
-# app = Flask(__name__)
-# app.config.from_mapping(
-#     SECRET_KEY='dev',
-# )
-# os.makedirs(app.instance_path, exist_ok=True)
-# from auto_augmentation import download_file
-# app.register_blueprint(home.bp)
-# app.register_blueprint(progress.bp)
-# app.register_blueprint(training.bp)
-# app.register_blueprint(result.bp)
-# app.register_blueprint(download_file.bp)
-
-
-
 socketio = SocketIO(app)
 
 

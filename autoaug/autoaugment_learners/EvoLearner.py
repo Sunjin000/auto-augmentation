@@ -95,13 +95,13 @@ class EvoLearner(AaLearner):
                     exclude_method=exclude_method
                     )
 
-        # evolutionary algorithm settings
         self.controller = controller(
                         fun_num=self.fun_num, 
                         p_bins=self.p_bins, 
                         m_bins=self.m_bins, 
                         sub_num_pol=self.sp_num
                         )
+
         # self.controller = controller
 
         self.num_solutions = num_solutions
@@ -113,67 +113,13 @@ class EvoLearner(AaLearner):
         self.policy_dict = {}
 
         self.running_policy = []
+        self.first_run = True 
+
+        self.fun_num = len(self.augmentation_space)
+        # evolutionary algorithm settings
 
 
         assert num_solutions > num_parents_mating, 'Number of solutions must be larger than the number of parents mating!'
-
-
-    def get_full_policy(self, x):
-        """
-        Generates the full policy (self.num_sub_pol subpolicies). Network architecture requires
-        output size 5 * 2 * (self.fun_num + self.p_bins + self.m_bins)
-
-        Parameters 
-        -----------
-        x -> PyTorch tensor
-            Input data for network 
-
-        Returns
-        ----------
-        full_policy -> [((String, float, float), (String, float, float)), ...)
-            Full policy consisting of tuples of subpolicies. Each subpolicy consisting of
-            two transformations, with a probability and magnitude float for each
-        """
-        section = self.fun_num + self.p_bins + self.m_bins
-
-        y = self.controller.forward(x)
-        full_policy = []
-        for pol in range(self.sp_num):
-            int_pol = []
-            for _ in range(2):
-                idx_ret = torch.argmax(y[:, (pol * section):(pol*section) + self.fun_num].mean(dim = 0))
-
-                trans, need_mag = self.augmentation_space[idx_ret]
-
-                if self.p_bins == 1:
-                    # p_ret = min(1, max(0, (y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0).item())))
-                    p_ret = torch.sigmoid(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0)).item()
-                else:
-                    p_ret = torch.argmax(y[:, (pol * section)+self.fun_num:(pol*section)+self.fun_num+self.p_bins].mean(dim = 0)).item() * 0.1
-
-                p_ret = round(p_ret, 1)
-
-
-                if need_mag:
-                    # print("original mag", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0))
-                    if self.m_bins == 1:
-                        # mag = min(9, max(0, (y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0).item())))
-                        mag = torch.sigmoid(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)).item()
-
-                    else:
-                        print("bit: ", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0))
-                        print("full: ", y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].shape)
-                        print("mean: ", torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)))
-                        mag = torch.argmax(y[:, (pol * section)+self.fun_num+self.p_bins:((pol+1)*section)].mean(dim = 0)).item()
-                    mag = int(mag)
-                else:
-                    mag = None
-                int_pol.append((trans, p_ret, mag))
-
-            full_policy.append(tuple(int_pol))
-
-        return full_policy
-
 
     
     def _get_single_policy_cov(self, x, alpha = 0.5):
@@ -273,11 +219,9 @@ class EvoLearner(AaLearner):
 
             Solution_idx -> int
         """
-        print("learn0")
+
         self.num_generations = iterations
         self.history_best = []
-
-        self.best_model = 0
 
         self._set_up_instance(train_dataset, test_dataset, child_network_architecture)
 
@@ -347,26 +291,22 @@ class EvoLearner(AaLearner):
 
             self.controller.load_state_dict(model_weights_dict)
             train_dataset.transform = torchvision.transforms.ToTensor()
-            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)
+            self.train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=500)
             count = 0
 
             new_pol = True
             for idx, (test_x, label_x) in enumerate(self.train_loader):
                 count += 1
-                # sub_pol = self._get_single_policy_cov(test_x)
-                sub_pol = self.get_full_policy(test_x)
+                sub_pol = self._get_single_policy_cov(test_x)
                 print("subpol: ", sub_pol)
 
-
-                # if self._in_pol_dict(sub_pol):
-                #     sub_pol = self._get_single_policy_cov(test_x)[0]
-                #     new_pol = False 
-                #     fit_val = 0
 
                 if idx == 0:
                     break
 
             print("start test")
+            self.print_every_epoch = True 
+            self.early_stop_num = 10
             if new_pol:
                 fit_val = self._test_autoaugment_policy(sub_pol,child_network_architecture,train_dataset,test_dataset)
             print("fit_val: ", fit_val)
@@ -382,12 +322,13 @@ class EvoLearner(AaLearner):
 
             if len(self.history_best) == 0:
                 self.history_best.append((fit_val))
-                self.best_model = model_weights_dict
+                self.new_pop = self.torch_ga.population_weights
             elif fit_val > self.history_best[-1]:
                 self.history_best.append(fit_val) 
-                self.best_model = model_weights_dict
+                self.new_pop = self.torch_ga.population_weights
             else:
                 self.history_best.append(self.history_best[-1])
+            self.first_run = False
             
 
             
@@ -410,10 +351,18 @@ class EvoLearner(AaLearner):
             print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
             return
 
+        if self.first_run:
 
-        self.ga_instance = pygad.GA(num_generations=self.num_generations, 
-            num_parents_mating=self.num_parents_mating, 
-            initial_population=self.initial_population,
-            mutation_percent_genes = 0.1,
-            fitness_func=_fitness_func,
-            on_generation = _on_generation)
+            self.ga_instance = pygad.GA(num_generations=self.num_generations, 
+                num_parents_mating=self.num_parents_mating, 
+                initial_population=self.initial_population,
+                mutation_percent_genes = 0.1,
+                fitness_func=_fitness_func,
+                on_generation = _on_generation)
+        else:
+            self.ga_instance = pygad.GA(num_generations=self.num_generations, 
+                num_parents_mating=self.num_parents_mating, 
+                initial_population=self.new_pop,
+                mutation_percent_genes = 0.1,
+                fitness_func=_fitness_func,
+                on_generation = _on_generation)           

@@ -50,7 +50,7 @@ def train_child_network(child_network,
                         early_stop_flag=True,
                         average_validation=[15,25],
                         logging=False,
-                        print_every_epoch=False):
+                        print_every_epoch=True):
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
