@@ -321,7 +321,7 @@ class EvoLearner(AaLearner):
 
 
             if len(self.history_best) == 0:
-                self.history_best.append((fit_val))
+                self.history_best.append(fit_val)
                 self.new_pop = self.torch_ga.population_weights
             elif fit_val > self.history_best[-1]:
                 self.history_best.append(fit_val) 
@@ -329,9 +329,6 @@ class EvoLearner(AaLearner):
             else:
                 self.history_best.append(self.history_best[-1])
             self.first_run = False
-            
-
-            
 
             return fit_val
 
