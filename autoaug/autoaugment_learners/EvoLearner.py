@@ -95,14 +95,14 @@ class EvoLearner(AaLearner):
                     exclude_method=exclude_method
                     )
 
-        self.controller = controller(
-                        fun_num=self.fun_num, 
-                        p_bins=self.p_bins, 
-                        m_bins=self.m_bins, 
-                        sub_num_pol=self.sp_num
-                        )
+        # self.controller = controller(
+        #                 fun_num=self.fun_num, 
+        #                 p_bins=self.p_bins, 
+        #                 m_bins=self.m_bins, 
+        #                 sub_num_pol=self.sp_num
+        #                 )
 
-        # self.controller = controller
+        self.controller = controller
 
         self.num_solutions = num_solutions
         self.torch_ga = torchga.TorchGA(model=self.controller, num_solutions=num_solutions)

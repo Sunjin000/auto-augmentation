@@ -1,6 +1,3 @@
-# We can initialize the train_dataset with its transform as None.
-# Later on, we will change this object's transform attribute to the policy
-# that we want to test
 import torchvision.datasets as datasets
 import torchvision
 
@@ -11,11 +8,6 @@ from autoaug.autoaugment_learners.GenLearner import GenLearner
 import random
 import pickle
     
-# train_dataset = datasets.MNIST(root='./datasets/mnist/train',
-#                                 train=True, download=True, transform=None)
-# test_dataset = datasets.MNIST(root='./datasets/mnist/test', 
-#                         train=False, download=True, transform=torchvision.transforms.ToTensor())
-
 
 # train_dataset = datasets.FashionMNIST(root='./datasets/fashionmnist/train',
 #                         train=True, download=True, transform=None)
@@ -30,8 +22,6 @@ test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
                         train=False, download=True, 
                         transform=torchvision.transforms.ToTensor())
 
-# child_network_architecture = cn.lenet
-# child_network_architecture = cn.lenet()
 
 # child_network_architecture = cn.EasyNet(
 #                                     img_height=28,
@@ -47,11 +37,21 @@ child_network_architecture = cn.LeNet(
                                     img_channels=3
                                     )
 
+# agent = GenLearner(
+#                             sp_num=2,
+#                             toy_size=0.01,
+#                             batch_size=4,
+#                             learning_rate=0.05,
+#                             max_epochs=float('inf'),
+#                             early_stop_num=10,
+#                             num_offspring=50
+#                             )
+
+
+
 agent = GenLearner(
                             sp_num=2,
-                            toy_size=0.01,
-                            batch_size=4,
-                            learning_rate=0.05,
+                            toy_size=0.8,
                             max_epochs=float('inf'),
                             early_stop_num=10,
                             num_offspring=50

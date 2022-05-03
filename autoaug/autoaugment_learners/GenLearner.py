@@ -290,6 +290,7 @@ class GenLearner(AaLearner):
         """
         parent_acc = sorted(self.history, key = lambda x: x[1], reverse=True)
         parents = [x[0] for x in parent_acc]
+        self.running_policy = parents[:self.sp_num]
         parents_weights = [x[1] for x in parent_acc]
         new_pols = []
         for _ in range(1):
@@ -321,7 +322,7 @@ class GenLearner(AaLearner):
         """
         if self.num_offspring == 1:
             self.num_offspring = 2
-            
+        
         for idx in range(iterations):
             if len(self.history) < self.num_offspring:
                 policy = [self._gen_random_subpol()]

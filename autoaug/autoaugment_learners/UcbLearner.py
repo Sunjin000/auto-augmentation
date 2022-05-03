@@ -151,7 +151,9 @@ class UcbLearner(RsLearner):
         """
 
         for this_iter in trange(iterations):
-
+            print("iter: ", this_iter)
+            if this_iter > 5:
+                print("best 5 pols: ", self.get_n_best_policies(5))
             # choose which policy we want to test
             if None in self.avg_accs:
                 # if there is a policy we haven't tested yet, we 
@@ -205,6 +207,7 @@ class UcbLearner(RsLearner):
                     self.q_plus_cnt[i] = self.avg_accs[i] + np.sqrt(2*np.log(self.total_count)/self.cnts[i])
             
             print(self.cnts)
+
 
             
     def get_mega_policy(self, number_policies=5):

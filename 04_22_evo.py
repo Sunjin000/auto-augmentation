@@ -11,15 +11,35 @@ controller = cn.EasyNet(img_height=28, img_width=28, num_labels=16*2, img_channe
 
 
 
+# config = {
+        # 'sp_num' : 5,
+        # 'learning_rate' : 1e-1,
+        # 'batch_size' : 32,
+        # 'max_epochs' : 100,
+        # 'early_stop_num' : 10,
+        # 'controller' : controller,
+        # 'num_solutions' : 10,
+        # }
+
+
+# config = {
+#         'sp_num' : 5,
+#         'learning_rate' : 1e-1,
+#         'batch_size' : 32,
+#         'max_epochs' : 100,
+#         'early_stop_num' : 10,
+#         'num_offspring' : 10,
+#         }
+
+
 config = {
         'sp_num' : 5,
         'learning_rate' : 1e-1,
         'batch_size' : 32,
         'max_epochs' : 100,
         'early_stop_num' : 10,
-        'controller' : controller,
-        'num_solutions' : 10,
         }
+
 
 import torch
 
@@ -68,7 +88,6 @@ def run_benchmark(
     # if history is not length total_iter yet(if total_iter
     # different policies haven't been tested yet), keep running
     
-    print("agent history: ", agent.history)
     while len(agent.history)<total_iter:
         print(f'{len(agent.history)} / {total_iter}')
         # run 1 iteration (test one new policy and update the GRU)
@@ -76,8 +95,9 @@ def run_benchmark(
                     train_dataset=train_dataset,
                     test_dataset=test_dataset,
                     child_network_architecture=child_network_architecture,
-                    iterations=5
+                    iterations=1
                     )
+        print("pols: ", agent.get_n_best_policies(1))
         # save agent every iteration
         with open(save_file, 'wb+') as f:
             torch.save(agent, f)
@@ -154,7 +174,7 @@ def rerun_best_policy(
 
 
 
-# # CIFAR10 with LeNet
+# # # CIFAR10 with LeNet
 # train_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
 #                         train=True, download=True, transform=None)
 # test_dataset = datasets.CIFAR10(root='./datasets/cifar10/train',
@@ -190,13 +210,13 @@ child_network_architecture = cn.EasyNet(
 
 save_dir='./benchmark/pickles/04_22_cf_ln_rssadasdsad'
 
-# # evo
+# evo
 run_benchmark(
     save_file=save_dir+'.pkl',
     train_dataset=train_dataset,
     test_dataset=test_dataset,
     child_network_architecture=child_network_architecture,
-    agent_arch=aal.EvoLearner,
+    agent_arch=aal.UcbLearner,
     # agent_arch=aal.GenLearner,
     config=config,
     )
@@ -217,23 +237,31 @@ run_benchmark(
 
 # Evo learner CIPHAR:  [0.6046000123023987, 0.6050999760627747, 0.5861999988555908, 0.5936999917030334, 0.5949000120162964, 0.5791000127792358, 0.6000999808311462, 0.6017000079154968, 0.5983999967575073, 0.5885999798774719]
 # megapol = [(('Equalize', 0.5, None), ('TranslateX', 0.5, 9)), (('Equalize', 0.5, None), ('TranslateX', 0.5, 8)), (('TranslateY', 0.5, 6), ('Brightness', 0.5, 6)), (('ShearY', 0.9, 5), ('Rotate', 0.5, 5)), (('TranslateX', 0.6, 5), ('Color', 1.0, 5))]
-
+megapol = [(('TranslateX', 0.3, 2), ('Sharpness', 0.4, 2)), (('Color', 0.4, 8), ('Contrast', 0.5, 1)), (('Sharpness', 0.0, 7), ('ShearY', 0.6, 2)), (('Equalize', 0.1, None), ('ShearY', 1.0, 6)), (('Solarize', 0.1, 5), ('Color', 0.9, 3))]
 
 
 # Genetic learner FASHION   [0.8870999813079834, 0.8906000256538391, 0.8853999972343445, 0.8866000175476074, 0.8924000263214111, 0.8889999985694885, 0.8859999775886536, 0.8910999894142151, 0.8871999979019165, 0.8848000168800354]
 # megapol = [(('Brightness', 0.6, 1), ('Color', 0.2, 9)), (('Brightness', 0.6, 7), ('Color', 0.2, 9)), (('AutoContrast', 0.9, None), ('Invert', 0.0, None)), (('Sharpness', 0.9, 3), ('AutoContrast', 0.9, None)), (('Brightness', 0.6, 3), ('Color', 0.2, 9))]
 
 
-# accs=[]
-# for _ in range(10):
-#     print(f'{_}/{10}')
-#     temp_agent = aal.EvoLearner(**config)
-#     accs.append(
-#             temp_agent._test_autoaugment_policy(megapol,
-#                                 child_network_architecture,
-#                                 train_dataset,
-#                                 test_dataset,
-#                                 logging=False)
-#                 )
+# UCB1
 
-# print("CIPHAR10 accs: ", accs)
+
+
+
+# megapol = [(('Brightness', 0.0, 1), ('Color', 0.0, 9))]
+accs=[]
+for _ in range(10):
+    print("CIFAR BASELINE GENETIC LEARNER")
+    print(f'{_}/{10}')
+    # temp_agent = aal.EvoLearner(**config)
+    temp_agent = aal.GenLearner(**config)
+    accs.append(
+            temp_agent._test_autoaugment_policy(megapol,
+                                child_network_architecture,
+                                train_dataset,
+                                test_dataset,
+                                logging=False)
+                )
+
+print("CIPHAR10 accs: ", accs)
