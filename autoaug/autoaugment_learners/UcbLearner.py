@@ -224,7 +224,7 @@ class UcbLearner(RsLearner):
 
         temp_history = list(zip(self.policies, temp_avg_accs))
 
-        number_policies = max(number_policies, len(temp_history))
+        number_policies = min(number_policies, len(temp_history))
 
         inter_pol = sorted(temp_history, key=lambda x: x[1], reverse = True)[:number_policies]
 
