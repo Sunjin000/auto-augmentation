@@ -480,4 +480,4 @@ class AaLearner:
 
         inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-        return inter_pol[number_policies]
+        return inter_pol[:number_policies]

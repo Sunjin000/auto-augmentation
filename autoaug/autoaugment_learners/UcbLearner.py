@@ -255,7 +255,7 @@ class UcbLearner(RsLearner):
 
         inter_pol = sorted(temp_history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-        return inter_pol[number_policies]
+        return inter_pol[:number_policies]
 
 
        
