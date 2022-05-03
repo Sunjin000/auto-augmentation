@@ -18,7 +18,7 @@ export default function Result() {
         })
       }
 
-    const doc = <a href="https://autoaug.readthedocs.io/en/latest/howto/AutoAugment.html#how-to-use-a-autoaugment-object-to-apply-autoaugment-policies-to-datasets-objects" >documentation</a>;
+    const doc = <a href="https://autoaug.readthedocs.io/en/latest/tutorial/AutoAugment.html" >documentation</a>;
     
     return (
         <div className="App" style={{padding:"60px"}}>

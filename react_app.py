@@ -17,8 +17,8 @@ torch.manual_seed(0)
 
 print('@@@ import successful')
 
-app = Flask(__name__, static_folder='react_frontend/build', static_url_path='/')
-# app = Flask(__name__)
+# app = Flask(__name__, static_folder='react_frontend/build', static_url_path='/')
+app = Flask(__name__)
 CORS(app)
 
 # it is used to collect user input and store them in the app
@@ -220,9 +220,9 @@ def show_result():
 
 
 
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+# @app.route('/')
+# def serve():
+#     return send_from_directory(app.static_folder, 'index.html')
 
 
 
