@@ -95,20 +95,20 @@ shared by all :class:`AaLearner`'s. Let us choose some here:
 
     search_space_hyp = {
             # number of subpolicies per policy
-            num_sub_policies=5, 
+            'num_sub_policies' : 5, 
             # number of bins for probability
-            p_bins=10, 
+            'p_bins' : 10, 
             # number of bins for magnitude
-            m_bins=11, 
+            'm_bins' : 11, 
             # image operations to exclude from
-            exclude_method=['Invert', 'Solarize']
+            'exclude_method' : ['Invert', 'Solarize']
             }
     child_network_hyp = {
-            learning_rate=0.01,
-            max_epochs=float('inf'),
-            early_stop_num=15,
-            batch_size=16,
-            toy_size=1 # using a toy size of 1 means 
+            'learning_rate' : 0.01,
+            'max_epochs' : float('inf'),
+            'early_stop_num' : 15,
+            'batch_size' : 16,
+            'toy_size' : 1 # using a toy size of 1 means 
                        # we use the whole dataset
             }
             
@@ -132,7 +132,7 @@ shared by all :class:`AaLearner`'s. Let us choose some here:
     learner = aal.GenLearner(
                             **search_space_hyp,
                             **child_network_hyp,
-                            num_offsprings=num_offsprings
+                            num_offspring=num_offspring
                             )
 
 
@@ -174,7 +174,7 @@ Therefore, we recommend something like the following:
             agent = GenLearner(
                             **search_space_hyp,
                             **child_network_hyp,
-                            num_offsprings=num_offsprings
+                            num_offspring=num_offspring
                             )
 
         # if history is not length total_iter yet(if total_iter
@@ -202,10 +202,10 @@ There are several ways to view the what the learner has found.
 
 - :attr:`AaLearner.history` is a list containing all the policies tested 
   and the respective accuracies obtained when trained using them.
-- :meth:`AaLearner.get_n_best_policies` shows the top n policies that the 
+- :meth:`AaLearner.get_n_best_policies()` shows the top n policies that the 
   learner has tested.
 - If you want to create a mega policy containing the top n policies the 
-  learner has tested, you can use :meth:`AaLearner.get_mega_policy`.
+  learner has tested, you can use :meth:`AaLearner.get_mega_policy()`.
 
 
 
