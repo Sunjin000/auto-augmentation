@@ -476,8 +476,8 @@ class AaLearner:
             list of best n policies
         """
 
-        number_policies = max(number_policies, len(self.history))
+        number_policies = min(number_policies, len(self.history))
 
         inter_pol = sorted(self.history, key=lambda x: x[1], reverse = True)[:number_policies]
 
-        return inter_pol[:number_policies]
+        return inter_pol
