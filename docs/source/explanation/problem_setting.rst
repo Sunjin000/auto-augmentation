@@ -2,12 +2,5 @@ Introduction to the Automatic Image Augmentation Problem Setting
 ################################################################
 
 
-
-The First Major Automatic Image Augmentation Paper
---------------------------------------------------
-
-
-
-The Current State of the Literature and Plans for Future Work
--------------------------------------------------------------
-
+Refer to Section 1: Introduction in the report: 
+:download:`pdf <docs/report.pdf>`
