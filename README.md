@@ -7,10 +7,10 @@ for automatically finding good data augmentations for image datasets.
 
 Documentation: https://autoaug.readthedocs.io/en/latest/
 
-Report: https://github.com/Sunjin000/auto-augmentation/blob/master/docs/source/explanation/report.pdf
+Report: https://github.com/sunjin000/auto-augmentation/blob/master/docs/source/explanation/report.pdf
 
-See https://paperswithcode.com/sota/data-augmentation-on-imagenet for latest 
-benchmark on this problem setting.
+See https://paperswithcode.com/sota/data-augmentation-on-imagenet for further elaboration 
+(and the latest benchmarks) on this problem setting.
 
 
 Made for the Software Engineering Project in the MSc Artificial Intelligence 
