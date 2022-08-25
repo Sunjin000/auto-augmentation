@@ -1,5 +1,10 @@
 # Auto-Augmentation
 
+> **_NOTE:_**  If you want to find the best data augmentation policy for your dataset, I suggest looking at 
+https://paperswithcode.com/task/data-augmentation.
+This repository was mainly used as practice for learning software enginnering skills; it is not the most 
+practically useful tool.
+
 Contains 
 - A simple PyTorch compatible library implementing several algorithms
 for automatically finding good data augmentations for image datasets.
